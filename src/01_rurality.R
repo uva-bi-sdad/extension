@@ -83,7 +83,23 @@ rucc <- rucc %>% filter(state == "VA")
 countyfips <- get(data("fips_codes")) %>% filter(state == "VA")
 countyfips <- countyfips$county_code
 
+# Counties
 va_counties <- counties(state = 51, cb = FALSE, year = 2018, class = "sf")
-#va_tracts <- tracts(state = 51, county = countyfips, cb = FALSE, year = 2018, class = "sf")
+va_counties <- va_counties %>% select(STATEFP, COUNTYFP, GEOID, NAME, NAMELSAD, ALAND, AWATER)
+va_counties <- va_counties %>% st_drop_geometry()
+
+# Tracts
+va_tracts <- tracts(state = 51, county = countyfips, cb = FALSE, year = 2018, class = "sf")
 
 
+#
+# JOIN ------------------------------------------------------------------------
+#
+
+# Check
+setdiff(rucc$fips, va_counties$GEOID) # 51515 is in RUCC but not va_counties -- Bedford City
+setdiff(irr$fips2010, va_counties$GEOID) # 51515 is in IRR but not va_counties -- Bedford City
+
+# Counties
+virginia <- left_join(rucc, va_counties, by = c("fips" = "GEOID"))
+virginia <- left_join(virginia, irr, by = c("fips" = "fips2010"))
