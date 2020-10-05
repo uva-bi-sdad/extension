@@ -168,7 +168,7 @@ table(va_county$rucc_2013, useNA = "always")
 # Plot
 pal_rucc <- colorFactor("YlGn", domain = va_county$rucc_2013)
 
-labels_rucc_irr_iser <- lapply(
+labels_rucc_irr_isser <- lapply(
   paste("<strong>Area: </strong>",
         va_county$county_name,
         "<br />",
@@ -259,6 +259,7 @@ leaflet(data = va_county)%>%
             values =  ~(isserman),
             title = "Isserman",
             opacity = 0.7)
+
 
 #
 # CHECK RURALITY: Tract Level, Rural-Urban Commuting Area Codes ------------------------------------------------------------------------
