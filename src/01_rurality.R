@@ -307,3 +307,29 @@ leaflet(data = va_tract)%>%
             values =  ~(primary_ruca_code_2010),
             title = "RUCA",
             opacity = 0.7)
+
+
+#
+# CHECK COUNTY RURALITY: ALL ------------------------------------------------------------------------
+#
+
+# isserman: rural, mixed rural
+# irr2010: > 0.5
+# rucc_2013:  Nonmetropolitan Counties	
+# 4	Urban population of 20,000 or more, adjacent to a metro area
+# 5	Urban population of 20,000 or more, not adjacent to a metro area
+# 6	Urban population of 2,500 to 19,999, adjacent to a metro area
+# 7	Urban population of 2,500 to 19,999, not adjacent to a metro area
+# 8	Completely rural or less than 2,500 urban population, adjacent to a metro area
+# 9	Completely rural or less than 2,500 urban population, not adjacent to a metro area)
+
+va_county <- va_county %>% mutate(score_rucc = ifelse(rucc_2013 == 9 | rucc_2013 == 8, 1, 0),
+                                  score_isserman = ifelse(isserman == "rural" | isserman == "mixed rural", 1, 0),
+                                  score_irr = ifelse(irr2010 > 0.5, 1, 0),
+                                  score = score_rucc + score_isserman + score_irr)
+
+table(va_county$score_irr)
+table(va_county$score_isserman)
+table(va_county$score_rucc)
+table(va_county$score)
+
