@@ -1,12 +1,9 @@
-library(tidygeocoder)
 library(dplyr)
-library(readxl)
 library(sf)
 library(leaflet)
-library(disco)
-library(RColorBrewer)
 library(readr)
-library(stringr)
+library(janitor)
+library(tidygeocoder)
 library(tigris)
 
 
@@ -14,33 +11,33 @@ library(tigris)
 # Read in --------------------------------------------------
 #
 
-market <- read.csv("./data/original/marketmaker_va_2020/VirginiaMarketMaker_All Farmers Markets.csv")
+# Farmers markets
+market <- read_csv("./data/original/marketmaker_va_2020/VirginiaMarketMaker_All Farmers Markets.csv") %>%
+  clean_names()
 
 
 #
 # Geocode --------------------------------------------------
 #
 
-market <- market %>% geocode(street = Address1, city = City, county = County, state = State, postalcode= Zip, lat = latitude, long = longitude, method = "cascade")
+# Farmers markets
+market <- market %>% geocode(street = address1, city = city, county = county, state = state, postalcode = zip, 
+                             lat = latitude, long = longitude, method = "cascade")
 
 sum(is.na(market$latitude))
+sum(is.na(market$longitude))
 
-# need manual geocoding for 29 locations (4,5,9,12,18,2,22,24,35,38,44,46,47,51,52,54,56,67,72,84,87,90,91,92,93,94,115,119,149)
+# Need manual geocoding for X locations (4,5,9,12,18,2,22,24,35,38,44,46,47,51,52,54,56,67,72,84,87,90,91,92,93,94,115,119,149)
 market$latitude[4] <- 38.8512019
 market$longitude[4] <- -77.7885119
 market$geo_method[4] <- "manual"
-
-market$latitude[5] <- 
-market$longitude[5] <- 
-market$geo_method[5] <- "manual"
 
 
 #
 # Plot --------------------------------------------------
 #
 
-virginiacty <- counties(state = "51", year = 2018)
-virginiacty <- st_as_sf(virginiacty)
+virginiacty <- counties(state = "51", year = 2018, class = "sf")
 
 # Farmers Markets
 
