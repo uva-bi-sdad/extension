@@ -18,6 +18,9 @@ data2 <- data[2010:4019, ]
 data3 <- data[4020:6029, ]
 data4 <- data[6030:8037, ]
 
+# Clean up
+remove(data)
+
 
 #
 # OSRM backend instance for Virginia locations on the SDAD server  -------------------------------
