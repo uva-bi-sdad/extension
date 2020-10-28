@@ -94,7 +94,16 @@ leaflet(store_geocoded) %>%
 # Write out --------------------------------------------------
 #
 
-write_rds(store_geocoded, "./data/working/foodretail/foodretailers.Rds")
+# All
+write_rds(store_geocoded, "./data/working/foodretail/foodretail_all.rds")
+
+# Nonmissing
+store_geocoded_nonmiss <- store_geocoded %>% filter(!is.na(longitude) & !is.na(latitude))
+write_rds(store_geocoded_nonmiss, "./data/working/foodretail/foodretail_nonmiss.rds")
+
+# Missing
+store_geocoded_miss <- store_geocoded %>% filter(is.na(longitude) | is.na(latitude))
+write_rds(store_geocoded_nonmiss, "./data/working/foodretail/foodretail_missing.rds")
 
 
 
