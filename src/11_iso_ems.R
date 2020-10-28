@@ -23,29 +23,29 @@ options(osrm.server = "http://104.248.112.16:5000/", osrm.profile = "driving")
 # Get isochrones  --------------------------------------------------------------
 #
 
-ems_8 <- map_dfr(c(1:nrow(data)), ~osrmIsochrone(
-  loc = data[.x, ],
-  breaks = 8,
-  res = 200,
-  returnclass = "sf"
-))
+# ems_8 <- map_dfr(c(1:nrow(data)), ~osrmIsochrone(
+#   loc = data[.x, ],
+#   breaks = 8,
+#   res = 200,
+#   returnclass = "sf"
+# ))
 
-write_rds(ems_8, "/home/tp2sk/Git/extension/data/working/ems/ems_8.rds")
+# write_rds(ems_8, "/home/tp2sk/Git/extension/data/working/ems/ems_8.rds")
 
-ems_10 <- map_dfr(c(1:nrow(data)), ~osrmIsochrone(
-  loc = data[.x, ],
-  breaks = 10,
-  res = 200,
-  returnclass = "sf"
-))
+# ems_10 <- map_dfr(c(1:nrow(data)), ~osrmIsochrone(
+#   loc = data[.x, ],
+#   breaks = 10,
+#   res = 200,
+#   returnclass = "sf"
+# ))
+# 
+# write_rds(ems_10, "/home/tp2sk/Git/extension/data/working/ems/ems_10.rds")
 
-write_rds(ems_10, "/home/tp2sk/Git/extension/data/working/ems/ems_10.rds")
-
-ems_12 <- map_dfr(c(1:nrow(data)), ~osrmIsochrone(
-  loc = data[.x, ],
-  breaks = 12,
-  res = 200,
-  returnclass = "sf"
-))
-
-write_rds(ems_12, "/home/tp2sk/Git/extension/data/working/ems/ems_12.rds")
+# ems_12 <- map_dfr(c(1:nrow(data)), ~osrmIsochrone(
+#   loc = data[.x, ],
+#   breaks = 12,
+#   res = 200,
+#   returnclass = "sf"
+# ))
+# 
+# write_rds(ems_12, "/home/tp2sk/Git/extension/data/working/ems/ems_12.rds")
