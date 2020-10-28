@@ -77,6 +77,13 @@ store_geocoded <- rbind(store1, store2, store3, store4, store5, store6, store7, 
 
 # 650 rows uncoded
 
+# Business ID 4307344 is coded way out of Virginia. See what's up with that
+test <- store_geocoded %>% filter(business_id == 4307344)
+# Manually recode
+store_geocoded$latitude[which(store_geocoded$business_id == 4307344)] <- 36.691195
+store_geocoded$longitude[which(store_geocoded$business_id == 4307344)] <- -79.870405
+store_geocoded$geo_method[which(store_geocoded$business_id == 4307344)] <- "manual"
+
 
 #
 # Plot --------------------------------------------------
@@ -90,6 +97,8 @@ leaflet(store_geocoded) %>%
   addCircleMarkers(stroke = FALSE, fillOpacity = 1, radius = 2)
 
 
+
+
 #
 # Write out --------------------------------------------------
 #
@@ -99,6 +108,9 @@ write_rds(store_geocoded, "./data/working/foodretail/foodretail_all.rds")
 
 # Nonmissing
 store_geocoded_nonmiss <- store_geocoded %>% filter(!is.na(longitude) & !is.na(latitude))
+store_geocoded_nonmiss <- st_as_sf(store_geocoded_nonmiss, coords = c("longitude", "latitude"))
+st_crs(store_geocoded_nonmiss) <- 4326
+store_geocoded_nonmiss <- st_transform(store_geocoded_nonmiss, crs = 4326) 
 write_rds(store_geocoded_nonmiss, "./data/working/foodretail/foodretail_nonmiss.rds")
 
 # Missing
