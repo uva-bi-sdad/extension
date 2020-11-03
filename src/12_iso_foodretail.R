@@ -54,25 +54,25 @@ options(osrm.server = "http://104.248.112.16:5000/", osrm.profile = "driving")
 # 
 # write_rds(foodretail_10_pt2, "/home/tp2sk/Git/extension/data/working/foodretail/foodretail_10_nonmiss_pt2.rds")
 
-# 10 minute isochrones PART 3
-foodretail_10_pt3 <- map_dfr(c(1:nrow(data3)), ~osrmIsochrone(
-  loc = data3[.x, ],
-  breaks = 10,
-  res = 200,
-  returnclass = "sf"
-))
+# # 10 minute isochrones PART 3
+# foodretail_10_pt3 <- map_dfr(c(1:nrow(data3)), ~osrmIsochrone(
+#   loc = data3[.x, ],
+#   breaks = 10,
+#   res = 200,
+#   returnclass = "sf"
+# ))
+# 
+# write_rds(foodretail_10_pt3, "/home/tp2sk/Git/extension/data/working/foodretail/foodretail_10_nonmiss_pt3.rds")
 
-write_rds(foodretail_10_pt3, "/home/tp2sk/Git/extension/data/working/foodretail/foodretail_10_nonmiss_pt3.rds")
-
-# 10 minute isochrones PART 4
-foodretail_10_pt4 <- map_dfr(c(1:nrow(data4)), ~osrmIsochrone(
-  loc = data4[.x, ],
-  breaks = 10,
-  res = 200,
-  returnclass = "sf"
-))
-
-write_rds(foodretail_10_pt4, "/home/tp2sk/Git/extension/data/working/foodretail/foodretail_10_nonmiss_pt4.rds")
+# # 10 minute isochrones PART 4
+# foodretail_10_pt4 <- map_dfr(c(1:nrow(data4)), ~osrmIsochrone(
+#   loc = data4[.x, ],
+#   breaks = 10,
+#   res = 200,
+#   returnclass = "sf"
+# ))
+# 
+# write_rds(foodretail_10_pt4, "/home/tp2sk/Git/extension/data/working/foodretail/foodretail_10_nonmiss_pt4.rds")
 
 # 10 minute isochrones PART 5
 foodretail_10_pt5 <- map_dfr(c(1:nrow(data5)), ~osrmIsochrone(

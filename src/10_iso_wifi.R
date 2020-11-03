@@ -97,3 +97,35 @@ options(osrm.server = "http://104.248.112.16:5000/", osrm.profile = "driving")
 # 
 # write_rds(wifi_15, "/home/tp2sk/Git/extension/data/working/wifi/wifi_15.rds")
 
+
+#
+# Join back to original data  --------------------------------------------------------------
+#
+
+wifi_10 <- read_rds("./data/working/wifi/wifi_10.rds") %>% select(max, geometry) %>% rename(isominute = max)
+wifi_15 <- read_rds("./data/working/wifi/wifi_15.rds") %>% select(max, geometry) %>% rename(isominute = max)
+
+data <- data %>% st_drop_geometry()
+
+data_10 <- cbind(data, wifi_10)
+data_10 <- st_as_sf(data_10)
+
+data_15 <- cbind(data, wifi_15)
+data_15 <- st_as_sf(data_15)
+
+
+#
+# Write  --------------------------------------------------------------
+#
+
+write_rds(data_10, "/home/tp2sk/Git/extension/data/working/wifi/final_wifi_10.rds")
+write_rds(data_15, "/home/tp2sk/Git/extension/data/working/wifi/final_wifi_15.rds")
+
+
+#
+# Test --------------------------------------------------------------
+#
+
+data <- read_rds("/home/tp2sk/Git/extension/data/working/wifi/final_wifi.rds")
+plot(st_geometry(data_10[29, ]))
+plot(st_geometry(data[29, ]), col = "red", add = TRUE)
