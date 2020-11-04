@@ -15,6 +15,7 @@ options(scipen = 999)
 #
 # Tigris Work ------------------------------------------------------------------------
 #
+
 usda_data <- fread("data/original/usda_food_atlas_2017/usda_food_atlas.csv")
 
 usda_data <- usda_data %>%
@@ -42,5 +43,6 @@ usda <- usda_geo_data %>% select(GEOID, State, County,
                                  lalowi1share, lalowi10share, lapop1share, lapop10share, 
                                  laseniors1share, laseniors10share)
 usda <- st_as_sf(usda)
-usda <- usda %>% st_transform(4269)
-write_rds(usda, "./data/working/usda/usda.Rds")
+usda <- usda %>% st_transform(4326)
+
+write_rds(usda, "./data/working/usda/final_usda.rds")

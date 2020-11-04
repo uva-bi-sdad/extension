@@ -1,8 +1,8 @@
-library(readr)
-library(dplyr)
-library(osrm)
-library(sf)
-library(purrr)
+library(readr, repos = 'http://cran.us.r-project.org')
+library(dplyr, repos = 'http://cran.us.r-project.org')
+library(osrm, repos = 'http://cran.us.r-project.org')
+library(sf, repos = 'http://cran.us.r-project.org')
+library(purrr, repos = 'http://cran.us.r-project.org')
 
 
 #

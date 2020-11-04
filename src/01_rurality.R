@@ -30,6 +30,12 @@ library(leaflet)
 
 # Defining and measuring rurality in the US: https://sites.nationalacademies.org/cs/groups/dbassesite/documents/webpage/dbasse_168031.pdf
 
+# HRSA "are you rural" tool
+# Rural Health Grants Eligibility Analyzer
+# https://data.hrsa.gov/Content/Documents/tools/rural-health/forhpeligibleareas.pdf -- list for Virginia
+# https://data.hrsa.gov/tools/rural-health
+
+
 #
 # READ IN RURALITY CODES ------------------------------------------------------------------------
 #
