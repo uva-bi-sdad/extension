@@ -26,7 +26,7 @@ conn <- dbConnect(drv = PostgreSQL(), dbname = "sdad",
 data <- dbGetQuery(conn, "SELECT apn__parcel_number_unformatted_, apn_sequence_number, composite_property_linkage_key, original_apn,
                                  online_formatted_parcel_id, previous_parcel_number, previous_parcel_sequence_number, previous_parcel_number_formatted,
                                  tax_year, assessed_year, year_built, effective_year_built, 
-                                 parcel_level_latitude, parcel_level_longitude, block_level_latitude, block_level_longitude, census_tract, 
+                                 parcel_level_latitude, parcel_level_longitude, block_level_latitude, block_level_longitude, fips_code, census_tract, 
                                  township, municipality_code, situs_house_number, situs_street_name, situs_mode, situs_city, situs_state, situs_zip_code,
                                  property_indicator_code, land_use_code, owner_1_corporate_indicator, county_use_description 
                           FROM corelogic_sdad.tax_hist_2_51
@@ -123,6 +123,40 @@ data <- data %>% filter(property_indicator_code == 10 | # single family residenc
 # Mostly residential, but also examples of agriculture, medical office, vacant, campground,... 
 table(data$county_use_description, useNA = "always")
 unique(data$county_use_description)
+
+# Year
+table(data$tax_year)
+table(data$assessed_year)
+
+# IDs: Only the composite property linkage key is unique.
+any(duplicated(data$composite_property_linkage_key)) # Unique property key, which can be used to link to other files associated with property.
+any(duplicated(data$apn__parcel_number_unformatted_)) # Assessor's Parcel Number in an unformatted form. This is most often used by the county and others as a unique key.
+any(duplicated(data$apn_sequence_number)) # This internal sequence number is used to ensure uniqueness of the Assessor's Parcel Number.
+any(duplicated(data$original_apn)) # Original Assessors Parcel Number (APN) in raw format provided on the assessor tax roll.
+any(duplicated(data$online_formatted_parcel_id)) # APN that would link to CoreLogic online products.
+
+# Coords
+# Parcel level: CoreLogic proprietary parcel-centroid coordinate that specifies the north-south / east-west position of the center point of a parcel. 
+# Block level: CoreLogic derived geographic coordinate that specifies the north-south / east-west position of a point based on United States Postal Service address data for the parcel. 
+any(is.na(data$parcel_level_latitude))            
+any(is.na(data$parcel_level_longitude))
+any(is.na(data$block_level_latitude))
+any(is.na(data$block_level_longitude))
+
+any(duplicated(data$parcel_level_latitude))            
+any(duplicated(data$parcel_level_longitude))
+any(duplicated(data$block_level_latitude))
+any(duplicated(data$block_level_longitude))
+
+data$latlong_parcel <- paste0(data$parcel_level_latitude, ", ", data$parcel_level_longitude)
+data$latlong_block <- paste0(data$block_level_latitude, ", ", data$parcel_level_longitude)
+
+any(duplicated(data$latlong_parcel))    
+any(duplicated(data$latlong_block))    
+
+test1 <- data[duplicated(data$latlong_parcel), ]
+test2 <- data[duplicated(data$latlong_block), ]
+
 
 #
 # Sanity check with land use code: WITH COMMERCIAL CONDOS INCLUDED ------------------------
