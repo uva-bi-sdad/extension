@@ -1,12 +1,10 @@
 library(naniar)
 library(dplyr)
 library(sf)
-library(leaflet)
 library(readr)
-library(janitor)
-library(tidygeocoder)
-library(tigris)
 library(opencage)
+library(purrr)
+
 
 #
 # Check Missingness ---------------------------------------------
@@ -34,44 +32,39 @@ miss_var_summary(food_na)
 
 
 #
-# Add Name to Address ---------------------------------------------
-# 
-
-# county and city names look fine
-sort(unique(food_na$county))
-sort(unique(food_na$city))
-
-# add together business and address1 and business and mail_address
-food_na$address3 <- paste(food_na$business, food_na$address1, sep = " ")
-food_na$address4 <- paste(food_na$business, food_na$mail_address, sep = " ")
-
-food_na <- food_na %>% geocode(street = address3, city = city, county = county, state = state, postalcode = zip, 
-                             lat = latitude, long = longitude, method = "cascade")
-# miss_var_summary(food_na)
-# found 6
-food_na_1 <- food_na[,-c(21:23)]
-food_na_1 <- food_na_1 %>% geocode(street = address4, city = city, county = county, state = state, postalcode = zip, 
-                               lat = latitude, long = longitude, method = "cascade")
-# miss_var_summary(food_na_1)
-# found 8
-
-#
-# Opencage ------------------------------------
+# Opencage ------------------------------------------------------------------------
 #
 
-food_na_2 <- food_na[,-c(21:23)]
-readRenviron("~/.Renviron")
-OPENKEY <- Sys.getenv("OPENKEY")
-food_oc <- c()
-for(i in 1:nrow(food_na_2)){
-val <- opencage_forward(placename = food_na_2$address1[i], key = OPENKEY)
-food_oc[i] <- val
-}
+# Make address
+food_na$fulladdress <- paste0(food_na$business, ", ", food_na$address1, ", ", food_na$city, ", VA ", food_na$zip)
 
-food_oc_null <- c()
-for(i in 1:length(food_oc)){
-  val <- is.null(food_oc[[i]])
-  food_oc_null[i] <- val
-}
+# Run 
+output <- map_df(food_na$fulladdress, opencage_forward, key = "821a184b48df4b0fbc08e75ccfb29e12", countrycode = "US", language = "en", no_annotations = TRUE, limit = 1)
+output2 <- data.frame(output$results$query, output$results$confidence, output$results$geometry.lat, output$results$geometry.lng)
 
-# missing 57 still
+
+#
+# Prepare ------------------------------------------------------------------------
+#
+
+# Add back in
+data <- left_join(food_na, output2, by = c("fulladdress" = "output.results.query"))
+
+# Clean
+data$geo_method <- "opencage"
+data$latitude <- data$output.results.geometry.lat
+data$longitude <- data$output.results.geometry.lng
+
+data <- data %>% select(-output.results.geometry.lat, -output.results.geometry.lng) %>%
+                 rename(confidence = output.results.confidence)
+
+# Check
+table(data$confidence)
+
+
+#
+# Write ------------------------------------------------------------------------
+#
+
+write_rds(data, "./data/working/foodretail/foodretail_missing_coded.rds")
+
