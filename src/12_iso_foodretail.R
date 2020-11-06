@@ -24,11 +24,11 @@ st_crs(data) <- 4326
 data <- st_transform(data, 4326)
 
 # Split across 5 days
-#data1 <- data[1:1607, ]
+data1 <- data[1:1607, ]
 #data2 <- data[1608:3215, ]
 #data3 <- data[3216:4823, ]
 #data4 <- data[4824:6431, ]
-data5 <- data[6432:8037, ]
+#data5 <- data[6432:8037, ]
 
 # Clean up
 remove(data)
