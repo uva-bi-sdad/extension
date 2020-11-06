@@ -1,9 +1,9 @@
-install.packages('readr', repos = 'http://cran.us.r-project.org')
-install.packages('dplyr', repos = 'http://cran.us.r-project.org')
-install.packages('osrm', repos = 'http://cran.us.r-project.org')
-install.packages('sf', repos = 'http://cran.us.r-project.org')
-install.packages('purrr', repos = 'http://cran.us.r-project.org')
-install.packages('lwgeom', repos = 'http://cran.us.r-project.org')
+# install.packages('readr', repos = 'http://cran.us.r-project.org')
+# install.packages('dplyr', repos = 'http://cran.us.r-project.org')
+# install.packages('osrm', repos = 'http://cran.us.r-project.org')
+# install.packages('sf', repos = 'http://cran.us.r-project.org')
+# install.packages('purrr', repos = 'http://cran.us.r-project.org')
+# install.packages('lwgeom', repos = 'http://cran.us.r-project.org')
 
 library(readr)
 library(dplyr)
@@ -85,26 +85,26 @@ options(osrm.server = "http://104.248.112.16:5000/", osrm.profile = "driving")
 # 
 # write_rds(foodretail_10_pt4, "/home/tp2sk/Git/extension/data/working/foodretail/foodretail_10_nonmiss_pt4.rds")
 
-# 10 minute isochrones PART 5
-foodretail_10_pt5 <- map_dfr(c(1:nrow(data5)), ~osrmIsochrone(
-  loc = data5[.x, ],
-  breaks = 10,
-  res = 200,
-  returnclass = "sf"
-))
-
-write_rds(foodretail_10_pt5, "/home/tp2sk/Git/extension/data/working/foodretail/foodretail_10_nonmiss_pt5.rds")
-
-# # 15 minute isochrones PART 1
-# foodretail_15_pt1 <- map_dfr(c(1:nrow(data1)), ~osrmIsochrone(
-#   loc = data1[.x, ],
+# # 10 minute isochrones PART 5
+# foodretail_10_pt5 <- map_dfr(c(1:nrow(data5)), ~osrmIsochrone(
+#   loc = data5[.x, ],
 #   breaks = 10,
 #   res = 200,
 #   returnclass = "sf"
 # ))
 # 
-# write_rds(foodretail_15_pt1, "/home/tp2sk/Git/extension/data/working/foodretail/foodretail_15_nonmiss_pt1.rds")
-# 
+# write_rds(foodretail_10_pt5, "/home/tp2sk/Git/extension/data/working/foodretail/foodretail_10_nonmiss_pt5.rds")
+
+# 15 minute isochrones PART 1
+foodretail_15_pt1 <- map_dfr(c(1:nrow(data1)), ~osrmIsochrone(
+  loc = data1[.x, ],
+  breaks = 10,
+  res = 200,
+  returnclass = "sf"
+))
+
+write_rds(foodretail_15_pt1, "/home/tp2sk/Git/extension/data/working/foodretail/foodretail_15_nonmiss_pt1.rds")
+
 # # 15 minute isochrones PART 2
 # foodretail_15_pt2 <- map_dfr(c(1:nrow(data2)), ~osrmIsochrone(
 #   loc = data2[.x, ],
