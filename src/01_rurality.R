@@ -85,6 +85,13 @@ omb <- read_xls("./data/original/omb_metro_2020/list1_2020.xls", sheet = 1, rang
   clean_names()
 
 
+# 2020 Office of Rural Health strategic plan: COUNTY LEVEL ------------------------------------------------------------------
+srhp <- read_csv("./data/original/srhp_rurality_2020/omb_srhp_rurality.csv", 
+                col_names = TRUE, col_types = list(col_character(), col_character(), col_character())) %>%
+  clean_names() %>%
+  rename(srhprurality = rural_urban)
+
+
 #
 # GET GEOMETRIES ------------------------------------------------------------------------
 #
@@ -134,6 +141,7 @@ setdiff(irr$fips2010, va_counties$GEOID) # 51515 is in IRR but not va_counties -
 va_county <- full_join(va_counties, rucc, by = c("GEOID" = "fips"))
 va_county <- left_join(va_county, irr, by = c("GEOID" = "fips2010"))
 va_county <- full_join(va_county, isser, by = c("county_name.y" = "countyname"))
+va_county <- full_join(va_county, srhp, by = c("GEOID" = "fips"))
 
 # Tracts
 va_tract <- left_join(va_tracts, ruca, by = c("GEOID" = "tractfips"))
@@ -189,7 +197,14 @@ labels_rucc_irr_isser <- lapply(
         round(va_county$irr2010, 2),
         "<br />",
         "<strong>Isserman 2013: </strong>",
-        va_county$isserman),
+        va_county$isserman,
+        "<br />",
+        "<strong>State rural health plan 2020: </strong>",
+        va_county$srhprurality,
+        "<br />",
+        "<strong>OMB 2013: </strong>",
+        va_county$metropolitan_micropolitan_statistical_area
+        ),
   htmltools::HTML
 )
 
@@ -209,6 +224,62 @@ leaflet(data = va_county)%>%
             pal = pal_rucc,
             values =  ~(rucc_2013),
             title = "RUCC",
+            opacity = 0.7)
+
+
+#
+# CHECK RURALITY: County Level, State rural health plan ------------------------------------------------------------------------
+#
+
+table(va_county$srhprurality) # The difference in 1 is Bedford city (which is urban)
+
+# Plot
+pal_srhp <- colorFactor("YlGn", domain = va_county$srhprurality)
+
+leaflet(data = va_county)%>%
+  addProviderTiles(providers$CartoDB.Positron) %>%
+  addPolygons(fillColor = ~pal_srhp(srhprurality), 
+              fillOpacity = 0.7, 
+              stroke = TRUE, weight = 0.5, color = "#202020",
+              label = labels_rucc_irr_isser,
+              labelOptions = labelOptions(direction = "bottom",
+                                          style = list(
+                                            "font-size" = "12px",
+                                            "border-color" = "rgba(0,0,0,0.5)",
+                                            direction = "auto"
+                                          )))  %>%
+  addLegend("bottomleft",
+            pal = pal_srhp,
+            values =  ~(srhprurality),
+            title = "SRHP 2020",
+            opacity = 0.7)
+
+
+#
+# CHECK RURALITY: County Level, OMB ------------------------------------------------------------------------
+#
+
+table(va_county$metropolitan_micropolitan_statistical_area)
+
+# Plot
+pal_omb <- colorFactor("YlGn", domain = va_county$metropolitan_micropolitan_statistical_area)
+
+leaflet(data = va_county)%>%
+  addProviderTiles(providers$CartoDB.Positron) %>%
+  addPolygons(fillColor = ~pal_omb(metropolitan_micropolitan_statistical_area), 
+              fillOpacity = 0.7, 
+              stroke = TRUE, weight = 0.5, color = "#202020",
+              label = labels_rucc_irr_isser,
+              labelOptions = labelOptions(direction = "bottom",
+                                          style = list(
+                                            "font-size" = "12px",
+                                            "border-color" = "rgba(0,0,0,0.5)",
+                                            direction = "auto"
+                                          )))  %>%
+  addLegend("bottomleft",
+            pal = pal_omb,
+            values =  ~(metropolitan_micropolitan_statistical_area),
+            title = "OMB 2013",
             opacity = 0.7)
 
 

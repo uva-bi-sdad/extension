@@ -6,6 +6,15 @@ library(naniar)
 
 
 #
+# Read in current list of "rural" counties ---------------------------------------------------------------------------------------------
+#
+
+ruralcty <- read_csv("./data/original/srhp_rurality_2020/omb_srhp_rurality.csv", 
+                     col_types = list(col_character(), col_character(), col_character()))
+ruralcty <- ruralcty %>% filter(RuralUrban == "R") %>% select(-Metropolitan_MicropolitanStatisticalArea)
+
+
+#
 # Connect to DB ---------------------------------------------------------------------------------------------
 #
 
@@ -124,39 +133,6 @@ data <- data %>% filter(property_indicator_code == 10 | # single family residenc
 table(data$county_use_description, useNA = "always")
 unique(data$county_use_description)
 
-# Year
-table(data$tax_year)
-table(data$assessed_year)
-
-# IDs: Only the composite property linkage key is unique.
-any(duplicated(data$composite_property_linkage_key)) # Unique property key, which can be used to link to other files associated with property.
-any(duplicated(data$apn__parcel_number_unformatted_)) # Assessor's Parcel Number in an unformatted form. This is most often used by the county and others as a unique key.
-any(duplicated(data$apn_sequence_number)) # This internal sequence number is used to ensure uniqueness of the Assessor's Parcel Number.
-any(duplicated(data$original_apn)) # Original Assessors Parcel Number (APN) in raw format provided on the assessor tax roll.
-any(duplicated(data$online_formatted_parcel_id)) # APN that would link to CoreLogic online products.
-
-# Coords
-# Parcel level: CoreLogic proprietary parcel-centroid coordinate that specifies the north-south / east-west position of the center point of a parcel. 
-# Block level: CoreLogic derived geographic coordinate that specifies the north-south / east-west position of a point based on United States Postal Service address data for the parcel. 
-any(is.na(data$parcel_level_latitude))            
-any(is.na(data$parcel_level_longitude))
-any(is.na(data$block_level_latitude))
-any(is.na(data$block_level_longitude))
-
-any(duplicated(data$parcel_level_latitude))            
-any(duplicated(data$parcel_level_longitude))
-any(duplicated(data$block_level_latitude))
-any(duplicated(data$block_level_longitude))
-
-data$latlong_parcel <- paste0(data$parcel_level_latitude, ", ", data$parcel_level_longitude)
-data$latlong_block <- paste0(data$block_level_latitude, ", ", data$parcel_level_longitude)
-
-any(duplicated(data$latlong_parcel))    
-any(duplicated(data$latlong_block))    
-
-test1 <- data[duplicated(data$latlong_parcel), ]
-test2 <- data[duplicated(data$latlong_block), ]
-
 
 #
 # Sanity check with land use code: WITH COMMERCIAL CONDOS INCLUDED ------------------------
@@ -238,6 +214,196 @@ unique(data$land_use_code)
 # 135	Mobile home lot
 
 # Codes that were filtered out: # 247	Office condo, # 213	Commercial condominium, # 238	Medical condo, # 206	Condotel
+
+
+#
+# Uniqueness --------------------------------------------------------------------
+#
+
+# Year
+table(data$tax_year)
+table(data$assessed_year)
+
+# IDs: Only the composite property linkage key is unique.
+any(duplicated(data$composite_property_linkage_key)) # Unique property key, which can be used to link to other files associated with property.
+any(duplicated(data$apn__parcel_number_unformatted_)) # Assessor's Parcel Number in an unformatted form. This is most often used by the county and others as a unique key.
+any(duplicated(data$apn_sequence_number)) # This internal sequence number is used to ensure uniqueness of the Assessor's Parcel Number.
+any(duplicated(data$original_apn)) # Original Assessors Parcel Number (APN) in raw format provided on the assessor tax roll.
+any(duplicated(data$online_formatted_parcel_id)) # APN that would link to CoreLogic online products.
+
+# Coords
+# Parcel level: CoreLogic proprietary parcel-centroid coordinate that specifies the north-south / east-west position of the center point of a parcel. 
+# Block level: CoreLogic derived geographic coordinate that specifies the north-south / east-west position of a point based on United States Postal Service address data for the parcel. 
+any(is.na(data$parcel_level_latitude))            
+any(is.na(data$parcel_level_longitude))
+any(is.na(data$block_level_latitude))
+any(is.na(data$block_level_longitude))
+
+any(duplicated(data$parcel_level_latitude))            
+any(duplicated(data$parcel_level_longitude))
+any(duplicated(data$block_level_latitude))
+any(duplicated(data$block_level_longitude))
+
+data$latlong_parcel <- paste0(data$parcel_level_latitude, ", ", data$parcel_level_longitude)
+data$latlong_block <- paste0(data$block_level_latitude, ", ", data$parcel_level_longitude)
+
+any(duplicated(data$latlong_parcel))    
+any(duplicated(data$latlong_block))    
+
+test1 <- data[duplicated(data$latlong_parcel), ]
+test2 <- data[duplicated(data$latlong_block), ]
+
+pct_complete_case(data) # 0
+pct_complete_var(data) # 26.7
+pct_miss_var(data) # 73.3
+
+n_var_complete(data) # 8 variables complete
+n_var_miss(data) # 22 have missingness
+print(miss_var_summary(data), n = Inf)
+
+# 11 block_level_latitude              294981    9.10 
+# 12 block_level_longitude             294981    9.10 
+# 17 parcel_level_latitude              75079    2.32 
+# 18 parcel_level_longitude             75079    2.32 
+
+
+#
+# Check for rural counties (per RSHP/OMB only) --------------------------------------------------------------------
+#
+
+ruraldata <- data %>% filter(fips_code %in% ruralcty$FIPS)
+ruraldata <- 
+
+n_var_complete(ruraldata) # 8 variables complete
+n_var_miss(ruraldata) # 22 have missingness
+print(miss_var_summary(ruraldata), n = Inf)
+
+#  9 block_level_latitude             201533  26.5   
+# 10 block_level_longitude            201533  26.5   
+# 16 parcel_level_latitude             31519   4.14  
+# 17 parcel_level_longitude            31519   4.14  
+
+# No data: 12,461. >93% of these also missing one or more address fields, so this would be impossible to code.
+test_allmiss <- ruraldata %>% filter(is.na(block_level_latitude) & is.na(block_level_longitude) &
+                                     is.na(parcel_level_latitude) & is.na(parcel_level_longitude))
+print(miss_var_summary(test_allmiss), n = Inf)
+
+# Cases with no data appear in 51 different counties out of 55. Counties with over 100 properties with missing coordinates are below.
+table(test_allmiss$fips_code)
+print(test_allmiss %>% 
+        select(fips_code) %>% group_by(fips_code) %>% 
+        summarize(n = n()) %>% arrange(desc(n)), n = Inf)
+
+#  1 51147      1307 Prince Edward County
+#  2 51105      1279 Lee County
+#  3 51051      1156 Dickenson County
+#  4 51163       735 Rockbridge County
+#  5 51197       642 Wythe County
+#  6 51027       641 Buchanan County
+#  7 51143       640 Pittsylvania County
+#  8 51193       608 Westmoreland County
+#  9 51025       512 Brunswick County
+# 10 51083       489 Halifax County
+# 11 51037       487 Charlotte County
+# 12 51185       458 Tazewell County
+# 13 51019       316 Bedford County
+# 14 51001       291 Accomack County
+# 15 51117       257 Mecklenburg County
+# 16 51131       223 Northampton County
+# 17 51103       221 Lancaster County
+# 18 51035       209 Carroll County
+# 19 51195       199 Wise County
+# 20 51135       187 Nottoway County
+# 21 51141       178 Patrick County
+# 22 51017       153 Bath County
+# 23 51049       140 Cumberland County
+# 24 51159       106 Richmond County
+# 25 51021       104 Bland County
+# 26 51111       102 Lunenburg County
+
+# Missing parcel but have block: 19,058. These have parts of the address missing. Could maybe piece something together to geocode.
+test_parcelmiss <- ruraldata %>% filter(!is.na(block_level_latitude) & !is.na(block_level_longitude) &
+                                       is.na(parcel_level_latitude) & is.na(parcel_level_longitude))
+print(miss_var_summary(test_parcelmiss), n = Inf) 
+
+
+#
+# Prepare df --------------------------------------------------------------------
+#
+
+# 760,573 properties in rural counties.
+# Of these, 12,461 (1.64%) have no location data (block or parcel level coordinates).
+# Filter to observations that have at least one set of coordinates. 
+# There are 748,112 rows with at least one set of coordinates.
+
+ruraldata_filtered <- ruraldata %>% filter((!is.na(block_level_latitude) & !is.na(block_level_longitude)) | 
+                                           (!is.na(parcel_level_latitude) & !is.na(parcel_level_longitude)))
+
+# Coordinates are always missing as a set (all parcel, all block).
+# More rows are missing block level coordinates than parcel level coordinates.
+print(miss_var_summary(ruraldata_filtered), n = Inf) 
+# 189,072 rows (25.3%) are missing block level coordinates.
+# 19,058 rows (2.55%) are missing parcel level coordinates.
+
+# Use parcel level coordinates. Where parcel level coordinates are unavailable, use block level coordinates.
+ruraldata_filtered <- ruraldata_filtered %>% 
+                        mutate(latitude = case_when(
+                                !is.na(parcel_level_latitude) & !is.na(parcel_level_longitude) ~ parcel_level_latitude,
+                                 is.na(parcel_level_latitude) & is.na(parcel_level_longitude) ~ block_level_latitude),
+                               longitude = case_when(
+                                 !is.na(parcel_level_latitude) & !is.na(parcel_level_longitude) ~ parcel_level_longitude,
+                                 is.na(parcel_level_latitude) & is.na(parcel_level_longitude) ~ block_level_longitude)
+                               )
+
+any(is.na(ruraldata_filtered$longitude))
+any(is.na(ruraldata_filtered$latitude))
+
+# In sum:
+# Of 760,573 properties in rural counties, 12,461 (1.64%) have no location data (block or parcel level coordinates). 
+# We drop these observations.
+# Of the remaining 748,112 rows with at least one set of coordinates, we use parcel level coordinates for the 
+# 729,054 properties (97.45%) where these coordinates are available. 
+# For the remaining 19,058 rows (2.55%) that are missing parcel level coordinates, we use block level coordinates.
+
+# Check the characteristics of properties that don't have parcel level coordinates.
+noparcel <- ruraldata_filtered %>% filter(is.na(parcel_level_latitude) & is.na(parcel_level_longitude))
+
+# Missingness is in all 55 counties. 
+table(noparcel$fips_code)
+print(noparcel %>% 
+        select(fips_code) %>% group_by(fips_code) %>% 
+        summarize(n = n()) %>% arrange(desc(n)), n = Inf)
+
+#  1 51147      4749 Prince Edward County
+#  2 51027      3774 Buchanan County
+#  3 51105      1425 Lee County
+#  4 51077       930 Grayson County
+#  5 51163       645 Rockbridge County
+#  6 51620       615 Franklin City
+#  7 51193       505 Westmoreland County
+#  8 51185       499 Tazewell County
+#  9 51025       492 Brunswick County
+# 10 51051       485 Dickenson County
+# 11 51015       427 Augusta County
+# 12 51678       340 Lexington City
+# 13 51017       339 Bath County
+# 14 51143       283 Pittsylvania County
+# 15 51195       274 Wise County
+# 16 51117       232 Mecklenburg County
+# 17 51037       224 Charlotte County
+# 18 51057       211 Essex County
+# 19 51197       209 Wythe County
+# 20 51119       200 Middlesex County
+ 
+# See what this looks like
+# A couple are in weird spots/look outside of the rural counties. 
+testplot <- ruraldata_filtered %>% select(apn__parcel_number_unformatted_, longitude, latitude)
+testplot <- st_as_sf(testplot, coords = c("longitude", "latitude"))
+plot(st_geometry(testplot), pch = 20)
+
+
+
+
 
 
 
