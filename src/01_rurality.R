@@ -5,6 +5,7 @@ library(readxl)
 library(janitor)
 library(stringr)
 library(leaflet)
+library(readr)
 
 
 # Get VA geographies at county and tract level to examine rurality. 
@@ -87,9 +88,14 @@ omb <- read_xls("./data/original/omb_metro_2020/list1_2020.xls", sheet = 1, rang
 
 # 2020 Office of Rural Health strategic plan: COUNTY LEVEL ------------------------------------------------------------------
 srhp <- read_csv("./data/original/srhp_rurality_2020/omb_srhp_rurality.csv", 
-                col_names = TRUE, col_types = list(col_character(), col_character(), col_character())) %>%
+                col_names = TRUE, col_types = list(col_character(), col_factor(), col_factor())) %>%
   clean_names() %>%
-  rename(srhprurality = rural_urban)
+  rename(srhprurality = rural_urban,
+         ombrural = metropolitan_micropolitan_statistical_area)
+
+srhp$srhprurality <- ifelse(srhp$srhprurality == "R", "rural", "urban")
+srhp$ombrural <- str_to_lower(srhp$ombrural)
+srhp$ombrural <- factor(srhp$ombrural, levels = c("non-metro", "micropolitan statistical area", "metropolitan statistical area"))
 
 
 #
@@ -131,20 +137,29 @@ va_tracts <- left_join(va_tracts, countynames, by = c("STATEFP", "COUNTYFP"))
 # JOIN ------------------------------------------------------------------------
 #
 
-# Check
-setdiff(rucc$fips, va_counties$GEOID) # 51515 is in RUCC but not va_counties -- Bedford City
-setdiff(irr$fips2010, va_counties$GEOID) # 51515 is in IRR but not va_counties -- Bedford City
+# Check Bedford problem
 # Bedford County is a United States county located in the Piedmont region of the Commonwealth of Virginia. Its county seat is the town of Bedford, which was an independent city from 1968 until rejoining the county in 2013.
 # Bedford is an incorporated town and former independent city located within Bedford County in the U.S. state of Virginia.
+setdiff(rucc$fips, va_counties$GEOID) # 51515 is in RUCC but not va_counties -- Bedford City
+setdiff(irr$fips2010, va_counties$GEOID) # 51515 is in IRR but not va_counties -- Bedford City
+setdiff(srhp$fips, va_counties$GEOID)
+setdiff(isser$countyname, rucc$county_name) # Isserman has Clifton Forge City
+
+test0 <- rucc %>% filter(fips == 51019 | fips == 51515) # Has both
+test1 <- srhp %>% filter(fips == 51019 | fips == 51515) # Has county
+test2 <- va_counties %>% filter(GEOID == 51019 | GEOID == 51515) # Has county
+test3 <- irr %>% filter(fips2010 == 51019 | fips2010 == 51515) # Has both
+test4 <- isser %>% filter(countyname == "Bedford County" | countyname == "Bedford City") # Has county twice but one is city
 
 # Counties
 va_county <- full_join(va_counties, rucc, by = c("GEOID" = "fips"))
 va_county <- left_join(va_county, irr, by = c("GEOID" = "fips2010"))
 va_county <- full_join(va_county, isser, by = c("county_name.y" = "countyname"))
-va_county <- full_join(va_county, srhp, by = c("GEOID" = "fips"))
+va_county <- left_join(va_county, srhp, by = c("GEOID" = "fips"))
 
 # Tracts
 va_tract <- left_join(va_tracts, ruca, by = c("GEOID" = "tractfips"))
+
 
 
 #
@@ -184,7 +199,7 @@ pal_rucc <- colorFactor("YlGn", domain = va_county$rucc_2013)
 
 labels_rucc_irr_isser <- lapply(
   paste("<strong>Area: </strong>",
-        va_county$county_name,
+        va_county$county_name.y,
         "<br />",
         "<strong>RUCC 2013: </strong>",
         va_county$rucc_2013,
@@ -203,7 +218,7 @@ labels_rucc_irr_isser <- lapply(
         va_county$srhprurality,
         "<br />",
         "<strong>OMB 2013: </strong>",
-        va_county$metropolitan_micropolitan_statistical_area
+        va_county$ombrural
         ),
   htmltools::HTML
 )
@@ -259,14 +274,14 @@ leaflet(data = va_county)%>%
 # CHECK RURALITY: County Level, OMB ------------------------------------------------------------------------
 #
 
-table(va_county$metropolitan_micropolitan_statistical_area)
+table(va_county$ombrural)
 
 # Plot
-pal_omb <- colorFactor("YlGn", domain = va_county$metropolitan_micropolitan_statistical_area)
+pal_omb <- colorFactor("YlGn", domain = va_county$ombrural)
 
 leaflet(data = va_county)%>%
   addProviderTiles(providers$CartoDB.Positron) %>%
-  addPolygons(fillColor = ~pal_omb(metropolitan_micropolitan_statistical_area), 
+  addPolygons(fillColor = ~pal_omb(ombrural), 
               fillOpacity = 0.7, 
               stroke = TRUE, weight = 0.5, color = "#202020",
               label = labels_rucc_irr_isser,
@@ -278,7 +293,7 @@ leaflet(data = va_county)%>%
                                           )))  %>%
   addLegend("bottomleft",
             pal = pal_omb,
-            values =  ~(metropolitan_micropolitan_statistical_area),
+            values =  ~(ombrural),
             title = "OMB 2013",
             opacity = 0.7)
 
@@ -403,10 +418,21 @@ leaflet(data = va_tract)%>%
 va_county <- va_county %>% mutate(score_rucc = ifelse(rucc_2013 == 9 | rucc_2013 == 8, 1, 0),
                                   score_isserman = ifelse(isserman == "rural" | isserman == "mixed rural", 1, 0),
                                   score_irr = ifelse(irr2010 > 0.5, 1, 0),
-                                  score = score_rucc + score_isserman + score_irr)
+                                  score_omb = ifelse(ombrural == "non-metro" | ombrural == "micropolitan statistical area", 1, 0),
+                                  score_srhp = ifelse(srhprurality == "rural", 1, 0),
+                                  score = score_rucc + score_isserman + score_irr + score_omb + score_srhp)
 
-table(va_county$score_irr)
-table(va_county$score_isserman)
-table(va_county$score_rucc)
+# Check which counties are rural according to X definitions out of 5
 table(va_county$score)
+test <- va_county %>% filter(score > 2)
+test <- va_county %>% filter(score == 5)
+# 75 counties are rural according to 2 or more definitions.
+# 45 counties are rural according to 3 or more definitions.
+# 21 counties are rural according to all 5 definitions.
 
+
+#
+# WRITE OUT FOR APP ------------------------------------------------------------------------
+#
+
+# write_rds(va_county, "./ruralapp/ruralapp.rds")
