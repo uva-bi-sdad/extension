@@ -36,15 +36,6 @@ ui <- fluidPage(theme = shinytheme("cosmo"),
                            )
                   ),
                   
-                  tabPanel("Purdue IRR",
-                           fluidRow(
-                             style = "margin: 17px",
-                             h4(strong('County-Level Rurality: Purdue Index of Relative Rurality Definition')),
-                             p(),
-                             leafletOutput('plot_irr', height = "500px")
-                           )
-                  ),
-                  
                   tabPanel("OMB",
                            fluidRow(
                              style = "margin: 17px",
@@ -54,12 +45,30 @@ ui <- fluidPage(theme = shinytheme("cosmo"),
                            )
                   ),
                   
+                  tabPanel("Purdue IRR",
+                           fluidRow(
+                             style = "margin: 17px",
+                             h4(strong('County-Level Rurality: Purdue Index of Relative Rurality Definition')),
+                             p(),
+                             leafletOutput('plot_irr', height = "500px")
+                           )
+                  ),
+                  
                   tabPanel("USDA RUCC",
                            fluidRow(
                              style = "margin: 17px",
                              h4(strong('County-Level Rurality: USDA Rural-Urban Continuum Code Definition')),
                              p(),
                              leafletOutput('plot_rucc', height = "500px")
+                           )
+                  ),
+                  
+                  tabPanel("USDA Urban Influence",
+                           fluidRow(
+                             style = "margin: 17px",
+                             h4(strong('County-Level Rurality: USDA Urban Influence Codes Definition')),
+                             p(),
+                             leafletOutput('plot_urbinf', height = "500px")
                            )
                   ),
                   
@@ -137,7 +146,14 @@ server <- function(input, output, session) {
           "<br />",
           "<strong>RUCC 2013 description: </strong>",
           "<br />",
-          data$description,
+          data$description_rucc,
+          "<br />",
+          "<strong>Urban influence 2013: </strong>",
+          data$uic_2013,
+          "<br />",
+          "<strong>Urban influence 2013 description: </strong>",
+          "<br />",
+          data$description_urbinf,
           "<br />",
           "<strong>IRR 2010: </strong>",
           round(data$irr2010, 2),
@@ -221,6 +237,10 @@ server <- function(input, output, session) {
   
   output$plot_irr <- renderLeaflet({
     create_plot_cont(data$irr201, "IRR Classification")
+  })
+  
+  output$plot_urbinf <- renderLeaflet({
+    create_plot_factor(data$uic_2013, "USDA Urban Influence<br>Classification")
   })
   
 }
