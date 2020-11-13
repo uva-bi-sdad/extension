@@ -35,14 +35,24 @@ colors <- c("#232d4b","#2c4f6b","#0e879c","#60999a","#d1e0bf","#d9e12b","#e6ce3a
 # UI ------------------------------------------------
 #
 
-ui <- fluidPage(
-  shinyDashboardThemes(
-    theme = "grey_light"
+ui <- navbarPage(selected = "home",
+  shinyDashboardThemes(theme = "grey_light"),
+  
+  # main -----------------------------------------------------------
+  tabPanel("Home", value = "home",
+           fluidRow(style = "margin: 6px;",
+                    align = "center",
+                    br("", style = "padding-top:10px;"),
+                    # img(src = "uva-dspg-logo.jpg", class = "topimage", width = "20%", style = "display: block; margin-left: auto; margin-right: auto;"),
+                    br(""),
+                    h2(strong("Addressing Barriers to Health in Rurual Countis in Virginia"),
+                       br(""),
+                       h4("University of Virginia"),
+                       h4("Biocomplexity Insititute"))
+           )
   ),
    
-   titlePanel("Extension Project"),
-   
-  # DATA PANEL -----------------------------------------------------------
+  # data and measures  -----------------------------------------------------------
   tabPanel("Data and Measures", value = "data",
            fluidRow(style = "margin: 6px;",
                     h1(strong("Data and Measures"), align = "center"),
