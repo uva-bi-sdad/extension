@@ -56,7 +56,7 @@ ui <- navbarPage(selected = "home",
            fluidRow(style = "margin: 6px;",
                     h1(strong("Proof of Concept"), align = "center"),
                     br(),
-                    selectInput("usdadrop", "Select County:", width = "100%", choices = c(allcountynames)),
+                    selectInput("usdadrop", "Select County:", multiple = F, width = "100%", choices = c(allcountynames)),
                     # selectInput("usdadrop_1", "Select Variable:", width = "100%", choices = c(
                     #   "Percent Population with Low Food Access at 1 Mile" = "lapop1share",  
                     #   "Percent Population with Low Food Access at 10 Miles" = "lapop10share",
@@ -81,14 +81,14 @@ ui <- navbarPage(selected = "home",
              tabPanel("Data Sources",
                       h3("", align = "center"),
                      br(""),
-                      column(12, 
-                             box(img(src = "data-hifld.png", style = "display: inline; float: left;", width = "100px"),
-                             p(strong("Homeland Infrastructure Foundation-Level Data."), "Homeland Infrastructure Foundation-Level Data (HIFLD) is a collection of public 
-                               source datasets at property level provided by the Department of Homeland Security. Since 2002, this HIFLD has provided quarterly 
-                               updated layers on topics from education to energy, including on health care facilities. We used HIFLD emergency medical services 
+                      column(12,
+                             shinydashboard::box(img(src = "data-hifld.png", style = "display: inline; float: left;", width = "100px"),
+                             p(strong("Homeland Infrastructure Foundation-Level Data."), "Homeland Infrastructure Foundation-Level Data (HIFLD) is a collection of public
+                               source datasets at property level provided by the Department of Homeland Security. Since 2002, this HIFLD has provided quarterly
+                               updated layers on topics from education to energy, including on health care facilities. We used HIFLD emergency medical services
                                station data at the latitude and longitude geographic level in our analyses.")),
                              # br(""),
-                             box(img(src = "data-marketmaker.png", style = "display: inline; float: left;", width = "200px"),
+                             shinydashboard::box(img(src = "data-marketmaker.png", style = "display: inline; float: left;", width = "200px"),
                              p(strong("MarketMaker."), "MarketMaker is a data source that includes locations of supermarkets, farmers' markets, and grocery stores.
                                It is a networking site that connects producers across America, and we utilize their 2019 data set to parse out locations of food
                                for communities. These locations are at the longitude and latitude geographic level.")
@@ -96,37 +96,37 @@ ui <- navbarPage(selected = "home",
                       # )
                       ,
                       #column(4,
-                             box(img(src = "data-acs.png", style = "display: inline; float: left;", width = "200px"),
-                             p(strong("American Community Survey."), "The American Community Survey (ACS) is an ongoing yearly survey conducted by the U.S Census 
-                               Bureau. ACS samples households to compile 1-year and 5-year datasets providing information on population sociodemographic and 
-                               socioeconomic characteristics including employment, disability, and health insurance coverage. We used AC 2014/18 5-year 
+                      shinydashboard::box(img(src = "data-acs.png", style = "display: inline; float: left;", width = "200px"),
+                             p(strong("American Community Survey."), "The American Community Survey (ACS) is an ongoing yearly survey conducted by the U.S Census
+                               Bureau. ACS samples households to compile 1-year and 5-year datasets providing information on population sociodemographic and
+                               socioeconomic characteristics including employment, disability, and health insurance coverage. We used AC 2014/18 5-year
                                estimates to obtain census tract and census block group-level to explore Patrick County resident characteristics.")),
                              # br(""),
-                             box(img(src = "data-connect.png", style = "display: inline; float: left;", width = "150px"),
-                             p(strong("CommonwealthConnect."), "The Virginia Tech CommonwealthConnect Wi-Fi Hotspot Map is an interactive map of free, publicly 
-                               available wi-fi hotspots in Virginia. Its goal is to provide an easily accessible map of areas where individuals can connect to the 
-                               internet for free, decreasing the constraints placed on families that do not have internet access at home. We used the 2020 wi-fi 
-                               hotspot map data to retrieve hotspot locations in Patrick County and subsequently employed the information in calculating hotspot 
+                      shinydashboard::box(img(src = "data-connect.png", style = "display: inline; float: left;", width = "150px"),
+                             p(strong("CommonwealthConnect."), "The Virginia Tech CommonwealthConnect Wi-Fi Hotspot Map is an interactive map of free, publicly
+                               available wi-fi hotspots in Virginia. Its goal is to provide an easily accessible map of areas where individuals can connect to the
+                               internet for free, decreasing the constraints placed on families that do not have internet access at home. We used the 2020 wi-fi
+                               hotspot map data to retrieve hotspot locations in Patrick County and subsequently employed the information in calculating hotspot
                                coverage isochrones.")),
                              # br(""),
-                             box(img(src = "data-corelogic.png", style = "display: inline; float: left;", width = "120px"),
-                             p(strong("CoreLogic."), "CoreLogic is a supplier of proprietary US real estate and specialized business data at the property level. 
-                               This company provides data spamming over 50 years at the latitude and longitude level. Information available in the dataset includes 
+                      shinydashboard::box(img(src = "data-corelogic.png", style = "display: inline; float: left;", width = "120px"),
+                             p(strong("CoreLogic."), "CoreLogic is a supplier of proprietary US real estate and specialized business data at the property level.
+                               This company provides data spamming over 50 years at the latitude and longitude level. Information available in the dataset includes
                                property characteristics, mortgage, foreclosures and performance. We used 2019 CoreLogic data to obtain the locations of all residential
                                properties in Patrick County.")
                              ),
                       # ),
                       #column(4,
-                             box(img(src = "data-traveltime.png", style = "display: inline; float: left;", width = "140px"),
+                      shinydashboard::box(img(src = "data-traveltime.png", style = "display: inline; float: left;", width = "140px"),
                              p(strong("TravelTime."), "TravelTime Application Programming Interface (API) aggregates data from OpenStreetMap, transport timetables and
-                               speed profiles to generate isochrones. An isochrone is a shape covering all locations that can be reached within the same timeframe 
-                               given a start location, departure time, and a mode of transportation. We used the TravelTime API to produce isochrones of 10- and 
-                               15-minute drive time interval from supermarkets, farmers' markets, and free wi-fi hotspots, and of 8-, 10-, and 12-minute drive 
+                               speed profiles to generate isochrones. An isochrone is a shape covering all locations that can be reached within the same timeframe
+                               given a start location, departure time, and a mode of transportation. We used the TravelTime API to produce isochrones of 10- and
+                               15-minute drive time interval from supermarkets, farmers' markets, and free wi-fi hotspots, and of 8-, 10-, and 12-minute drive
                                time intervals from all emergency medical service stations in Patrick County.")),
                             #  br(""),
-                             box(img(src = "data-ers.png", style = "display: inline; float: left;", width = "120px"),
-                             p(strong("Food Access Research Atlas."), "The United State Department of Agriculture Food Access Research Atlas is a data resource 
-                               created by the Economic Research Service that provides information on food access indicators at census tract level. The data allows 
+                      shinydashboard::box(img(src = "data-ers.png", style = "display: inline; float: left;", width = "120px"),
+                             p(strong("Food Access Research Atlas."), "The United State Department of Agriculture Food Access Research Atlas is a data resource
+                               created by the Economic Research Service that provides information on food access indicators at census tract level. The data allows
                                individuals to understand food access in communities based on factors like age and socioeconomic status. We used the 2017 Food Access
                                Research Atlas to examine Patrick County residents’ food access at multiple distance thresholds and by resident characteristics.")
                              ))
@@ -150,10 +150,10 @@ ui <- navbarPage(selected = "home",
 server <- function(input, output){
   
   # proof of concept panel - usda ------------------------------------------------------
-
   usdadata <- reactive({datausda %>% filter(County == input$usdadrop)})
   
   output$usdaplot <- renderLeaflet({
+    
     # data <- switch(input$usdadrop_1,
     #                "lakids1share" = usdadata$lakids1share,
     #                "lakids10share" = usdadata$lakids10share,
@@ -174,22 +174,22 @@ server <- function(input, output){
     #                     "laseniors1share" = "low food access for seniors at 1 mile",
     #                     "laseniors10share" = "low food access for seniors at 10 miles")
     
-    pal <- colorQuantile("Blues",domain = usdadata$lakids10share, probs = seq(0, 1, length = 5), right = TRUE)
+    pal <- colorQuantile("Blues",domain = usdadata()$lakids1share, probs = seq(0, 1, length = 5), right = TRUE)
     
     labels <- lapply(
       paste("<strong>Area: </strong>",
-            usdadata$NAME,
+            usdadata()$NAME,
             "<br />",
             "<strong>% Population with",
             #usda_spec,
-            "low food access for children at 10 miles",
-            round(usdadata$lakids10share, 2)),
+            "low food access for children at 1 mile",
+            round(usdadata()$lakids1share, 2)),
       htmltools::HTML
     )
     
-    leaflet(data = usdadata, options = leafletOptions(minZoom = 10))%>%
+    leaflet(data = usdadata(), options = leafletOptions(minZoom = 10))%>%
       addProviderTiles(providers$CartoDB.Positron) %>%
-      addPolygons(fillColor = ~pal(usdadata$lakids10share), 
+      addPolygons(fillColor = ~pal(usdadata()$lakids1share), 
                   fillOpacity = 0.6, 
                   stroke = FALSE,
                   label = labels,
@@ -201,7 +201,7 @@ server <- function(input, output){
                                               ))) %>%
       addLegend("bottomleft",
                 pal = pal,
-                values =  ~(usdadata$lakids10share),
+                values =  ~(usdadata()$lakids1share),
                 title = "Percent by<br>Quartile Group",
                 opacity = 0.6,
                 labFormat = function(type, cuts, p) {
@@ -211,6 +211,10 @@ server <- function(input, output){
   })
   
   # data and measures table ------------------------------------------
+  
+  var_topic <- reactive({
+    input$topic
+  })
   
   output$datatable <- renderDataTable({
     if(var_topic() == "All Measures"){
