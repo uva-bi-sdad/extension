@@ -86,12 +86,12 @@ ui <- navbarPage(selected = "home",
                              p(strong("Homeland Infrastructure Foundation-Level Data."), "Homeland Infrastructure Foundation-Level Data (HIFLD) is a collection of public
                                source datasets at property level provided by the Department of Homeland Security. Since 2002, this HIFLD has provided quarterly
                                updated layers on topics from education to energy, including on health care facilities. We used HIFLD emergency medical services
-                               station data at the latitude and longitude geographic level in our analyses.")),
+                               station data at the latitude and longitude geographic level in our analyses."), width = 12),
                              # br(""),
                              shinydashboard::box(img(src = "data-marketmaker.png", style = "display: inline; float: left;", width = "200px"),
                              p(strong("MarketMaker."), "MarketMaker is a data source that includes locations of supermarkets, farmers' markets, and grocery stores.
                                It is a networking site that connects producers across America, and we utilize their 2019 data set to parse out locations of food
-                               for communities. These locations are at the longitude and latitude geographic level.")
+                               for communities. These locations are at the longitude and latitude geographic level."), width = 12
                              )
                       # )
                       ,
@@ -100,20 +100,20 @@ ui <- navbarPage(selected = "home",
                              p(strong("American Community Survey."), "The American Community Survey (ACS) is an ongoing yearly survey conducted by the U.S Census
                                Bureau. ACS samples households to compile 1-year and 5-year datasets providing information on population sociodemographic and
                                socioeconomic characteristics including employment, disability, and health insurance coverage. We used AC 2014/18 5-year
-                               estimates to obtain census tract and census block group-level to explore Patrick County resident characteristics.")),
+                               estimates to obtain census tract and census block group-level to explore Patrick County resident characteristics."), width = 12),
                              # br(""),
                       shinydashboard::box(img(src = "data-connect.png", style = "display: inline; float: left;", width = "150px"),
                              p(strong("CommonwealthConnect."), "The Virginia Tech CommonwealthConnect Wi-Fi Hotspot Map is an interactive map of free, publicly
                                available wi-fi hotspots in Virginia. Its goal is to provide an easily accessible map of areas where individuals can connect to the
                                internet for free, decreasing the constraints placed on families that do not have internet access at home. We used the 2020 wi-fi
                                hotspot map data to retrieve hotspot locations in Patrick County and subsequently employed the information in calculating hotspot
-                               coverage isochrones.")),
+                               coverage isochrones."), width = 12),
                              # br(""),
                       shinydashboard::box(img(src = "data-corelogic.png", style = "display: inline; float: left;", width = "120px"),
                              p(strong("CoreLogic."), "CoreLogic is a supplier of proprietary US real estate and specialized business data at the property level.
                                This company provides data spamming over 50 years at the latitude and longitude level. Information available in the dataset includes
                                property characteristics, mortgage, foreclosures and performance. We used 2019 CoreLogic data to obtain the locations of all residential
-                               properties in Patrick County.")
+                               properties in Patrick County."), width = 12
                              ),
                       # ),
                       #column(4,
@@ -122,13 +122,13 @@ ui <- navbarPage(selected = "home",
                                speed profiles to generate isochrones. An isochrone is a shape covering all locations that can be reached within the same timeframe
                                given a start location, departure time, and a mode of transportation. We used the TravelTime API to produce isochrones of 10- and
                                15-minute drive time interval from supermarkets, farmers' markets, and free wi-fi hotspots, and of 8-, 10-, and 12-minute drive
-                               time intervals from all emergency medical service stations in Patrick County.")),
+                               time intervals from all emergency medical service stations in Patrick County."), width = 12),
                             #  br(""),
                       shinydashboard::box(img(src = "data-ers.png", style = "display: inline; float: left;", width = "120px"),
                              p(strong("Food Access Research Atlas."), "The United State Department of Agriculture Food Access Research Atlas is a data resource
                                created by the Economic Research Service that provides information on food access indicators at census tract level. The data allows
                                individuals to understand food access in communities based on factors like age and socioeconomic status. We used the 2017 Food Access
-                               Research Atlas to examine Patrick County residents’ food access at multiple distance thresholds and by resident characteristics.")
+                               Research Atlas to examine Patrick County residents’ food access at multiple distance thresholds and by resident characteristics."), width = 12
                              ))
                              ),
              tabPanel("Measures",  
