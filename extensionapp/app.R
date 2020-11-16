@@ -178,7 +178,7 @@ server <- function(input, output){
     
     labels <- lapply(
       paste("<strong>Area: </strong>",
-            data$NAME,
+            usdadata$NAME,
             "<br />",
             "<strong>% Population with",
             #usda_spec,
