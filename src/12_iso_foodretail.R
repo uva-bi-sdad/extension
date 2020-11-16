@@ -18,20 +18,20 @@ library(lwgeom)
 #
 
 # The nonmissing DF
-#data <- read_rds("/home/tp2sk/Git/extension/data/working/foodretail/foodretail_nonmiss.rds")
-data_mis <- read_rds("/home/tp2sk/Git/extension/data/working/foodretail/foodretail_missing_coded.rds")
-
-#st_crs(data) <- 4326
-st_crs(data_mis) <- 4326
-#data <- st_transform(data, 4326)
-data_mis <- st_transform(data_mis, 4326)
-
-# Split across 5 days
-#data1 <- data[1:1607, ]
-#data2 <- data[1608:3215, ]
-#data3 <- data[3216:4823, ]
-#data4 <- data[4824:6431, ]
-#data5 <- data[6432:8037, ]
+# data <- read_rds("/home/tp2sk/Git/extension/data/working/foodretail/foodretail_nonmiss.rds")
+# data_mis <- read_rds("/home/tp2sk/Git/extension/data/working/foodretail/foodretail_missing_coded.rds")
+# 
+# #st_crs(data) <- 4326
+# #st_crs(data_mis) <- 4326
+# #data <- st_transform(data, 4326)
+# #data_mis <- st_transform(data_mis, 4326)
+# 
+# # Split across 5 days
+# data1 <- data[1:1607, ]
+# data2 <- data[1608:3215, ]
+# data3 <- data[3216:4823, ]
+# data4 <- data[4824:6431, ]
+# data5 <- data[6432:8037, ]
 
 # Clean up
 #remove(data)
@@ -167,3 +167,80 @@ options(osrm.server = "http://104.248.112.16:5000/", osrm.profile = "driving")
 # ))
 # 
 # write_rds(foodretail_15_mis, "/home/tp2sk/Git/extension/data/working/foodretail/foodretail_15_mis.rds")
+
+
+#
+# Join back to original data  --------------------------------------------------------------
+#
+
+# Read in and prepare: Isos
+food_10_pt1 <- read_rds("./data/working/foodretail/foodretail_10_nonmiss_pt1.rds") %>% select(max, geometry) %>% rename(isominute = max)
+food_10_pt2 <- read_rds("./data/working/foodretail/foodretail_10_nonmiss_pt2.rds") %>% select(max, geometry) %>% rename(isominute = max)
+food_10_pt3 <- read_rds("./data/working/foodretail/foodretail_10_nonmiss_pt3.rds") %>% select(max, geometry) %>% rename(isominute = max)
+food_10_pt4 <- read_rds("./data/working/foodretail/foodretail_10_nonmiss_pt4.rds") %>% select(max, geometry) %>% rename(isominute = max)
+food_10_pt5 <- read_rds("./data/working/foodretail/foodretail_10_nonmiss_pt5.rds") %>% select(max, geometry) %>% rename(isominute = max)
+food_10_mis <- read_rds("./data/working/foodretail/foodretail_10_mis.rds") %>% select(max, geometry) %>% rename(isominute = max)
+  
+food_15_pt1 <- read_rds("./data/working/foodretail/foodretail_15_nonmiss_pt1.rds") %>% select(max, geometry) %>% rename(isominute = max)
+food_15_pt2 <- read_rds("./data/working/foodretail/foodretail_15_nonmiss_pt2.rds") %>% select(max, geometry) %>% rename(isominute = max)
+food_15_pt3 <- read_rds("./data/working/foodretail/foodretail_15_nonmiss_pt3.rds") %>% select(max, geometry) %>% rename(isominute = max)
+food_15_pt4 <- read_rds("./data/working/foodretail/foodretail_15_nonmiss_pt4.rds") %>% select(max, geometry) %>% rename(isominute = max)
+food_15_pt5 <- read_rds("./data/working/foodretail/foodretail_15_nonmiss_pt5.rds") %>% select(max, geometry) %>% rename(isominute = max)
+food_15_mis <- read_rds("./data/working/foodretail/foodretail_15_mis.rds") %>% select(max, geometry) %>% rename(isominute = max)
+
+# Read in and prepare: original
+data <- read_rds("/home/tp2sk/Git/extension/data/working/foodretail/foodretail_nonmiss.rds")
+data_mis <- read_rds("/home/tp2sk/Git/extension/data/working/foodretail/foodretail_missing_coded.rds")
+
+data <- data %>% st_drop_geometry()
+data_mis <- data_mis %>% st_drop_geometry()
+
+data1 <- data[1:1607, ]
+data2 <- data[1608:3215, ]
+data3 <- data[3216:4823, ]
+data4 <- data[4824:6431, ]
+data5 <- data[6432:8037, ]
+
+# Join
+data1_joined_10 <- cbind(data1, food_10_pt1)
+data2_joined_10 <- cbind(data2, food_10_pt2)
+data3_joined_10 <- cbind(data3, food_10_pt3)
+data4_joined_10 <- cbind(data4, food_10_pt4)
+data5_joined_10 <- cbind(data5, food_10_pt5)
+datamis_joined_10 <- cbind(data_mis, food_10_mis)
+datamis_joined_10$fulladdress <- NULL
+datamis_joined_10$confidence <- NULL
+data_10 <- rbind(data1_joined_10, data2_joined_10, data3_joined_10, data4_joined_10, data5_joined_10, datamis_joined_10)
+data_10 <- st_as_sf(data_10)
+
+data1_joined_15 <- cbind(data1, food_15_pt1)
+data2_joined_15 <- cbind(data2, food_15_pt2)
+data3_joined_15 <- cbind(data3, food_15_pt3)
+data4_joined_15 <- cbind(data4, food_15_pt4)
+data5_joined_15 <- cbind(data5, food_15_pt5)
+datamis_joined_15 <- cbind(data_mis, food_15_mis)
+datamis_joined_15$fulladdress <- NULL
+datamis_joined_15$confidence <- NULL
+data_15 <- rbind(data1_joined_15, data2_joined_15, data3_joined_15, data4_joined_15, data5_joined_15, datamis_joined_15)
+data_15 <- st_as_sf(data_15)
+
+#
+# Write  --------------------------------------------------------------
+#
+
+write_rds(data_10, "/home/tp2sk/Git/extension/data/working/foodretail/final_foodretail_10.rds")
+write_rds(data_15, "/home/tp2sk/Git/extension/data/working/foodretail/final_foodretail_15.rds")
+
+
+#
+# Test --------------------------------------------------------------
+#
+
+test_data <- read_rds("/home/tp2sk/Git/extension/data/working/foodretail/foodretail_nonmiss.rds")
+plot(st_geometry(data_10[29, ]))
+plot(st_geometry(test_data[29, ]), col = "red", add = TRUE)
+
+test_data <- read_rds("/home/tp2sk/Git/extension/data/working/foodretail/foodretail_missing_coded.rds")
+plot(st_geometry(data_10[8687, ]))
+plot(st_geometry(test_data[650, ]), col = "red", add = TRUE)
+
