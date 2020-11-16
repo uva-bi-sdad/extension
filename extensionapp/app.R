@@ -57,16 +57,15 @@ ui <- navbarPage(selected = "home",
                     h1(strong("Proof of Concept"), align = "center"),
                     br(),
                     selectInput("usdadrop", "Select County:", width = "100%", choices = c(allcountynames)),
-                    selectInput("usdadrop_1", "Select Variable:", width = "100%", choices = c(
-                      "Percent Population with Low Food Access at 1 Mile" = "lapop1share",  
-                      "Percent Population with Low Food Access at 10 Miles" = "lapop10share",
-                      "Percent Children with Low Food Access at 1 Mile" = "lakids1share",
-                      "Percent Children with Low Food Access at 10 Miles" = "lakids10share",
-                      "Percent Low Income Population with Low Food Access at 1 Mile" = "lalowi1share",
-                      "Percent Low Income Population with Low Food Access at 10 Miles" = "lalowi10share",
-                      "Percent Older Adults with Low Food Access at 1 Mile" = "laseniors1share",
-                      "Percent Older Adults with Low Food Access at 10 Miles" = "laseniors10share")
-                    ),
+                    # selectInput("usdadrop_1", "Select Variable:", width = "100%", choices = c(
+                    #   "Percent Population with Low Food Access at 1 Mile" = "lapop1share",  
+                    #   "Percent Population with Low Food Access at 10 Miles" = "lapop10share",
+                    #   "Percent Children with Low Food Access at 1 Mile" = "lakids1share",
+                    #   "Percent Children with Low Food Access at 10 Miles" = "lakids10share",
+                    #   "Percent Low Income Population with Low Food Access at 1 Mile" = "lalowi1share",
+                    #   "Percent Low Income Population with Low Food Access at 10 Miles" = "lalowi10share",
+                    #   "Percent Older Adults with Low Food Access at 1 Mile" = "laseniors1share",
+                    #   "Percent Older Adults with Low Food Access at 10 Miles" = "laseniors10share")),
                     br(),
                     withSpinner(leafletOutput("usdaplot"))
            )
