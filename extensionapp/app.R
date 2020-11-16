@@ -19,6 +19,7 @@ library(stringr)
 # Data ------------------------------------------------
 #
 datausda <- read_rds("data/final_usda.rds")
+allcountynames <- datausda$County
 
 measures_table <- read_excel("data/Measures.xlsx")
 
@@ -55,28 +56,7 @@ ui <- navbarPage(selected = "home",
            fluidRow(style = "margin: 6px;",
                     h1(strong("Proof of Concept"), align = "center"),
                     br(),
-                    selectInput("usdadrop", "Select County:", width = "100%", choices = c(
-                      "Accomack",    "Albemarle",   "Alleghany",   "Amelia", "Amherst","Appomattox",  "Arlington",  
-                      "Augusta","Bath",   "Bedford","Bland",  "Botetourt",   "Brunswick",   "Buchanan",   
-                      "Buckingham",  "Campbell",    "Caroline",    "Carroll","Charles City","Charlotte",  "Chesterfield",    
-                      "Clarke", "Craig",  "Culpeper",    "Cumberland",  "Dickenson",   "Dinwiddie",   "Essex",
-                      "Fairfax","Fauquier",    "Floyd",  "Fluvanna",    "Franklin",    "Frederick",   "Giles",
-                      "Gloucester",  "Goochland",   "Grayson","Greene", "Greensville", "Halifax","Hanover", 
-                      "Henrico","Henry",  "Highland",    "Isle of Wight"   , "James City",  "King and Queen"  , "King George",
-                      "King William","Lancaster",   "Lee",    "Loudoun","Louisa", "Lunenburg",   "Madison",    
-                      "Mathews","Mecklenburg", "Middlesex",   "Montgomery",  "Nelson", "New Kent",    "Northampton",
-                      "Northumberland"  , "Nottoway",    "Orange", "Page",   "Patrick","Pittsylvania","Powhatan",   
-                      "Prince Edward"  ,  "Prince George" ,   "Prince William"  , "Pulaski","Rappahannock","Richmond",    "Roanoke",    
-                      "Rockbridge",  "Rockingham",  "Russell","Scott",  "Shenandoah",  "Smyth",  "Southampton",
-                      "Spotsylvania","Stafford"  ,  "Surry",  "Sussex", "Tazewell",    "Warren", "Washington", 
-                      "Westmoreland","Wise",  "Wythe",  "York",   "Alexandria",  "Bedford City","Bristol",    
-                      "Buena Vista", "Charlottesville" , "Chesapeake",  "Colonial Heights" ,"Covington",   "Danville",    "Emporia",    
-                      "Fairfax City","Falls Church","Franklin City" ,   "Fredericksburg" ,  "Galax",  "Hampton","Harrisonburg"    ,
-                      "Hopewell",    "Lexington",   "Lynchburg",   "Manassas",    "Manassas Park",    "Martinsville","Newport News"    ,
-                      "Norfolk","Norton","Petersburg",  "Poquoson",    "Portsmouth",  "Radford","Richmond City"   ,
-                      "Roanoke City","Salem", "Staunton",    "Suffolk","Virginia Beach",   "Waynesboro",  "Williamsburg"   ,
-                      "Winchester")
-                    ),
+                    selectInput("usdadrop", "Select County:", width = "100%", choices = c(allcountynames)),
                     selectInput("usdadrop_1", "Select Variable:", width = "100%", choices = c(
                       "Percent Population with Low Food Access at 1 Mile" = "lapop1share",  
                       "Percent Population with Low Food Access at 10 Miles" = "lapop10share",
@@ -175,41 +155,42 @@ server <- function(input, output){
   usdadata <- reactive({datausda %>% filter(County == input$usdadrop)})
   
   output$usdaplot <- renderLeaflet({
-    data <- switch(input$usdadrop_1,
-                   "lakids1share" = usdadata$lakids1share,
-                   "lakids10share" = usdadata$lakids10share,
-                   "lalowi1share" = usdadata$lalowi1share,
-                   "lalowi10share" = usdadata$lalowi10share,
-                   "lapop1share" = usdadata$lapop1share,  
-                   "lapop10share" = usdadata$lapop10share,
-                   "laseniors1share" = usdadata$laseniors1share,
-                   "laseniors10share" = usdadata$laseniors10share)
+    # data <- switch(input$usdadrop_1,
+    #                "lakids1share" = usdadata$lakids1share,
+    #                "lakids10share" = usdadata$lakids10share,
+    #                "lalowi1share" = usdadata$lalowi1share,
+    #                "lalowi10share" = usdadata$lalowi10share,
+    #                "lapop1share" = usdadata$lapop1share,  
+    #                "lapop10share" = usdadata$lapop10share,
+    #                "laseniors1share" = usdadata$laseniors1share,
+    #                "laseniors10share" = usdadata$laseniors10share)
     
-    usda_spec <- switch(input$usdadrop_1,
-                        "lakids1share" = "low food access for children at 1 mile",
-                        "lakids10share" = "low food access for children at 10 miles",
-                        "lalowi1share" = "low food access for low income population at 1 mile",
-                        "lalowi10share" = "low food access for low income population at 10 miles",
-                        "lapop1share" = "low food access at 1 mile",  
-                        "lapop10share" = "low food access at 10 miles",
-                        "laseniors1share" = "low food access for seniors at 1 mile",
-                        "laseniors10share" = "low food access for seniors at 10 miles")
+    # usda_spec <- switch(input$usdadrop_1,
+    #                     "lakids1share" = "low food access for children at 1 mile",
+    #                     "lakids10share" = "low food access for children at 10 miles",
+    #                     "lalowi1share" = "low food access for low income population at 1 mile",
+    #                     "lalowi10share" = "low food access for low income population at 10 miles",
+    #                     "lapop1share" = "low food access at 1 mile",  
+    #                     "lapop10share" = "low food access at 10 miles",
+    #                     "laseniors1share" = "low food access for seniors at 1 mile",
+    #                     "laseniors10share" = "low food access for seniors at 10 miles")
     
-    pal <- colorQuantile("Blues", domain = data, probs = seq(0, 1, length = 5), right = TRUE)
+    pal <- colorQuantile("Blues",domain = usdadata$lakids10share, probs = seq(0, 1, length = 5), right = TRUE)
     
     labels <- lapply(
       paste("<strong>Area: </strong>",
             data$NAME,
             "<br />",
             "<strong>% Population with",
-            usda_spec,
-            round(data, 2)),
+            #usda_spec,
+            "low food access for children at 10 miles",
+            round(usdadata$lakids10share, 2)),
       htmltools::HTML
     )
     
-    leaflet(data = usda, options = leafletOptions(minZoom = 10))%>%
+    leaflet(data = usdadata, options = leafletOptions(minZoom = 10))%>%
       addProviderTiles(providers$CartoDB.Positron) %>%
-      addPolygons(fillColor = ~pal(data), 
+      addPolygons(fillColor = ~pal(usdadata$lakids10share), 
                   fillOpacity = 0.6, 
                   stroke = FALSE,
                   label = labels,
@@ -221,7 +202,7 @@ server <- function(input, output){
                                               ))) %>%
       addLegend("bottomleft",
                 pal = pal,
-                values =  ~(data),
+                values =  ~(usdadata$lakids10share),
                 title = "Percent by<br>Quartile Group",
                 opacity = 0.6,
                 labFormat = function(type, cuts, p) {
