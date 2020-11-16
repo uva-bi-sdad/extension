@@ -62,9 +62,9 @@ rucc <- read_xls("./data/original/usda_rucc_2013/ruralurbancodes2013.xls", sheet
                  col_names = TRUE, col_types = c(rep("text", 3), rep("numeric", 2), "text")) %>%
         clean_names() %>%
         rename(description_rucc = description)
-rucc$rucc_2013 <- factor(rucc$rucc_2013, labels = c("Metro - 1", "Metro - 2", "Metro - 3",
-                                                    "Nonmetro - 4", "Nonmetro - 5", "Nonmetro - 6",
-                                                    "Nonmetro - 7", "Nonmetro - 8", "Nonmetro - 9"), ordered = T)
+rucc$rucc_2013 <- factor(rucc$rucc_2013, labels = c("1 Metro", "2 Metro", "3 Metro",
+                                                    "4 Nonmetro", "5 Nonmetro", "6 Nonmetro",
+                                                    "7 Nonmetro", "8 Nonmetro", "9 Nonmetro"), ordered = T)
 rucc <- rucc %>% select(-population_2010)
 rucc <- rucc %>% filter(state == "VA")
 rucc$county_name <- str_to_title(rucc$county_name)
@@ -88,10 +88,10 @@ urbinf <- read_excel("./data/original/usda_urbinfl_2013/UrbanInfluenceCodes2013.
   rename(description_urbinf = description) %>%
   select(-population_2010, -state)
 urbinf$uic_2013 <- factor(urbinf$uic_2013, levels = c(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12), ordered = T,
-                          labels = c("Metro - 1", "Metro - 2", "Nonmetro - 3",
-                                     "Nonmetro - 4", "Nonmetro - 5", "Nonmetro - 6", 
-                                     "Nonmetro - 7", "Nonmetro - 8", "Nonmetro - 9",
-                                     "Nonmetro - 10", "Nonmetro - 11", "Nonmetro - 12"))
+                          labels = c("1 Metro", "2 Metro", "3 Nonmetro",
+                                     "4 Nonmetro", "5 Nonmetro", "6 Nonmetro", 
+                                     "7 Nonmetro", "8 Nonmetro", "9 Nonmetro",
+                                     "10 Nonmetro", "11 Nonmetro", "12 Nonmetro"))
 urbinf$county_name <- str_to_title(urbinf$county_name)
 
 # 2013 Isserman: COUNTY LEVEL ------------------------------------------------------------------
@@ -110,10 +110,10 @@ srhp <- read_csv("./data/original/srhp_rurality_2020/omb_srhp_rurality.csv",
          ombrural = metropolitan_micropolitan_statistical_area)
 
 srhp$srhprurality <- ifelse(srhp$srhprurality == "R", "rural", "urban")
-srhp$srhprurality <- factor(srhp$srhprurality, levels = c("urban", "rural"))
+srhp$srhprurality <- factor(srhp$srhprurality, levels = c("rural", "urban"))
 srhp$srhprurality <- str_to_sentence(srhp$srhprurality)
 srhp$ombrural <- str_to_sentence(srhp$ombrural)
-srhp$ombrural <- factor(srhp$ombrural, levels = c("Metropolitan statistical area", "Micropolitan statistical area", "Non-metro"))
+srhp$ombrural <- factor(srhp$ombrural, levels = c("Metropolitan statistical area", "Micropolitan statistical area", "Non-metro"), ordered = T)
 
 
 #
@@ -240,7 +240,7 @@ labels_rucc_irr_isser <- lapply(
         "<strong>Isserman 2013: </strong>",
         va_county$isserman,
         "<br />",
-        "<strong>State rural health plan 2020: </strong>",
+        "<strong>VDH ORH 2020: </strong>",
         va_county$srhprurality,
         "<br />",
         "<strong>OMB 2013: </strong>",
@@ -441,12 +441,12 @@ leaflet(data = va_tract)%>%
 # 8	Completely rural or less than 2,500 urban population, adjacent to a metro area
 # 9	Completely rural or less than 2,500 urban population, not adjacent to a metro area)
 
-va_county <- va_county %>% mutate(score_rucc = ifelse(rucc_2013 == "Nonmetro - 9" | rucc_2013 == "Nonmetro - 8", 1, 0),
+va_county <- va_county %>% mutate(score_rucc = ifelse(rucc_2013 == "9 Nonmetro" | rucc_2013 == "8 Nonmetro", 1, 0),
                                   score_isserman = ifelse(isserman == "Rural" | isserman == "Mixed rural", 1, 0),
                                   score_irr = ifelse(irr2010 > 0.5, 1, 0),
                                   score_omb = ifelse(ombrural == "Non-metro" | ombrural == "Micropolitan statistical area", 1, 0),
                                   score_srhp = ifelse(srhprurality == "Rural", 1, 0),
-                                  score_urbinf = ifelse(uic_2013 != "Metro - 1" & uic_2013 != "Metro - 2", 1, 0),
+                                  score_urbinf = ifelse(uic_2013 != "1 Metro" & uic_2013 != "2 Metro", 1, 0),
                                   score = score_rucc + score_isserman + score_irr + score_omb + score_srhp + score_urbinf)
 
 # Check which counties are rural according to X definitions out of 6

@@ -86,13 +86,14 @@ ui <- fluidPage(theme = shinytheme("cosmo"),
                 h1(strong("Data")),
                 
                 column(3,
+                       wellPanel(
                    br("Show counties that are rural according to this number of definitions:"),
                    br(),
                 tags$div(numericInput(inputId = "numdef_min",
                                       label = "Minimum:",
                                       value = 0,
                                       min = 0,
-                                      max = 5,
+                                      max = 6,
                                       step = 1, 
                                       width = "100px"),  
                          style = "display:inline-block"),
@@ -100,12 +101,13 @@ ui <- fluidPage(theme = shinytheme("cosmo"),
                                       label = "Maximum:",
                                       value = 0,
                                       min = 0,
-                                      max = 5,
+                                      max = 6,
                                       step = 1, 
                                       width = "100px"),  
                          style = "display:inline-block"),
                 br(),
                 textOutput("selected_range")
+                       )
                 ),
                 column(9,
                    DTOutput("filtered_table")
@@ -119,7 +121,8 @@ server <- function(input, output, session) {
   ruraltable <- reactive({
         
         data %>% st_set_geometry(NULL) %>%
-        select(county_name.y, rucc_2013, irr2010, isserman, ombrural, srhprurality, starts_with("score")) %>%
+        select(county_name.y, rucc_2013, uic_2013, ombrural, srhprurality, irr2010, isserman, 
+               score_rucc, score_urbinf, score_omb, score_srhp, score_irr, score_isserman, score) %>%
         mutate(irr2010 = round(irr2010, 2)) %>%
         filter(score >= input$numdef_min & score <= input$numdef_max) %>%
         arrange(desc(score))
@@ -127,8 +130,8 @@ server <- function(input, output, session) {
   
   output$filtered_table <- renderDataTable({
     datatable(ruraltable(), rownames = FALSE, options = list(pageLength = 15),
-              colnames = c("County", "RUCC", "IRR", "Isserman", "OMB", "VDH", 
-                           "RUCC rural?", "Isserman rural?", "IRR rural?", "OMB rural?", "VDH rural?", "Total")) 
+              colnames = c("County", "RUCC", "UIC", "OMB", "ORH", "IRR", "Isserman",  
+                           "RUCC rural?", "UIC rural?", "OMB rural?", "ORH rural?", "IRR rural?", "Isserman rural?", "Total")) 
   })
   
   output$selected_range <- renderText({ 
@@ -141,17 +144,17 @@ server <- function(input, output, session) {
     paste("<strong>Area: </strong>",
           data$county_name.y,
           "<br />",
-          "<strong>RUCC 2013: </strong>",
+          "<strong>USDA RUCC 2013: </strong>",
           data$rucc_2013,
           "<br />",
-          "<strong>RUCC 2013 description: </strong>",
+          "<strong>USDA RUCC 2013 description: </strong>",
           "<br />",
           data$description_rucc,
           "<br />",
-          "<strong>Urban influence 2013: </strong>",
+          "<strong>USDA Urban influence 2013: </strong>",
           data$uic_2013,
           "<br />",
-          "<strong>Urban influence 2013 description: </strong>",
+          "<strong>USDA Urban influence 2013 description: </strong>",
           "<br />",
           data$description_urbinf,
           "<br />",
@@ -161,7 +164,7 @@ server <- function(input, output, session) {
           "<strong>Isserman 2013: </strong>",
           data$isserman,
           "<br />",
-          "<strong>State rural health plan 2020: </strong>",
+          "<strong>VDH ORH 2020: </strong>",
           data$srhprurality,
           "<br />",
           "<strong>OMB 2013: </strong>",
@@ -220,7 +223,7 @@ server <- function(input, output, session) {
   
   # Create plots 
   output$plot_srhp <- renderLeaflet({
-    create_plot_factor(data$srhprurality, "SRHP Classification")
+    create_plot_factor(data$srhprurality, "VDH ORH Classification")
   })
   
   output$plot_omb <- renderLeaflet({

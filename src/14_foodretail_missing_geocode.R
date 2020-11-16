@@ -66,5 +66,7 @@ table(data$confidence)
 # Write ------------------------------------------------------------------------
 #
 
+data <- st_as_sf(data, coords = c("longitude", "latitude"))
+st_crs(data) <- 4326
 write_rds(data, "./data/working/foodretail/foodretail_missing_coded.rds")
 
