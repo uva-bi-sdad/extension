@@ -3,6 +3,7 @@ library(dplyr)
 library(readr)
 library(sf)
 library(naniar)
+library(leaflet)
 
 
 #
@@ -138,13 +139,13 @@ unique(data$county_use_description)
 # Sanity check with land use code: WITH COMMERCIAL CONDOS INCLUDED ------------------------
 #
 
-table(data$land_use_code, useNA = "always")
+# table(data$land_use_code, useNA = "always")
 # 100     102     106     109     111     112     115     116     117     131     132     133     135     137     138     151     160 
 # 143782  258036    8272     754    1984  179471   19766    3429   30088     113    1368   11530     261   48387    8116    1161     160 
 # 163     165     167     206     213     238     247    <NA> 
 #   2525193     423      68     626    1971     353    5723       0 
 
-unique(data$land_use_code)
+# unique(data$land_use_code)
 # "163" "100" "112" "106" "116" "117" "137" "247" "102" "115" "138" "213" "132" "133" "109" "111" "165" "238" "151" "160" "131" "167"
 # "135" "206"
 
@@ -175,8 +176,8 @@ unique(data$land_use_code)
 
 # From here, medical condo (238), condotel (206),  office condo (247), commercial condo (213) are suspicious
 
-test <- data %>% filter(land_use_code == 238)
-test <- data %>% filter(land_use_code == 213)
+# test <- data %>% filter(land_use_code == 238)
+# test <- data %>% filter(land_use_code == 213)
 
 
 #
@@ -272,7 +273,6 @@ print(miss_var_summary(data), n = Inf)
 #
 
 ruraldata <- data %>% filter(fips_code %in% ruralcty$FIPS)
-ruraldata <- 
 
 n_var_complete(ruraldata) # 8 variables complete
 n_var_miss(ruraldata) # 22 have missingness
@@ -395,13 +395,64 @@ print(noparcel %>%
 # 19 51197       209 Wythe County
 # 20 51119       200 Middlesex County
  
-# See what this looks like
+#
+# See what this looks like -------------------------------------------------
+#
+
 # A couple are in weird spots/look outside of the rural counties. 
-testplot <- ruraldata_filtered %>% select(apn__parcel_number_unformatted_, longitude, latitude)
+testplot <- ruraldata_filtered %>% select(apn__parcel_number_unformatted_, fips_code, longitude, latitude)
 testplot <- st_as_sf(testplot, coords = c("longitude", "latitude"))
 plot(st_geometry(testplot), pch = 20)
 
+# Recode obvious errors: Find IDs
+labels <- lapply(
+  paste("<strong>Unique ID: </strong>",
+        testplot$apn__parcel_number_unformatted_
+        ),
+  htmltools::HTML
+)
 
+leaflet(data = testplot[testplot$fips_code == 51005, ], options = leafletOptions())%>%
+  addProviderTiles(providers$CartoDB.Positron) %>%
+  addCircleMarkers(color = "#202020", radius = 0.5,
+              label = labels,
+              labelOptions = labelOptions(direction = "bottom",
+                                          style = list(
+                                            "font-size" = "12px",
+                                            "border-color" = "rgba(0,0,0,0.5)",
+                                            direction = "auto"
+                                          ))) 
+
+# 22 A 7
+# 9-5E
+# 0090000000041E
+# 45-7-63
+# 55 17
+# 3B 4 27
+# 12 5 23
+# 068 A 30 A
+# 071 A 7 A
+# 14-A-19A
+# 96-A-31
+# 57 (A) 15B
+# 57 (A) 58A
+# 32 A 22F
+# 050 A 26 A
+# 079 A 8 A
+# 059 3 1 C
+# 14-A-44-A
+# 04600020000000001A
+# 90510195
+# 36 17
+# 14237
+
+
+#
+# Write out -------------------------------------------------
+#
+
+data_writeout <- st_as_sf(ruraldata_filtered, coords = c("longitude", "latitude"))
+write_rds(data_writeout, "./data/working/corelogic/final_corelogic.rds")
 
 
 

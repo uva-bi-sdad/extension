@@ -70,6 +70,14 @@ data_10 <- st_as_sf(data_10)
 data_12 <- cbind(data, ems_12)
 data_12 <- st_as_sf(data_12)
 
+st_crs(data_8) <- 4326
+data_8 <- st_transform(data_8, 4326)
+
+st_crs(data_10) <- 4326
+data_10 <- st_transform(data_10, 4326)
+
+st_crs(data_12) <- 4326
+data_12 <- st_transform(data_12, 4326)
 
 #
 # Write  --------------------------------------------------------------
