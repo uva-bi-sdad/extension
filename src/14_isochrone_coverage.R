@@ -13,10 +13,15 @@ rural <- rural %>%
 rural$FIPS <- as.character(rural$FIPS)
 
 properties <- readRDS("./data/working/corelogic/final_corelogic.rds")
+properties <- st_as_sf(properties, coords = c("parcel_level_longitude", "parcel_level_latitude"))
+st_crs(properties) <- 4326
+properties <- st_transform(properties, 4326)
 properties <- properties %>%
   filter(fips_code == "51001")
 
 ems_8 <- readRDS("./data/working/ems/final_ems_8.rds")
+st_crs(ems_8) <- 4326
+ems_8 <- st_transform(ems_8, 4326)
 ems_8 <- inner_join(ems_8, rural, by = c("geoid" = "FIPS"))
 ems_8 <- ems_8 %>%
   filter(county == "Accomack")
