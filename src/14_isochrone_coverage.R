@@ -27,7 +27,7 @@ ems_8 <- ems_8 %>%
   filter(county == "Accomack")
 
 plot(st_geometry(properties))
-plot(st_geometry(ems_8))
+plot(st_geometry(ems_8[1]))
 
 # Warning message:
 #   In st_is_longlat(x) :
@@ -35,7 +35,7 @@ plot(st_geometry(ems_8))
 #   The values of range seem inaccurate, and are certainly different than the range of accomack county
 
 for(i in 1:nrow(ems_8)){
-  int <- st_intersection(properties, ems_8[i,])
+  int <- st_intersection(properties, ems_8[i])
   cov <- (nrow(int)/nrow(properties))*100
   ems_8$coverage_8[i] <- cov
 }
