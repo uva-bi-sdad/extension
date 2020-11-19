@@ -1,5 +1,6 @@
 library(sf)
 library(tidyverse)
+library(leaflet)
 
 #
 # Coverage -------------------------------------------------
@@ -13,7 +14,6 @@ rural <- rural %>%
 rural$FIPS <- as.character(rural$FIPS)
 
 properties <- readRDS("./data/working/corelogic/final_corelogic.rds")
-properties <- st_as_sf(properties, coords = c("parcel_level_longitude", "parcel_level_latitude"))
 st_crs(properties) <- 4326
 properties <- st_transform(properties, 4326)
 properties <- properties %>%
@@ -27,7 +27,10 @@ ems_8 <- ems_8 %>%
   filter(county == "Accomack")
 
 plot(st_geometry(properties))
-plot(st_geometry(ems_8[1]))
+plot(st_geometry(ems_8[3, ]), add = T)
+
+st_is_valid(ems_8)
+ems_8 <- st_make_valid(ems_8)
 
 # Warning message:
 #   In st_is_longlat(x) :
@@ -39,3 +42,14 @@ for(i in 1:nrow(ems_8)){
   cov <- (nrow(int)/nrow(properties))*100
   ems_8$coverage_8[i] <- cov
 }
+
+
+
+st_crs(ems_8) <- 3857
+ems_8 <- st_transform(ems_8, 3857)
+
+st_crs(ems_8) <- st_crs(data)
+ems_8 <- st_transform(ems_8, st_crs(data))
+
+st_crs(properties) <- st_crs(data)
+properties <- st_transform(properties, st_crs(data))
