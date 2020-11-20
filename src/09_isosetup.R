@@ -1,11 +1,17 @@
 library(osrm)
 library(sf)
 library(cartography)
+library(readr)
+library(dplyr)
+
 
 # OSRM backend instance for Virginia locations on the SDAD server
 options(osrm.server = "http://104.248.112.16:5000/", osrm.profile = "driving")
 
-# Test from Aaron's house
+#
+# Test from Aaron's house ----------------------------------------------------------
+#
+
 iso <- osrmIsochrone(loc = c(-77.116444, 38.896130), 
                      returnclass="sf",
                      breaks = seq(from = 0, to = 14, by = 2), 
@@ -26,3 +32,14 @@ choroLayer(x = iso, var = "center", breaks = bks,
 # http://project-osrm.org/docs/v5.23.0/api/#result-objects
 # https://github.com/Project-OSRM/osrm-backend/blob/master/docs/http.md
 # curl http://104.248.112.16:5000/route/v1/driving/-77.116444,38.896130;-77.070264,38.894856?steps=true
+
+
+#
+# Test with unruly EMS file ----------------------------------------------------------
+#
+
+data <- read_rds("/home/tp2sk/Git/extension/data/working/ems/final_ems.rds")
+
+class(data)
+table(st_is_valid(data))
+st_is_longlat(data)

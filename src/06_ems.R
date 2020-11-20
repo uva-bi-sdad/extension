@@ -11,6 +11,12 @@ library(janitor)
 
 ems <- st_read("./data/original/hifld_ems_2010/ems.shp")
 
+table(st_is_valid(ems))
+st_is_longlat(ems)
+
+# Drop weird/corrupt geometries that came with this and make back into a spatial object later after it's filtered
+ems <- st_drop_geometry(ems)
+
 
 #
 # Clean ----------------------------------------------------------------------------
@@ -60,7 +66,24 @@ ems <- ems %>%
 
 
 #
+# Back to spatial ----------------------------------------------------------------------------
+#
+
+ems <- st_as_sf(ems, coords = c("longitude", "latitude"))
+st_crs(ems) <- 4326
+ems <- st_transform(ems, crs = 4326) 
+
+
+#
 # Write out ----------------------------------------------------------------------------
 #
 
 write_rds(ems, "./data/working/ems/final_ems.rds")
+
+
+
+
+
+
+
+
