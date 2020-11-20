@@ -27,7 +27,7 @@ ems_8 <- ems_8 %>%
   filter(county == "Accomack")
 
 plot(st_geometry(properties))
-plot(st_geometry(ems_8[3, ]), add = T)
+plot(st_geometry(ems_8_test), add = T, col = "red")
 
 st_is_valid(ems_8)
 ems_8 <- st_make_valid(ems_8)
@@ -42,14 +42,3 @@ for(i in 1:nrow(ems_8)){
   cov <- (nrow(int)/nrow(properties))*100
   ems_8$coverage_8[i] <- cov
 }
-
-
-
-st_crs(ems_8) <- 3857
-ems_8 <- st_transform(ems_8, 3857)
-
-st_crs(ems_8) <- st_crs(data)
-ems_8 <- st_transform(ems_8, st_crs(data))
-
-st_crs(properties) <- st_crs(data)
-properties <- st_transform(properties, st_crs(data))
