@@ -43,3 +43,8 @@ data <- read_rds("/home/tp2sk/Git/extension/data/working/ems/final_ems.rds")
 class(data)
 table(st_is_valid(data))
 st_is_longlat(data)
+
+iso <- osrmIsochrone(loc = data[1], 
+                     returnclass="sf",
+                     breaks = 10, 
+                     res = 50)
