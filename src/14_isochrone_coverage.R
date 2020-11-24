@@ -23,10 +23,13 @@ st_crs(properties)
 wifi_10 <- read_rds("./data/working/wifi/final_wifi_10.rds")
 wifi_10 <- wifi_10 %>% filter(wifi_10$GEOID %in% rural$FIPS)
 
+# Read in isochrones: WIFI 15
+wifi_15 <- read_rds("./data/working/wifi/final_wifi_15.rds")
+wifi_15 <- wifi_15 %>% filter(wifi_15$GEOID %in% rural$FIPS)
+
 # Make sure that the projections are equal
 compare(st_crs(properties), st_crs(wifi_10))
-
-
+compare(st_crs(properties), st_crs(wifi_15))
 
 
 #
@@ -65,7 +68,7 @@ setdiff(properties$fips_code, wifi_10$GEOID)
 setdiff(wifi_10$GEOID, properties$fips_code)
 wifi_fips <- intersect(wifi_10$GEOID, rural$FIPS)
 
-# Loop through
+# Loop through: Wifi 10
 for(i in wifi_fips){
   
   propertydata <- properties %>% filter(fips_code == i)
@@ -74,17 +77,53 @@ for(i in wifi_fips){
   for(j in 1:nrow(wifidata)){
     int <- st_intersection(propertydata, wifidata[j, ])
     cov <- (nrow(int) / nrow(propertydata)) * 100
-    wifidata$coverage_10[j] <- cov
+    wifidata$wifi_coverage_10[j] <- cov
     
     assign(paste0("wifi_10_coverage_", i), wifidata)
   }
   
 }
 
+# Clean up
+remove(cov)
+remove(i)
+remove(j)
+remove(wifidata)
+remove(int)
+remove(propertydata)
+
+# Loop through: Wifi 15
+for(i in wifi_fips){
+  
+  propertydata <- properties %>% filter(fips_code == i)
+  wifidata <- wifi_15 %>% filter(GEOID == i)
+  
+  for(j in 1:nrow(wifidata)){
+    int <- st_intersection(propertydata, wifidata[j, ])
+    cov <- (nrow(int) / nrow(propertydata)) * 100
+    wifidata$wifi_coverage_15[j] <- cov
+    
+    assign(paste0("wifi_15_coverage_", i), wifidata)
+  }
+  
+}
+
+
+#
+# Save -------------------------------------------------
+#
+
+wifi_10_coverage_final <- mget(ls(pattern = "^wifi_10_coverage_")) %>% bind_rows()
+wifi_15_coverage_final <- mget(ls(pattern = "^wifi_15_coverage_")) %>% bind_rows()
+
+write_rds(wifi_10_coverage_final, "./data/working/wifi/final_wifi_10_coverage.rds")
+write_rds(wifi_15_coverage_final, "./data/working/wifi/final_wifi_15_coverage.rds")
 
 
 
-
+#
+# Backup and clean later -------------------------------------------------
+#
 # Morgan
 for(i in 1:nrow(wifi_10)){
   int <- st_intersection(properties, wifi_10[i, ])
