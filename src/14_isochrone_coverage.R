@@ -16,6 +16,7 @@ rural <- rural %>% filter(RuralUrban == "R")
 
 # Read in property data
 properties <- read_rds("./data/working/corelogic/final_corelogic.rds")
+properties <- properties %>% filter(properties$fips_code %in% rural$FIPS)
 st_crs(properties)
 
 # Read in isochrones: WIFI 10
@@ -24,6 +25,8 @@ wifi_10 <- wifi_10 %>% filter(wifi_10$GEOID %in% rural$FIPS)
 
 # Make sure that the projections are equal
 compare(st_crs(properties), st_crs(wifi_10))
+
+
 
 
 #
@@ -57,8 +60,13 @@ plot(st_geometry(int), add = T, col = "red", pch = 25, cex = 0.2)
 # Scale -------------------------------------------------
 #
 
-# Solution 1
-for(i in rural$FIPS){
+# 5 counties have no wifi hotspots. Filter that out so I don't have to deal with exceptions in the loop. *angelface*
+setdiff(properties$fips_code, wifi_10$GEOID)
+setdiff(wifi_10$GEOID, properties$fips_code)
+wifi_fips <- intersect(wifi_10$GEOID, rural$FIPS)
+
+# Loop through
+for(i in wifi_fips){
   
   propertydata <- properties %>% filter(fips_code == i)
   wifidata <- wifi_10 %>% filter(GEOID == i)
@@ -73,26 +81,9 @@ for(i in rural$FIPS){
   
 }
 
-# Solution 1
-calc_coverage <- function(whichfips, i) {
-  propertydata <- properties %>% filter(fips_code == whichfips)
-  wifidata <- wifi_10 %>% filter(GEOID == whichfips)
-  
-  int <- st_intersection(propertydata, wifidata[i, ])
-  cov <- (nrow(int) / nrow(propertydata)) * 100
-  
-  wifidata$coverage_10[i] <- cov
-  assign(paste0("wifi_10_coverage_", whichfips), wifidata)
-}
 
-# Solution 3
-counties_wifi10 <- split(wifi_10, wifi_10$GEOID)
-counties_property <- split(properties, properties$fips_code)
 
-# Solution 4
-wifi_10_coverage <- map_dfr(.x = rural$FIPS,
-                            ~ assign(paste0("wifi_10_", .x), df)
-                            )
+
 
 # Morgan
 for(i in 1:nrow(wifi_10)){
