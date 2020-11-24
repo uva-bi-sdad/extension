@@ -1,37 +1,103 @@
 library(sf)
 library(tidyverse)
 library(leaflet)
+library(waldo)
+library(purrr)
+
 
 #
-# Coverage -------------------------------------------------
+# Prepare -------------------------------------------------
 #
-rural <- read.csv("./data/original/srhp_rurality_2020/omb_srhp_rurality.csv")
-rural <- rural %>%
-  filter(RuralUrban == "R")
-rural$FIPS <- as.character(rural$FIPS)
 
-properties <- readRDS("./data/working/corelogic/final_corelogic.rds")
-st_crs(properties) <- 4326
-properties <- st_transform(properties, 4326)
-properties <- properties %>%
+# Select rural counties only (according to VDH)
+rural <- read_csv("./data/original/srhp_rurality_2020/omb_srhp_rurality.csv", 
+                  col_names = TRUE, col_types = list(col_character(), col_factor(), col_factor()))
+rural <- rural %>% filter(RuralUrban == "R")
+
+# Read in property data
+properties <- read_rds("./data/working/corelogic/final_corelogic.rds")
+st_crs(properties)
+
+# Read in isochrones: WIFI 10
+wifi_10 <- read_rds("./data/working/wifi/final_wifi_10.rds")
+wifi_10 <- wifi_10 %>% filter(wifi_10$GEOID %in% rural$FIPS)
+
+# Make sure that the projections are equal
+compare(st_crs(properties), st_crs(wifi_10))
+
+
+#
+# Select a test case -------------------------------------------------
+#
+
+# Filter
+accomack_properties <- properties %>%
   filter(fips_code == "51001")
 
-wifi_10 <- readRDS("./data/working/wifi/final_wifi_10.rds")
-st_crs(wifi_10) <- 4326
-wifi_10 <- st_transform(wifi_10, 4326)
-wifi_10 <- inner_join(wifi_10, rural, by = c("GEOID" = "FIPS"))
-wifi_10 <- wifi_10 %>%
-  filter(GEOID == 51001)
+accomack_wifi_10 <- wifi_10 %>%
+  filter(GEOID == "51001")
 
-plot(st_geometry(properties))
-plot(st_geometry(wifi_10[3,]), add = T, col = "red")
+# Check
+plot(st_geometry(accomack_properties), pch = 19, cex = 0.2)
+plot(st_geometry(accomack_wifi_10[3, ]), add = T, col = "red", pch = 25, cex = 0.2)
 
-st_is_valid(wifi_10)
-wifi_10 <- st_make_valid(wifi_10)
 
+#
+# Test -------------------------------------------------
+#
+
+int <- st_intersection(accomack_properties, accomack_wifi_10[1, ])
+cov <- (nrow(int) / nrow(accomack_properties)) * 100
+
+plot(st_geometry(accomack_properties), pch = 19, cex = 0.2)
+plot(st_geometry(int), add = T, col = "red", pch = 25, cex = 0.2)
+
+
+#
+# Scale -------------------------------------------------
+#
+
+# Solution 1
+for(i in rural$FIPS){
+  
+  propertydata <- properties %>% filter(fips_code == i)
+  wifidata <- wifi_10 %>% filter(GEOID == i)
+  
+  for(j in 1:nrow(wifidata)){
+    int <- st_intersection(propertydata, wifidata[j, ])
+    cov <- (nrow(int) / nrow(propertydata)) * 100
+    wifidata$coverage_10[j] <- cov
+    
+    assign(paste0("wifi_10_coverage_", i), wifidata)
+  }
+  
+}
+
+# Solution 1
+calc_coverage <- function(whichfips, i) {
+  propertydata <- properties %>% filter(fips_code == whichfips)
+  wifidata <- wifi_10 %>% filter(GEOID == whichfips)
+  
+  int <- st_intersection(propertydata, wifidata[i, ])
+  cov <- (nrow(int) / nrow(propertydata)) * 100
+  
+  wifidata$coverage_10[i] <- cov
+  assign(paste0("wifi_10_coverage_", whichfips), wifidata)
+}
+
+# Solution 3
+counties_wifi10 <- split(wifi_10, wifi_10$GEOID)
+counties_property <- split(properties, properties$fips_code)
+
+# Solution 4
+wifi_10_coverage <- map_dfr(.x = rural$FIPS,
+                            ~ assign(paste0("wifi_10_", .x), df)
+                            )
+
+# Morgan
 for(i in 1:nrow(wifi_10)){
-  int <- st_intersection(properties, wifi_10[i,])
-  cov <- (nrow(int)/nrow(properties))*100
+  int <- st_intersection(properties, wifi_10[i, ])
+  cov <- (nrow(int) / nrow(properties)) * 100
   wifi_10$coverage_10[i] <- cov
 }
 
@@ -39,6 +105,7 @@ wifi_10_union <- st_union(wifi_10[1,],wifi_10[2,])
 for(i in 3:nrow(wifi_10)){
 wifi_10_union <- st_union(wifi_10_union,wifi_10[i,])
 }
+
 plot(st_geometry(wifi_10_union))
 
 # this uses to union from the loop - this is what we did for patrick

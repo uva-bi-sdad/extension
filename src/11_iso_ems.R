@@ -29,7 +29,7 @@ options(osrm.server = "http://104.248.112.16:5000/", osrm.profile = "driving")
 #   res = 200,
 #   returnclass = "sf"
 # ))
-
+# 
 # write_rds(ems_8, "/home/tp2sk/Git/extension/data/working/ems/ems_8.rds")
 
 # ems_10 <- map_dfr(c(1:nrow(data)), ~osrmIsochrone(
@@ -40,7 +40,7 @@ options(osrm.server = "http://104.248.112.16:5000/", osrm.profile = "driving")
 # ))
 # 
 # write_rds(ems_10, "/home/tp2sk/Git/extension/data/working/ems/ems_10.rds")
-
+# 
 # ems_12 <- map_dfr(c(1:nrow(data)), ~osrmIsochrone(
 #   loc = data[.x, ],
 #   breaks = 12,
@@ -78,6 +78,7 @@ data_10 <- st_transform(data_10, 4326)
 
 st_crs(data_12) <- 4326
 data_12 <- st_transform(data_12, 4326)
+
 
 #
 # Write  --------------------------------------------------------------

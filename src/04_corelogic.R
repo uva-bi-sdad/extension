@@ -452,6 +452,10 @@ leaflet(data = testplot[testplot$fips_code == 51005, ], options = leafletOptions
 #
 
 data_writeout <- st_as_sf(ruraldata_filtered, coords = c("longitude", "latitude"))
+
+st_crs(data_writeout) <- 4326
+data_writeout <- st_transform(data_writeout, 4326)
+
 write_rds(data_writeout, "./data/working/corelogic/final_corelogic.rds")
 
 

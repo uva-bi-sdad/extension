@@ -15,9 +15,13 @@ library(shinycssloaders)
 library(readxl)
 library(readr)
 library(stringr)
+
+
 #
 # Data ------------------------------------------------
 #
+
+
 datausda <- read_rds("data/final_usda.rds")
 allcountynames <- datausda$County
 
