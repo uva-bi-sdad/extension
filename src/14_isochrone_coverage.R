@@ -5,9 +5,6 @@ library(leaflet)
 #
 # Coverage -------------------------------------------------
 #
-
-ems_points <- readRDS("./data/working/ems/final_ems.rds")
-
 rural <- read.csv("./data/original/srhp_rurality_2020/omb_srhp_rurality.csv")
 rural <- rural %>%
   filter(RuralUrban == "R")
@@ -19,26 +16,41 @@ properties <- st_transform(properties, 4326)
 properties <- properties %>%
   filter(fips_code == "51001")
 
-ems_8 <- readRDS("./data/working/ems/final_ems_8.rds")
-st_crs(ems_8) <- 4326
-ems_8 <- st_transform(ems_8, 4326)
-ems_8 <- inner_join(ems_8, rural, by = c("geoid" = "FIPS"))
-ems_8 <- ems_8 %>%
-  filter(county == "Accomack")
+wifi_10 <- readRDS("./data/working/wifi/final_wifi_10.rds")
+st_crs(wifi_10) <- 4326
+wifi_10 <- st_transform(wifi_10, 4326)
+wifi_10 <- inner_join(wifi_10, rural, by = c("GEOID" = "FIPS"))
+wifi_10 <- wifi_10 %>%
+  filter(GEOID == 51001)
 
 plot(st_geometry(properties))
-plot(st_geometry(ems_8_test), add = T, col = "red")
+plot(st_geometry(wifi_10[3,]), add = T, col = "red")
 
-st_is_valid(ems_8)
-ems_8 <- st_make_valid(ems_8)
+st_is_valid(wifi_10)
+wifi_10 <- st_make_valid(wifi_10)
 
-# Warning message:
-#   In st_is_longlat(x) :
-#   bounding box has potentially an invalid value range for longlat data
-#   The values of range seem inaccurate, and are certainly different than the range of accomack county
-
-for(i in 1:nrow(ems_8)){
-  int <- st_intersection(properties, ems_8[i])
+for(i in 1:nrow(wifi_10)){
+  int <- st_intersection(properties, wifi_10[i,])
   cov <- (nrow(int)/nrow(properties))*100
-  ems_8$coverage_8[i] <- cov
+  wifi_10$coverage_10[i] <- cov
 }
+
+wifi_10_union <- st_union(wifi_10[1,],wifi_10[2,])
+for(i in 3:nrow(wifi_10)){
+wifi_10_union <- st_union(wifi_10_union,wifi_10[i,])
+}
+plot(st_geometry(wifi_10_union))
+
+# this uses to union from the loop - this is what we did for patrick
+# so I feel that maybe this is a better estimate of coverage
+wifi_10_union_int_a <- st_intersection(wifi_10_union, properties)
+wifi_10_cov_a <- (nrow(wifi_10_union_int_a)/nrow(properties))*100
+
+# this uses the data frame without st_union - 72.389 percent covered, which makes no sense given
+# how small the individual coverage estimates are
+# wifi_10_union_int_b <- st_intersection(wifi_10, properties)
+# wifi_10_cov_b <- (nrow(wifi_10_union_int_b)/nrow(properties))*100
+
+# to make this loop work through more than 1 county we need to add a bigger loop that
+# subsets for a rural county based on FIPS in rural and GEOID in wifi_10
+# and then subsets properties with fips_code and then runs the two separate loops and saves them somewhere
