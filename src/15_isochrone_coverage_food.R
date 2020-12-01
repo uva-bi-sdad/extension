@@ -66,7 +66,7 @@ plot(st_geometry(int), add = T, col = "red", pch = 25, cex = 0.2)
 # 2 counties have no food retailers? "51640" "51580" Filter out from loop.
 setdiff(properties$fips_code, food_10$fips)
 setdiff(food_10$fips, properties$fips_code)
-food_fips <- intersect(food_10$fips, properties$fips_code)
+food_fips <- intersect(food_15$fips, properties$fips_code)
 
 # Galax "51640" and Covington "51580" 
 galax_food <- food_10 %>% filter(str_detect(city, "Galax") == TRUE | 
@@ -89,7 +89,7 @@ remove(covington_food)
 for(i in food_fips){
   
   propertydata <- properties %>% filter(fips_code == i)
-  fooddata <- food_10 %>% filter(GEOID == i)
+  fooddata <- food_10 %>% filter(fips == i)
   
   for(j in 1:nrow(fooddata)){
     int <- st_intersection(propertydata, fooddata[j, ])
@@ -113,7 +113,7 @@ remove(propertydata)
 for(i in food_fips){
   
   propertydata <- properties %>% filter(fips_code == i)
-  fooddata <- food_15 %>% filter(GEOID == i)
+  fooddata <- food_15 %>% filter(fips == i)
   
   for(j in 1:nrow(fooddata)){
     int <- st_intersection(propertydata, fooddata[j, ])
@@ -133,5 +133,5 @@ for(i in food_fips){
 food_10_coverage_final <- mget(ls(pattern = "^food_10_coverage_")) %>% bind_rows()
 food_15_coverage_final <- mget(ls(pattern = "^food_15_coverage_")) %>% bind_rows()
 
-write_rds(food_10_coverage_final, "./data/working/food/final_food_10_coverage.rds")
-write_rds(food_15_coverage_final, "./data/working/food/final_food_15_coverage.rds")
+write_rds(food_10_coverage_final, "./data/working/foodretail/final_food_10_coverage.rds")
+write_rds(food_15_coverage_final, "./data/working/foodretail/final_food_15_coverage.rds")
