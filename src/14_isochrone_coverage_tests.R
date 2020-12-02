@@ -61,33 +61,47 @@ plot(st_geometry(int), add = T, col = "red", pch = 25, cex = 0.2)
 
 
 #
-# Backup and clean later -------------------------------------------------
+# Union -------------------------------------------------
 #
 
-# Morgan
-for(i in 1:nrow(wifi_10)){
-  int <- st_intersection(properties, wifi_10[i, ])
-  cov <- (nrow(int) / nrow(properties)) * 100
-  wifi_10$coverage_10[i] <- cov
+# Test
+accomack_union <- st_union(accomack_wifi_10)
+plot(st_geometry(accomack_wifi_10))
+     
+plot(st_geometry(accomack_properties), pch = 19, cex = 0.2)
+plot(st_geometry(accomack_wifi_10), add = T, col = "red")
+
+test_wifi <- wifi_10 %>%
+  group_by(GEOID) %>% 
+  summarize(geometry = st_union(geometry)) %>%
+  ungroup()
+plot(st_geometry(test_wifi))
+
+test_property <- properties %>%
+  group_by(fips_code) %>% 
+  summarize(geometry = st_union(geometry)) %>%
+  ungroup()
+plot(st_geometry(test_property))
+
+wifi_fips <- intersect(wifi_10$GEOID, properties$fips_code)
+
+# Loop through: Wifi 10
+for(i in wifi_fips[1:3]){
+  
+  propertydata <- properties %>% 
+    filter(fips_code == i)
+  
+  wifidata <- wifi_10 %>% 
+    filter(GEOID == i)
+  
+  whichgeoid <- wifidata$GEOID[1]
+  wifidata <- wifidata %>% summarize(geometry = st_union(geometry))
+  wifidata$GEOID <- whichgeoid
+  
+  int <- st_intersection(propertydata, wifidata)
+  cov <- (nrow(int) / nrow(propertydata)) * 100
+  
+  wifidata$wifi_countywide_coverage_10 <- cov
+    
+  assign(paste0("wifi_10_countywide_coverage_", i), wifidata)
 }
-
-wifi_10_union <- st_union(wifi_10[1,],wifi_10[2,])
-for(i in 3:nrow(wifi_10)){
-  wifi_10_union <- st_union(wifi_10_union,wifi_10[i,])
-}
-
-plot(st_geometry(wifi_10_union))
-
-# this uses to union from the loop - this is what we did for patrick
-# so I feel that maybe this is a better estimate of coverage
-wifi_10_union_int_a <- st_intersection(wifi_10_union, properties)
-wifi_10_cov_a <- (nrow(wifi_10_union_int_a)/nrow(properties))*100
-
-# this uses the data frame without st_union - 72.389 percent covered, which makes no sense given
-# how small the individual coverage estimates are
-# wifi_10_union_int_b <- st_intersection(wifi_10, properties)
-# wifi_10_cov_b <- (nrow(wifi_10_union_int_b)/nrow(properties))*100
-
-# to make this loop work through more than 1 county we need to add a bigger loop that
-# subsets for a rural county based on FIPS in rural and GEOID in wifi_10
-# and then subsets properties with fips_code and then runs the two separate loops and saves them somewhere

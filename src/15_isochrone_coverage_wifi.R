@@ -60,7 +60,7 @@ plot(st_geometry(int), add = T, col = "red", pch = 25, cex = 0.2)
 
 
 #
-# Scale -------------------------------------------------
+# Scale: SINGLE -------------------------------------------------
 #
 
 # 5 counties have no wifi hotspots. Filter that out so I don't have to deal with exceptions in the loop.
@@ -108,6 +108,14 @@ for(i in wifi_fips){
   
 }
 
+# Clean up
+remove(cov)
+remove(i)
+remove(j)
+remove(wifidata)
+remove(int)
+remove(propertydata)
+
 
 #
 # Save -------------------------------------------------
@@ -118,3 +126,76 @@ wifi_15_coverage_final <- mget(ls(pattern = "^wifi_15_coverage_")) %>% bind_rows
 
 write_rds(wifi_10_coverage_final, "./data/working/wifi/final_wifi_10_coverage.rds")
 write_rds(wifi_15_coverage_final, "./data/working/wifi/final_wifi_15_coverage.rds")
+
+
+#
+# Scale: UNION -------------------------------------------------
+#
+
+# Loop through: Wifi 10
+for(i in wifi_fips){
+  
+  propertydata <- properties %>% 
+    filter(fips_code == i)
+  
+  wifidata <- wifi_10 %>% 
+    filter(GEOID == i)
+  
+  whichgeoid <- wifidata$GEOID[1]
+  wifidata <- wifidata %>% summarize(geometry = st_union(geometry))
+  wifidata$GEOID <- whichgeoid
+  
+  int <- st_intersection(propertydata, wifidata)
+  cov <- (nrow(int) / nrow(propertydata)) * 100
+  
+  wifidata$wifi_countywide_coverage_10 <- cov
+  
+  assign(paste0("wifi_10_countywide_coverage_", i), wifidata)
+}
+
+# Clean up
+remove(cov)
+remove(i)
+remove(wifidata)
+remove(int)
+remove(propertydata)
+
+# Loop through: Wifi 15
+for(i in wifi_fips){
+  
+  propertydata <- properties %>% 
+    filter(fips_code == i)
+  
+  wifidata <- wifi_15 %>% 
+    filter(GEOID == i)
+  
+  whichgeoid <- wifidata$GEOID[1]
+  wifidata <- wifidata %>% summarize(geometry = st_union(geometry))
+  wifidata$GEOID <- whichgeoid
+  
+  int <- st_intersection(propertydata, wifidata)
+  cov <- (nrow(int) / nrow(propertydata)) * 100
+  
+  wifidata$wifi_countywide_coverage_15 <- cov
+  
+  assign(paste0("wifi_15_countywide_coverage_", i), wifidata)
+}
+
+# Clean up
+remove(cov)
+remove(i)
+remove(wifidata)
+remove(int)
+remove(propertydata)
+
+
+#
+# Save -------------------------------------------------
+#
+
+wifi_10_countywide_coverage_final <- mget(ls(pattern = "^wifi_10_countywide_coverage_")) %>% bind_rows()
+wifi_15_countywide_coverage_final <- mget(ls(pattern = "^wifi_15_countywide_coverage_")) %>% bind_rows()
+
+write_rds(wifi_10_countywide_coverage_final, "./data/working/wifi/final_wifi_10_countywide_coverage.rds")
+write_rds(wifi_15_countywide_coverage_final, "./data/working/wifi/final_wifi_15_countywide_coverage.rds")
+
