@@ -1,20 +1,9 @@
 library(shiny)
+library(shinydashboard)
 library(leaflet)
 library(tidyverse)
-library(sf)
-library(mapview)
-library(ggthemes)
-library(RColorBrewer)
-library(dashboardthemes)
-library(sjmisc)
-library(shinythemes)
 library(DT)
-library(data.table)
-library(rsconnect)
-library(shinycssloaders)
 library(readxl)
-library(readr)
-library(stringr)
 
 
 #
@@ -31,18 +20,28 @@ measures_table <- read_excel("data/Measures.xlsx")
 #
 # Options --------------------------------------------
 #
-
-prettyblue <- "#232D4B"
 navBarBlue <- '#427EDC'
-options(spinner.color = prettyblue, spinner.color.background = '#ffffff', spinner.size = 3, spinner.type = 7)
-
 colors <- c("#232d4b","#2c4f6b","#0e879c","#60999a","#d1e0bf","#d9e12b","#e6ce3a","#e6a01d","#e57200","#fdfdfd")
 
-ui <- navbarPage(selected = "home",
-  shinyDashboardThemes(theme = "grey_light"),
-  
+
+
+ui <- dashboardPage(
+  dashboardSidebar(
+    sidebarMenu(id = "sidebar",
+      menuItem("Home", tabName = "home"),
+      menuItem("Proof of Concept", tabName = "usda"),
+      menuItem(text="Explore Access", tabName="explore",
+               menuSubItem(text = "Food Retail", tabName ="food"),
+               menuSubItem(text = "Free Wifi", tabName = "wifi"),
+               menuSubItem(text = "EMS Stations", tabName = "ems")),
+      menuItem(text = "Data and Methods", tabName = "data", icon = icon("info-circle"),
+               menuSubItem(text = "Measures Table", tabName = "methods"),
+               menuSubItem(text = "Data Descriptions", tabName = "descriptions"))
+    )),
+  dashboardBody(
+  tabItems(
   # main -----------------------------------------------------------
-  tabPanel("Home", value = "home",
+  tabItem(tabName = "home",
            fluidRow(style = "margin: 6px;",
                     align = "center",
                     br("", style = "padding-top:10px;"),
@@ -56,35 +55,53 @@ ui <- navbarPage(selected = "home",
   ),
   
   # proof of concept with usda data -----------------------------------------------------------
-  tabPanel("Proof of Concept", value = "usda",
+  tabItem(tabName = "usda",
            fluidRow(style = "margin: 6px;",
                     h1(strong("Proof of Concept"), align = "center"),
                     br(),
                     selectInput("usdadrop", "Select County:", multiple = F, width = "100%", choices = c(allcountynames)),
-                    # selectInput("usdadrop_1", "Select Variable:", width = "100%", choices = c(
-                    #   "Percent Population with Low Food Access at 1 Mile" = "lapop1share",  
-                    #   "Percent Population with Low Food Access at 10 Miles" = "lapop10share",
-                    #   "Percent Children with Low Food Access at 1 Mile" = "lakids1share",
-                    #   "Percent Children with Low Food Access at 10 Miles" = "lakids10share",
-                    #   "Percent Low Income Population with Low Food Access at 1 Mile" = "lalowi1share",
-                    #   "Percent Low Income Population with Low Food Access at 10 Miles" = "lalowi10share",
-                    #   "Percent Older Adults with Low Food Access at 1 Mile" = "laseniors1share",
-                    #   "Percent Older Adults with Low Food Access at 10 Miles" = "laseniors10share")),
+                    selectInput("usdadrop_1", "Select Variable:", width = "100%", choices = c(
+                      "Percent Population with Low Food Access at 1 Mile" = "lapop1share",
+                      "Percent Population with Low Food Access at 10 Miles" = "lapop10share",
+                      "Percent Children with Low Food Access at 1 Mile" = "lakids1share",
+                      "Percent Children with Low Food Access at 10 Miles" = "lakids10share",
+                      "Percent Low Income Population with Low Food Access at 1 Mile" = "lalowi1share",
+                      "Percent Low Income Population with Low Food Access at 10 Miles" = "lalowi10share",
+                      "Percent Older Adults with Low Food Access at 1 Mile" = "laseniors1share",
+                      "Percent Older Adults with Low Food Access at 10 Miles" = "laseniors10share")),
                     br(),
-                    withSpinner(leafletOutput("usdaplot"))
+                    leafletOutput("usdaplot")
            )
   ),
-   
+  # food retail ---------------------------------------------------
+  tabItem(tabName = "food",
+          fluidRow(style = "margin: 6px;",
+                   h1(strong("Food Retail"), align = "center"),
+                   br(),
+          )
+  ),
+  
+  # free wfi ------------------------------------------------------
+  tabItem(tabName = "eifi",
+          fluidRow(style = "margin: 6px;",
+                   h1(strong("Proof of Concept"), align = "center"),
+                   br(),
+          )
+  ),
+  
+  # ems stations --------------------------------------------------
+  tabItem(tabName = "ems",
+          fluidRow(style = "margin: 6px;",
+                   h1(strong("Proof of Concept"), align = "center"),
+                   br(),
+          )
+  ),
+
   # data and measures  -----------------------------------------------------------
-  tabPanel("Data and Measures", value = "data",
+  tabItem(tabName = "descriptions",
            fluidRow(style = "margin: 6px;",
                     h1(strong("Data and Measures"), align = "center"),
-                    br()
-           ),
-           tabsetPanel(
-             tabPanel("Data Sources",
-                      h3("", align = "center"),
-                     br(""),
+                    br(),
                       column(12,
                              shinydashboard::box(img(src = "data-hifld.png", style = "display: inline; float: left;", width = "100px"),
                              p(strong("Homeland Infrastructure Foundation-Level Data."), "Homeland Infrastructure Foundation-Level Data (HIFLD) is a collection of public
@@ -133,24 +150,24 @@ ui <- navbarPage(selected = "home",
                                created by the Economic Research Service that provides information on food access indicators at census tract level. The data allows
                                individuals to understand food access in communities based on factors like age and socioeconomic status. We used the 2017 Food Access
                                Research Atlas to examine Patrick County residents’ food access at multiple distance thresholds and by resident characteristics."), width = 12
-                             ))
+                             )))
                              ),
-             tabPanel("Measures",  
-                      h3(strong(""), align = "center"),
+             tabItem(tabName = "measures",
+                      fluidRow(
+                      box(width = 12,
+                            title = "Measures and Data Sources",
                       selectInput("topic", "Select Topic:", width = "100%", choices = c(
                         "All Measures",
                         "Sociodemographic Measures",
                         "Older Adult Population Measures",
                         "Connectivity Measures",
                         "Food Access Measures",
-                        "Health Care Access Measures")
-                      ),
-                      withSpinner(DTOutput("datatable"))
-             )
-                             )
-                             )
-)
-
+                        "Health Care Access Measures")),
+                      DTOutput("datatable")))
+                    )
+                  )
+      )
+    )
 server <- function(input, output){
   
   # proof of concept panel - usda ------------------------------------------------------
