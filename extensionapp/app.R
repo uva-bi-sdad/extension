@@ -7,7 +7,7 @@ library(readxl)
 
 
 #
-# Data ------------------------------------------------
+# Read in dta ------------------------------------------------
 #
 
 
@@ -20,12 +20,14 @@ measures_table <- read_excel("data/Measures.xlsx")
 #
 # Options --------------------------------------------
 #
-navBarBlue <- '#427EDC'
-colors <- c("#232d4b","#2c4f6b","#0e879c","#60999a","#d1e0bf","#d9e12b","#e6ce3a","#e6a01d","#e57200","#fdfdfd")
-
-
 
 ui <- dashboardPage(
+  
+  dashboardHeader(
+    titleWidth = '100%',
+    title = "Title"
+  ),
+  
   dashboardSidebar(
     sidebarMenu(id = "sidebar",
       menuItem("Home", tabName = "home"),
@@ -38,23 +40,23 @@ ui <- dashboardPage(
                menuSubItem(text = "Measures Table", tabName = "methods"),
                menuSubItem(text = "Data Descriptions", tabName = "descriptions"))
     )),
+  
   dashboardBody(
   tabItems(
-  # main -----------------------------------------------------------
+    
+  # Main -----------------------------------------------------------
   tabItem(tabName = "home",
            fluidRow(style = "margin: 6px;",
                     align = "center",
                     br("", style = "padding-top:10px;"),
-                    # img(src = "uva-dspg-logo.jpg", class = "topimage", width = "20%", style = "display: block; margin-left: auto; margin-right: auto;"),
-                    br(""),
-                    h2(strong("Addressing Barriers to Health in Rurual Countis in Virginia"),
+                    h2(strong("Addressing Barriers to Health in Rural Virginia Counties"),
                        br(""),
                        h4("University of Virginia"),
                        h4("Biocomplexity Insititute"))
            )
   ),
   
-  # proof of concept with usda data -----------------------------------------------------------
+  # Proof of concept with usda data -----------------------------------------------------------
   tabItem(tabName = "usda",
            fluidRow(style = "margin: 6px;",
                     h1(strong("Proof of Concept"), align = "center"),
@@ -73,37 +75,37 @@ ui <- dashboardPage(
                     leafletOutput("usdaplot")
            )
   ),
-  # food retail ---------------------------------------------------
+  # Food retail ---------------------------------------------------
   tabItem(tabName = "food",
           fluidRow(style = "margin: 6px;",
                    h1(strong("Food Retail"), align = "center"),
-                   br(),
+                   br()
           )
   ),
   
-  # free wfi ------------------------------------------------------
+  # Free wfi ------------------------------------------------------
   tabItem(tabName = "eifi",
           fluidRow(style = "margin: 6px;",
                    h1(strong("Proof of Concept"), align = "center"),
-                   br(),
+                   br()
           )
   ),
   
-  # ems stations --------------------------------------------------
+  # Ems stations --------------------------------------------------
   tabItem(tabName = "ems",
           fluidRow(style = "margin: 6px;",
                    h1(strong("Proof of Concept"), align = "center"),
-                   br(),
+                   br()
           )
   ),
 
-  # data and measures  -----------------------------------------------------------
+  # Data and measures  -----------------------------------------------------------
   tabItem(tabName = "descriptions",
            fluidRow(style = "margin: 6px;",
                     h1(strong("Data and Measures"), align = "center"),
                     br(),
                       column(12,
-                             shinydashboard::box(img(src = "data-hifld.png", style = "display: inline; float: left;", width = "100px"),
+                             box(img(src = "data-hifld.png", style = "display: inline; float: left;", width = "100px"),
                              p(strong("Homeland Infrastructure Foundation-Level Data."), "Homeland Infrastructure Foundation-Level Data (HIFLD) is a collection of public
                                source datasets at property level provided by the Department of Homeland Security. Since 2002, this HIFLD has provided quarterly
                                updated layers on topics from education to energy, including on health care facilities. We used HIFLD emergency medical services
@@ -113,39 +115,34 @@ ui <- dashboardPage(
                              p(strong("MarketMaker."), "MarketMaker is a data source that includes locations of supermarkets, farmers' markets, and grocery stores.
                                It is a networking site that connects producers across America, and we utilize their 2019 data set to parse out locations of food
                                for communities. These locations are at the longitude and latitude geographic level."), width = 12
-                             )
-                      # )
-                      ,
-                      #column(4,
-                      shinydashboard::box(img(src = "data-acs.png", style = "display: inline; float: left;", width = "200px"),
+                             ),
+                      box(img(src = "data-acs.png", style = "display: inline; float: left;", width = "200px"),
                              p(strong("American Community Survey."), "The American Community Survey (ACS) is an ongoing yearly survey conducted by the U.S Census
                                Bureau. ACS samples households to compile 1-year and 5-year datasets providing information on population sociodemographic and
                                socioeconomic characteristics including employment, disability, and health insurance coverage. We used AC 2014/18 5-year
                                estimates to obtain census tract and census block group-level to explore Patrick County resident characteristics."), width = 12),
                              # br(""),
-                      shinydashboard::box(img(src = "data-connect.png", style = "display: inline; float: left;", width = "150px"),
+                      box(img(src = "data-connect.png", style = "display: inline; float: left;", width = "150px"),
                              p(strong("CommonwealthConnect."), "The Virginia Tech CommonwealthConnect Wi-Fi Hotspot Map is an interactive map of free, publicly
                                available wi-fi hotspots in Virginia. Its goal is to provide an easily accessible map of areas where individuals can connect to the
                                internet for free, decreasing the constraints placed on families that do not have internet access at home. We used the 2020 wi-fi
                                hotspot map data to retrieve hotspot locations in Patrick County and subsequently employed the information in calculating hotspot
                                coverage isochrones."), width = 12),
                              # br(""),
-                      shinydashboard::box(img(src = "data-corelogic.png", style = "display: inline; float: left;", width = "120px"),
+                      box(img(src = "data-corelogic.png", style = "display: inline; float: left;", width = "120px"),
                              p(strong("CoreLogic."), "CoreLogic is a supplier of proprietary US real estate and specialized business data at the property level.
                                This company provides data spamming over 50 years at the latitude and longitude level. Information available in the dataset includes
                                property characteristics, mortgage, foreclosures and performance. We used 2019 CoreLogic data to obtain the locations of all residential
                                properties in Patrick County."), width = 12
                              ),
-                      # ),
-                      #column(4,
-                      shinydashboard::box(img(src = "data-traveltime.png", style = "display: inline; float: left;", width = "140px"),
+                     box(img(src = "data-traveltime.png", style = "display: inline; float: left;", width = "140px"),
                              p(strong("TravelTime."), "TravelTime Application Programming Interface (API) aggregates data from OpenStreetMap, transport timetables and
                                speed profiles to generate isochrones. An isochrone is a shape covering all locations that can be reached within the same timeframe
                                given a start location, departure time, and a mode of transportation. We used the TravelTime API to produce isochrones of 10- and
                                15-minute drive time interval from supermarkets, farmers' markets, and free wi-fi hotspots, and of 8-, 10-, and 12-minute drive
-                               time intervals from all emergency medical service stations in Patrick County."), width = 12),
-                            #  br(""),
-                      shinydashboard::box(img(src = "data-ers.png", style = "display: inline; float: left;", width = "120px"),
+                               time intervals from all emergency medical service stations in Patrick County."), width = 12
+                         ),
+                     box(img(src = "data-ers.png", style = "display: inline; float: left;", width = "120px"),
                              p(strong("Food Access Research Atlas."), "The United State Department of Agriculture Food Access Research Atlas is a data resource
                                created by the Economic Research Service that provides information on food access indicators at census tract level. The data allows
                                individuals to understand food access in communities based on factors like age and socioeconomic status. We used the 2017 Food Access
@@ -168,32 +165,18 @@ ui <- dashboardPage(
                   )
       )
     )
+
 server <- function(input, output){
   
-  # proof of concept panel - usda ------------------------------------------------------
+  # Options ------------------------------------------------------
+  navBarBlue <- '#427EDC'
+  colors <- c("#232d4b","#2c4f6b","#0e879c","#60999a","#d1e0bf","#d9e12b","#e6ce3a","#e6a01d","#e57200","#fdfdfd")
+  
+  
+  # Proof of concept panel - USDA ------------------------------------------------------
   usdadata <- reactive({datausda %>% filter(County == input$usdadrop)})
   
   output$usdaplot <- renderLeaflet({
-    
-    # data <- switch(input$usdadrop_1,
-    #                "lakids1share" = usdadata$lakids1share,
-    #                "lakids10share" = usdadata$lakids10share,
-    #                "lalowi1share" = usdadata$lalowi1share,
-    #                "lalowi10share" = usdadata$lalowi10share,
-    #                "lapop1share" = usdadata$lapop1share,  
-    #                "lapop10share" = usdadata$lapop10share,
-    #                "laseniors1share" = usdadata$laseniors1share,
-    #                "laseniors10share" = usdadata$laseniors10share)
-    
-    # usda_spec <- switch(input$usdadrop_1,
-    #                     "lakids1share" = "low food access for children at 1 mile",
-    #                     "lakids10share" = "low food access for children at 10 miles",
-    #                     "lalowi1share" = "low food access for low income population at 1 mile",
-    #                     "lalowi10share" = "low food access for low income population at 10 miles",
-    #                     "lapop1share" = "low food access at 1 mile",  
-    #                     "lapop10share" = "low food access at 10 miles",
-    #                     "laseniors1share" = "low food access for seniors at 1 mile",
-    #                     "laseniors10share" = "low food access for seniors at 10 miles")
     
     pal <- colorQuantile("Blues",domain = usdadata()$lakids1share, probs = seq(0, 1, length = 5), right = TRUE)
     
@@ -231,7 +214,7 @@ server <- function(input, output){
                 })
   })
   
-  # data and measures table ------------------------------------------
+  # Data and measures table ------------------------------------------
   
   var_topic <- reactive({
     input$topic
