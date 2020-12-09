@@ -60,7 +60,7 @@ plot(st_geometry(int), add = T, col = "red", pch = 25, cex = 0.2)
 
 
 #
-# Scale -------------------------------------------------
+# PREPARE -------------------------------------------------
 #
 
 # 2 counties have no food retailers? "51640" "51580" Filter out from loop.
@@ -70,12 +70,12 @@ food_fips <- intersect(food_15$fips, properties$fips_code)
 
 # Galax "51640" and Covington "51580" 
 galax_food <- food_10 %>% filter(str_detect(city, "Galax") == TRUE | 
-                           str_detect(countyname, "Galax") == TRUE |
-                             str_detect(mail_city, "Galax") == TRUE)
+                                   str_detect(countyname, "Galax") == TRUE |
+                                   str_detect(mail_city, "Galax") == TRUE)
 
 covington_food <- food_10 %>% filter(str_detect(city, "Covington") == TRUE | 
-                                   str_detect(countyname, "Covington") == TRUE |
-                                   str_detect(mail_city, "Covington") == TRUE)
+                                       str_detect(countyname, "Covington") == TRUE |
+                                       str_detect(mail_city, "Covington") == TRUE)
 
 galax_prop <- properties %>% filter(fips_code == "51640")
 covington_prop <- properties %>% filter(fips_code == "51580")
@@ -84,6 +84,11 @@ remove(galax_prop)
 remove(covington_prop)
 remove(galax_food)
 remove(covington_food)
+
+
+#
+# Scale: SINGLE  -------------------------------------------------
+#
 
 # Loop through: Food 10
 for(i in food_fips){
@@ -135,3 +140,75 @@ food_15_coverage_final <- mget(ls(pattern = "^food_15_coverage_")) %>% bind_rows
 
 write_rds(food_10_coverage_final, "./data/working/foodretail/final_food_10_coverage.rds")
 write_rds(food_15_coverage_final, "./data/working/foodretail/final_food_15_coverage.rds")
+
+
+#
+# Scale: UNION -------------------------------------------------
+#
+
+# Loop through: Food 10
+for(i in food_fips){
+  
+  propertydata <- properties %>% 
+    filter(fips_code == i)
+  
+  fooddata <- food_10 %>% 
+    filter(fips == i)
+  
+  whichgeoid <- fooddata$GEOID[1]
+  fooddata <- fooddata %>% summarize(geometry = st_union(geometry))
+  fooddata$GEOID <- whichgeoid
+  
+  int <- st_intersection(propertydata, fooddata)
+  cov <- (nrow(int) / nrow(propertydata)) * 100
+  
+  fooddata$food_countywide_coverage_10 <- cov
+  
+  assign(paste0("food_10_countywide_coverage_", i), fooddata)
+}
+
+# Clean up
+remove(cov)
+remove(i)
+remove(fooddata)
+remove(int)
+remove(propertydata)
+
+# Loop through: Food 15
+for(i in food_fips){
+  
+  propertydata <- properties %>% 
+    filter(fips_code == i)
+  
+  fooddata <- food_15 %>% 
+    filter(fips == i)
+  
+  whichgeoid <- fooddata$GEOID[1]
+  fooddata <- fooddata %>% summarize(geometry = st_union(geometry))
+  fooddata$GEOID <- whichgeoid
+  
+  int <- st_intersection(propertydata, fooddata)
+  cov <- (nrow(int) / nrow(propertydata)) * 100
+  
+  fooddata$food_countywide_coverage_15 <- cov
+  
+  assign(paste0("food_15_countywide_coverage_", i), fooddata)
+}
+
+# Clean up
+remove(cov)
+remove(i)
+remove(fooddata)
+remove(int)
+remove(propertydata)
+
+
+#
+# Save -------------------------------------------------
+#
+
+food_10_countywide_coverage_final <- mget(ls(pattern = "^food_10_countywide_coverage_")) %>% bind_rows()
+food_15_countywide_coverage_final <- mget(ls(pattern = "^food_15_countywide_coverage_")) %>% bind_rows()
+
+write_rds(food_10_countywide_coverage_final, "./data/working/foodretail/final_food_10_countywide_coverage.rds")
+write_rds(food_15_countywide_coverage_final, "./data/working/foodretail/final_food_15_countywide_coverage.rds")

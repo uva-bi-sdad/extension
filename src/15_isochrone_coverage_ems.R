@@ -65,13 +65,18 @@ plot(st_geometry(int), add = T, col = "red", pch = 25, cex = 0.2)
 
 
 #
-# Scale -------------------------------------------------
+# PREP -------------------------------------------------
 #
 
 # 1 county has no ems stations. Filter that out so I don't have to deal with exceptions in the loop.
 setdiff(properties$fips_code, ems_10$geoid)
 setdiff(ems_10$geoid, properties$fips_code)
-ems_fips <- intersect(ems_10$geoid, properties$fips_code)
+ems_fips <- intersect(ems_12$geoid, properties$fips_code)
+
+
+#
+# Scale: SINGLE -------------------------------------------------
+#
 
 # Loop through: EMS 8
 for(i in ems_fips){
@@ -157,3 +162,106 @@ ems_12_coverage_final <- mget(ls(pattern = "^ems_12_coverage_")) %>% bind_rows()
 write_rds(ems_8_coverage_final, "./data/working/ems/final_ems_8_coverage.rds")
 write_rds(ems_10_coverage_final, "./data/working/ems/final_ems_10_coverage.rds")
 write_rds(ems_12_coverage_final, "./data/working/ems/final_ems_12_coverage.rds")
+
+
+#
+# Scale: UNION -------------------------------------------------
+#
+
+# Loop through: EMS 8
+for(i in ems_fips){
+  
+  propertydata <- properties %>% 
+    filter(fips_code == i)
+  
+  emsdata <- ems_8 %>% 
+    filter(geoid == i)
+  
+  whichgeoid <- emsdata$geoid[1]
+  emsdata <- emsdata %>% summarize(geometry = st_union(geometry))
+  emsdata$geoid <- whichgeoid
+  
+  int <- st_intersection(propertydata, emsdata)
+  cov <- (nrow(int) / nrow(propertydata)) * 100
+  
+  emsdata$ems_countywide_coverage_8 <- cov
+  
+  assign(paste0("ems_8_countywide_coverage_", i), emsdata)
+}
+
+# Clean up
+remove(cov)
+remove(i)
+remove(emsdata)
+remove(int)
+remove(propertydata)
+
+# Loop through: EMS 10
+for(i in ems_fips){
+  
+  propertydata <- properties %>% 
+    filter(fips_code == i)
+  
+  emsdata <- ems_10 %>% 
+    filter(geoid == i)
+  
+  whichgeoid <- emsdata$geoid[1]
+  emsdata <- emsdata %>% summarize(geometry = st_union(geometry))
+  emsdata$geoid <- whichgeoid
+  
+  int <- st_intersection(propertydata, emsdata)
+  cov <- (nrow(int) / nrow(propertydata)) * 100
+  
+  emsdata$ems_countywide_coverage_10 <- cov
+  
+  assign(paste0("ems_10_countywide_coverage_", i), emsdata)
+}
+
+# Clean up
+remove(cov)
+remove(i)
+remove(emsdata)
+remove(int)
+remove(propertydata)
+
+# Loop through: EMS 12
+for(i in ems_fips){
+  
+  propertydata <- properties %>% 
+    filter(fips_code == i)
+  
+  emsdata <- ems_12 %>% 
+    filter(geoid == i)
+  
+  whichgeoid <- emsdata$geoid[1]
+  emsdata <- emsdata %>% summarize(geometry = st_union(geometry))
+  emsdata$geoid <- whichgeoid
+  
+  int <- st_intersection(propertydata, emsdata)
+  cov <- (nrow(int) / nrow(propertydata)) * 100
+  
+  emsdata$ems_countywide_coverage_12 <- cov
+  
+  assign(paste0("ems_12_countywide_coverage_", i), emsdata)
+}
+
+# Clean up
+remove(cov)
+remove(i)
+remove(emsdata)
+remove(int)
+remove(propertydata)
+
+
+#
+# Save -------------------------------------------------
+#
+
+ems_8_countywide_coverage_final <- mget(ls(pattern = "^ems_8_countywide_coverage_")) %>% bind_rows()
+ems_10_countywide_coverage_final <- mget(ls(pattern = "^ems_10_countywide_coverage_")) %>% bind_rows()
+ems_12_countywide_coverage_final <- mget(ls(pattern = "^ems_12_countywide_coverage_")) %>% bind_rows()
+
+write_rds(ems_8_countywide_coverage_final, "./data/working/ems/final_ems_8_countywide_coverage.rds")
+write_rds(ems_10_countywide_coverage_final, "./data/working/ems/final_ems_10_countywide_coverage.rds")
+write_rds(ems_12_countywide_coverage_final, "./data/working/ems/final_ems_12_countywide_coverage.rds")
+

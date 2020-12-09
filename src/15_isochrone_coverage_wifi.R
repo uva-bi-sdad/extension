@@ -60,13 +60,18 @@ plot(st_geometry(int), add = T, col = "red", pch = 25, cex = 0.2)
 
 
 #
-# Scale: SINGLE -------------------------------------------------
+# PREP -------------------------------------------------
 #
 
 # 5 counties have no wifi hotspots. Filter that out so I don't have to deal with exceptions in the loop.
 setdiff(properties$fips_code, wifi_10$GEOID)
 setdiff(wifi_10$GEOID, properties$fips_code)
-wifi_fips <- intersect(wifi_10$GEOID, properties$fips_code)
+wifi_fips <- intersect(wifi_15$GEOID, properties$fips_code)
+
+
+#
+# Scale: SINGLE -------------------------------------------------
+#
 
 # Loop through: Wifi 10
 for(i in wifi_fips){
