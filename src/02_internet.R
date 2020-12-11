@@ -37,26 +37,25 @@ countyfips <- get(data("fips_codes")) %>% filter(state == "VA")
 countyfips <- countyfips$county_code
 
 # Get data from 2014/18 5-year estimates at tract level 
-data_tract <- get_acs(geography = "tract", state = 51, county = countyfips,
+data_bgrp <- get_acs(geography = "block group", state = 51, 
                       variables = acsvars,
                       year = 2018, survey = "acs5",
                       cache_table = TRUE, output = "wide", geometry = TRUE,
                       keep_geo_vars = TRUE)
+
 
 #
 # Calculate ------------------------------------------------------------------------
 #
 
 # Tract level 
-acs_tract <- data_tract %>% transmute(
+acs_bgrp <- data_bgrp %>% transmute(
   STATEFP = STATEFP,
   COUNTYFP = COUNTYFP,
   TRACTCE = TRACTCE,
+  BLKGRPCE = BLKGRPCE,
   GEOID = GEOID,
   NAME.x = NAME.x,
-  NAME.y = NAME.y,
-  ALAND = ALAND,
-  AWATER = AWATER,
   geometry = geometry,
   nocomputer = B28001_011E/B28001_001E * 100,
   laptop = B28001_003E/B28001_001E * 100,
@@ -67,5 +66,27 @@ acs_tract <- data_tract %>% transmute(
   satellite = B28002_009E/B28002_001E * 100,
   cellular = B28002_005E/B28002_001E * 100,
   dialup = B28002_003E/B28002_001E * 100,
-  broadband = B28002_007E/B28002_001E * 100,
+  broadband = B28002_007E/B28002_001E * 100
 )
+
+
+#
+# Select rural counties only (according to VDH) -------------------------------------------------------------------------------
+#
+
+rural <- read_csv("./data/original/srhp_rurality_2020/omb_srhp_rurality.csv", 
+                  col_names = TRUE, col_types = list(col_character(), col_factor(), col_factor()))
+rural <- rural %>% filter(RuralUrban == "R") %>% select(FIPS)
+
+acs_bgrp$FIPS <- paste0(acs_bgrp$STATEFP, acs_bgrp$COUNTYFP)
+  
+acs_bgrp_final <- acs_bgrp %>% filter(acs_bgrp$FIPS %in% rural$FIPS)
+
+
+#
+# Write -------------------------------------------------------------------------------
+#
+
+acs_bgrp_final <- acs_bgrp_final %>% st_transform(4326)
+
+write_rds(acs_bgrp_final, "./data/working/acs/final_technology.rds")

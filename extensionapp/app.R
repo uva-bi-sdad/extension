@@ -14,11 +14,11 @@ library(readxl)
 datausda <- read_rds("data/final_usda.rds")
 allcountynames <- datausda$County
 
-measures_table <- read_excel("data/Measures.xlsx")
+measures_table <- read_excel("data/measures.xlsx")
 
 
 #
-# Options --------------------------------------------
+# Interface --------------------------------------------
 #
 
 ui <- dashboardPage(
@@ -84,7 +84,7 @@ ui <- dashboardPage(
   ),
   
   # Free wfi ------------------------------------------------------
-  tabItem(tabName = "eifi",
+  tabItem(tabName = "wifi",
           fluidRow(style = "margin: 6px;",
                    h1(strong("Proof of Concept"), align = "center"),
                    br()

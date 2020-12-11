@@ -74,8 +74,6 @@ acs_older_tract <- older_data_tract %>% transmute(
   GEOID = GEOID,
   NAME.x = NAME.x,
   NAME.y = NAME.y,
-  ALAND = ALAND,
-  AWATER = AWATER,
   geometry = geometry,
   # TOTAL OLDER ADULTS
   older = (B01001_020E + B01001_021E + B01001_022E + B01001_023E + B01001_024E + B01001_025E +
@@ -95,9 +93,31 @@ acs_older_tract <- older_data_tract %>% transmute(
   inpov = (B17001_029E + B17001_030E + B17001_015E + B17001_016E) / (B17001_015E + B17001_016E + B17001_029E + B17001_030E + B17001_044E + B17001_045E + B17001_058E + B17001_059E) * 100,
   #HOUSEHOLDS
   hhsixty_total = B11006_002E / B11006_001E * 100,
-  hhsixty_marr = B11006_004E / B11006_003E * 100,
-  hhsixty_single = B11006_005E / B11006_003E * 100,
-  hhsixty_nonfam = B11006_008E / B11006_003E * 100,
+  hhsixty_marr = B11006_004E / B11006_002E * 100,
+  hhsixty_single = B11006_005E / B11006_002E * 100,
+  hhsixty_nonfam = B11006_008E / B11006_002E * 100,
   #EMPLOYMENT
   labfor = (B23001_160E + B23001_165E + B23001_170E + B23001_074E + B23001_079E + B23001_084E) / (B23001_159E + B23001_164E + B23001_169E + B23001_073E + B23001_078E + B23001_083E) * 100
 )
+
+
+#
+# Select rural counties only (according to VDH) -------------------------------------------------------------------------------
+#
+
+rural <- read_csv("./data/original/srhp_rurality_2020/omb_srhp_rurality.csv", 
+                  col_names = TRUE, col_types = list(col_character(), col_factor(), col_factor()))
+rural <- rural %>% filter(RuralUrban == "R") %>% select(FIPS)
+
+acs_older_tract$FIPS <- paste0(acs_older_tract$STATEFP, acs_older_tract$COUNTYFP)
+
+acs_older_tract_final <- acs_older_tract %>% filter(acs_older_tract$FIPS %in% rural$FIPS)
+
+
+#
+# Write -------------------------------------------------------------------------------
+#
+
+acs_older_tract_final <- acs_older_tract_final %>% st_transform(4326)
+
+write_rds(acs_older_tract_final, "./data/working/acs/final_older.rds")
