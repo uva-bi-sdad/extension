@@ -235,7 +235,16 @@ server <- function(input, output){
   # Options ------------------------------------------------------
   #
   
-  colorsusda <- c('#efe1c6', '#dccdb3', '#c9b8a0', '#b8a58d', '#a89179', '#987d65', '#896a52', '#7a573e', '#6b452b')
+  colors_usda <- c('#efe1c6', '#dccdb3', '#c9b8a0', '#b8a58d', '#a89179', '#987d65', '#896a52', '#7a573e', '#6b452b')
+  
+  choices_usda <- c("Percent Population with Low Food Access at 1 Mile" = "lapop1share",
+                    "Percent Population with Low Food Access at 10 Miles" = "lapop10share",
+                    "Percent Children with Low Food Access at 1 Mile" = "lakids1share",
+                    "Percent Children with Low Food Access at 10 Miles" = "lakids10share",
+                    "Percent Older Adults with Low Food Access at 1 Mile" = "laseniors1share",
+                    "Percent Older Adults with Low Food Access at 10 Miles" = "laseniors10share",
+                    "Percent Low Income Population with Low Food Access at 1 Mile" = "lalowi1share",
+                    "Percent Low Income Population with Low Food Access at 10 Miles" = "lalowi10share")
   
   #
   # Map function ------------------------------------------
@@ -243,7 +252,7 @@ server <- function(input, output){
   
   create_plot <- function(data, myvar, myvarlabel) {
     
-    pal <- colorNumeric(colorsusda, domain = myvar, na.color = "grey")
+    pal <- colorNumeric(colors_usda, domain = myvar, na.color = "grey")
     
     labels <- lapply(
       paste("<strong>Area: </strong>",
@@ -284,7 +293,7 @@ server <- function(input, output){
     
   output$plot_usda <- renderLeaflet({
 
-    var_label <- "Percent Population with Low Food Access at 1 Mile"
+    var_label <- names(choices_usda)[choices_usda == input$whichvar_usda]
     
     create_plot(plot_usda_data(), plot_usda_var(), var_label)
   })
