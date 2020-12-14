@@ -235,33 +235,61 @@ server <- function(input, output){
   # Options ------------------------------------------------------
   #
   
-  navBarBlue <- '#427EDC'
-  colors <- c("#232d4b","#2c4f6b","#0e879c","#60999a","#d1e0bf","#d9e12b","#e6ce3a","#e6a01d","#e57200","#fdfdfd")
+  colorsusda <- c('#efe1c6', '#dccdb3', '#c9b8a0', '#b8a58d', '#a89179', '#987d65', '#896a52', '#7a573e', '#6b452b')
   
   #
   # Map function ------------------------------------------
   #
   
-
+  create_plot <- function(data, myvar, myvarlabel) {
+    
+    pal <- colorNumeric(colorsusda, domain = myvar, na.color = "grey")
+    
+    labels <- lapply(
+      paste("<strong>Area: </strong>",
+            data$County,
+            "<br />",
+            "<strong>", myvarlabel, ": </strong>",
+            round(myvar, 2)),
+      htmltools::HTML
+    )
+    
+    leaflet(data = data) %>%
+      addProviderTiles(providers$CartoDB.Positron) %>%
+      addPolygons(fillColor = ~pal(myvar), 
+                  fillOpacity = 0.8, 
+                  stroke = TRUE, smoothFactor = 0.8, weight = 0.5, color = "#202020",
+                  label = labels,
+                  labelOptions = labelOptions(direction = "bottom",
+                                              style = list(
+                                                "font-size" = "12px",
+                                                "border-color" = "rgba(0,0,0,0.5)",
+                                                direction = "auto"
+                                              ))) %>%
+      addLegend("bottomleft",
+                pal = pal,
+                values =  ~(myvar),
+                title = "Value",
+                opacity = 0.8,
+                na.label = "Not Available")
+  }
   
   
   #
   # OUTPUT: Plot - USDA ------------------------------------------
   #
   
-
-  output$plot_usda <- renderLeaflet({
+  plot_usda_data <- reactive({data_usda %>% filter(County == input$whichcounty_usda)})
+  plot_usda_var <- reactive({plot_usda_data()[[input$whichvar_usda]]})
     
-    leaflet(data = data_usda[data_usda$County == input$whichcounty_usda, ]) %>%
-      addTiles() %>%
-      addPolygons()
-  })
-  
-  observeEvent(input$whichcounty_usda, {
-    leafletProxy("plot_usda") %>%
-      addPolygons(data = data_usda[data_usda$County == input$whichcounty_usda, ])
+  output$plot_usda <- renderLeaflet({
+
+    var_label <- "Percent Population with Low Food Access at 1 Mile"
+    
+    create_plot(plot_usda_data(), plot_usda_var(), var_label)
   })
 
+  
   
   #
   # OUTPUT: Measures table ------------------------------------------

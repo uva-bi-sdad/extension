@@ -9,7 +9,7 @@ library(data.table)
 
 options(scipen = 999)
 
-######## USDA Food Desert Atlas Data Geographies #################
+# USDA Food Research Atlas Data
 
 
 #
@@ -49,13 +49,38 @@ usda_geo_data$FIPS <- substr(usda_geo_data$GEOID, 1, 5)
 
 usda_geo_data <- usda_geo_data %>% filter(usda_geo_data$FIPS %in% rural$FIPS)
 
-# Write
+
+#
+# Select and transform -------------------------------------------------------------------------------
+#
+
+# Select only relevant variables
 usda <- usda_geo_data %>% select(GEOID, State, County, 
-                                 STATEFP, COUNTYFP, TRACTCE, NAME, FIPS, geometry,
+                                 STATEFP, COUNTYFP, TRACTCE, NAME, NAMELSAD, FIPS, geometry,
                                  lahunv1share, lahunv10share, lakids1share, lakids10share, 
                                  lalowi1share, lalowi10share, lapop1share, lapop10share, 
                                  laseniors1share, laseniors10share)
 
+# These are all shares, so multiply by 100 because we are displaying percentages.
+usda <- usda %>% mutate(lahunv1share = lahunv1share * 100,
+                        lahunv10share = lahunv10share * 100, 
+                        lakids1share = lakids1share * 100, 
+                        lakids10share = lakids10share * 100, 
+                        lalowi1share = lalowi1share * 100, 
+                        lalowi10share = lalowi10share * 100, 
+                        lapop1share = lapop1share * 100, 
+                        lapop10share = lapop10share * 100,
+                        laseniors1share = laseniors1share * 100, 
+                        laseniors10share = laseniors10share * 100)
+
+# Projection
 usda <- usda %>% st_transform(4326)
 
+
+#
+# Write -------------------------------------------------------------------------------
+#
+
 write_rds(usda, "./data/working/usda/final_usda.rds")
+
+
