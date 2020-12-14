@@ -18,7 +18,7 @@ data_usda <- read_rds("data/final_usda.rds")
 data_measures <- read_excel("data/measures.xlsx")
 
 # Get county vectors by dataset
-countylist_usda <- data_usda$County
+countylist_usda <- unique(data_usda$County)
 
 
 #
@@ -103,7 +103,9 @@ ui <- dashboardPage(
               fluidRow(style = "margin: 6px;",
                        h1(strong("Food Security"), align = "center"),
                        br(),
-                       selectInput("whichcounty_usda", "Select County:", multiple = F, width = "100%", choices = c(countylist_usda)),
+                       selectInput("whichcounty_usda", "Select County:", 
+                                   selected = "Accomack",
+                                   multiple = F, width = "100%", choices = c(countylist_usda)),
                        selectInput("whichvar_usda", "Select Variable:", width = "100%", choices = c(
                          "Percent Population with Low Food Access at 1 Mile" = "lapop1share",
                          "Percent Population with Low Food Access at 10 Miles" = "lapop10share",
@@ -240,28 +242,26 @@ server <- function(input, output){
   # Map function ------------------------------------------
   #
   
-  create_plot <- function(mydata, myvar) {
-    
-    leaflet(data = mydata) %>%
-      addProviderTiles(providers$CartoDB.Positron) %>%
-      addPolygons(fillColor = ~myvar,
-                  fillOpacity = 0.7, 
-                  stroke = TRUE, smoothFactor = 0.7, weight = 0.5, color = "#202020")
-    
-  }
+
   
   
   #
   # OUTPUT: Plot - USDA ------------------------------------------
   #
   
-  usda_data <- reactive({data_usda %>% filter(County == input$whichcounty_usda) %>% 
-      select(input$whichvar_usda, geometry)})
 
   output$plot_usda <- renderLeaflet({
-    usda_var <- usda_data() %>% select(input$whichvar_usda)
-    create_plot(usda_data(), usda_var)
+    
+    leaflet(data = data_usda[data_usda$County == input$whichcounty_usda, ]) %>%
+      addTiles() %>%
+      addPolygons()
   })
+  
+  observeEvent(input$whichcounty_usda, {
+    leafletProxy("plot_usda") %>%
+      addPolygons(data = data_usda[data_usda$County == input$whichcounty_usda, ])
+  })
+
   
   #
   # OUTPUT: Measures table ------------------------------------------
