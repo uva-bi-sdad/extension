@@ -2,9 +2,6 @@ library(tidycensus)
 library(tidyverse)
 library(sf)
 
-# Get ACS technology data
-
-
 
 #
 # API key ------------------------------------------------------------------------
@@ -34,7 +31,6 @@ acsvars <- c(
 
 # Get county FIPS
 countyfips <- get(data("fips_codes")) %>% filter(state == "VA")
-countyfips <- countyfips$county_code
 
 # Get data from 2014/18 5-year estimates at tract level 
 data_bgrp <- get_acs(geography = "block group", state = 51, 
@@ -48,7 +44,7 @@ data_bgrp <- get_acs(geography = "block group", state = 51,
 # Calculate ------------------------------------------------------------------------
 #
 
-# Tract level 
+# Calculate
 acs_bgrp <- data_bgrp %>% transmute(
   STATEFP = STATEFP,
   COUNTYFP = COUNTYFP,
@@ -56,6 +52,7 @@ acs_bgrp <- data_bgrp %>% transmute(
   BLKGRPCE = BLKGRPCE,
   GEOID = GEOID,
   NAME.x = NAME.x,
+  NAME.y = NAME.y,
   geometry = geometry,
   nocomputer = B28001_011E/B28001_001E * 100,
   laptop = B28001_003E/B28001_001E * 100,
@@ -69,24 +66,48 @@ acs_bgrp <- data_bgrp %>% transmute(
   broadband = B28002_007E/B28002_001E * 100
 )
 
+# NaNs (0 denominators) to NA.
+acs_bgrp <- acs_bgrp %>% mutate(
+  nocomputer = ifelse(is.nan(nocomputer), NA, nocomputer),
+  laptop = ifelse(is.nan(laptop), NA, laptop),
+  smartphone = ifelse(is.nan(smartphone), NA, smartphone),
+  tablet = ifelse(is.nan(tablet), NA, tablet),
+  othercomputer = ifelse(is.nan(othercomputer), NA, othercomputer),
+  nointernet = ifelse(is.nan(nointernet), NA, nointernet),
+  satellite = ifelse(is.nan(satellite), NA, satellite),
+  cellular = ifelse(is.nan(cellular), NA, cellular),
+  dialup = ifelse(is.nan(dialup), NA, dialup),
+  broadband = ifelse(is.nan(broadband), NA, broadband)
+)
+
 
 #
 # Select rural counties only (according to VDH) -------------------------------------------------------------------------------
 #
 
+# Read in
 rural <- read_csv("./data/original/srhp_rurality_2020/omb_srhp_rurality.csv", 
                   col_names = TRUE, col_types = list(col_character(), col_factor(), col_factor()))
 rural <- rural %>% filter(RuralUrban == "R") %>% select(FIPS)
 
+# Join
 acs_bgrp$FIPS <- paste0(acs_bgrp$STATEFP, acs_bgrp$COUNTYFP)
-  
 acs_bgrp_final <- acs_bgrp %>% filter(acs_bgrp$FIPS %in% rural$FIPS)
+
+# Add county names
+countyfips$FIPS <- paste0(countyfips$state_code, countyfips$county_code)
+countyfips <- countyfips %>% select(county, FIPS)
+acs_bgrp_final <- left_join(acs_bgrp_final, countyfips, by = "FIPS")
+
+# Projection
+acs_bgrp_final <- acs_bgrp_final %>% st_transform(4326)
+
+# Prepare areaname variable
+acs_bgrp_final$areaname <- acs_bgrp_final$NAME.y
 
 
 #
 # Write -------------------------------------------------------------------------------
 #
 
-acs_bgrp_final <- acs_bgrp_final %>% st_transform(4326)
-
-write_rds(acs_bgrp_final, "./data/working/acs/final_technology.rds")
+write_rds(acs_bgrp_final, "./data/working/acs/final_internet.rds")

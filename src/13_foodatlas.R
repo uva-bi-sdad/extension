@@ -76,6 +76,18 @@ usda <- usda %>% mutate(lahunv1share = lahunv1share * 100,
 # Projection
 usda <- usda %>% st_transform(4326)
 
+# Add full, clean county names
+countyfips <- get(data("fips_codes")) %>% filter(state == "VA")
+countyfips$FIPS <- paste0(countyfips$state_code, countyfips$county_code)
+countyfips <- countyfips %>% select(county, FIPS)
+
+usda$FIPS <- paste0(usda$STATEFP, usda$COUNTYFP)
+
+usda <- left_join(usda, countyfips, by = "FIPS")
+
+# Prepare areaname variable
+usda$areaname <- paste0(usda$NAMELSAD, ", ", usda$county, ", ", "Virginia")
+
 
 #
 # Write -------------------------------------------------------------------------------
