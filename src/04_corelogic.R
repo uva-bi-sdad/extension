@@ -451,14 +451,23 @@ leaflet(data = testplot[testplot$fips_code == 51005, ], options = leafletOptions
 # Write out -------------------------------------------------
 #
 
+# For processing
 data_writeout <- st_as_sf(ruraldata_filtered, coords = c("longitude", "latitude"))
 
 st_crs(data_writeout) <- 4326
 data_writeout <- st_transform(data_writeout, 4326)
 
+write_rds(data_writeout, "./data/working/corelogic/final_corelogic_forprocessing.rds")
+
+
+# Add full, clean county names and select for app
+countyfips <- get(data("fips_codes")) %>% filter(state == "VA")
+countyfips$FIPS <- paste0(countyfips$state_code, countyfips$county_code)
+countyfips <- countyfips %>% select(county, FIPS)
+
+data_writeout <- data_writeout %>% select("composite_property_linkage_key", "fips_code", "geometry")
+data_writeout <- left_join(data_writeout, countyfips, by = c("fips_code" = "FIPS"))
+data_writeout <- data_writeout %>% select(-fips_code)
+
 write_rds(data_writeout, "./data/working/corelogic/final_corelogic.rds")
-
-
-
-
 

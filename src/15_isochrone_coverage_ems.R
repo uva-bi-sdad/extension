@@ -265,3 +265,31 @@ write_rds(ems_8_countywide_coverage_final, "./data/working/ems/final_ems_8_count
 write_rds(ems_10_countywide_coverage_final, "./data/working/ems/final_ems_10_countywide_coverage.rds")
 write_rds(ems_12_countywide_coverage_final, "./data/working/ems/final_ems_12_countywide_coverage.rds")
 
+
+#
+# Add county names -------------------------------------------------
+#
+
+# Prepare
+countyfips <- get(data("fips_codes")) %>% filter(state == "VA")
+countyfips$FIPS <- paste0(countyfips$state_code, countyfips$county_code)
+countyfips <- countyfips %>% select(county, FIPS)
+
+# Read
+final_ems_8_countywide_coverage <- read_rds("./data/working/ems/final_ems_8_countywide_coverage.rds")
+final_ems_10_countywide_coverage <- read_rds("./data/working/ems/final_ems_10_countywide_coverage.rds")
+final_ems_12_countywide_coverage <- read_rds("./data/working/ems/final_ems_12_countywide_coverage.rds")
+
+# Join
+final_ems_8_countywide_coverage <- left_join(final_ems_8_countywide_coverage, countyfips, by = c("geoid" = "FIPS"))
+final_ems_10_countywide_coverage <- left_join(final_ems_10_countywide_coverage, countyfips, by = c("geoid" = "FIPS"))
+final_ems_12_countywide_coverage <- left_join(final_ems_12_countywide_coverage, countyfips, by = c("geoid" = "FIPS"))
+
+# Write
+write_rds(final_ems_8_countywide_coverage, "./data/working/ems/final_ems_8_countywide_coverage.rds")
+write_rds(final_ems_10_countywide_coverage, "./data/working/ems/final_ems_10_countywide_coverage.rds")
+write_rds(final_ems_12_countywide_coverage, "./data/working/ems/final_ems_12_countywide_coverage.rds")
+
+
+
+

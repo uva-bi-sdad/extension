@@ -18,6 +18,12 @@ library(DT)
 data_usda <- read_rds("data/final_usda.rds")
 data_older <- read_rds("data/final_older.rds")
 data_internet <- read_rds("data/final_internet.rds")
+data_corelogic <- read_excel("data/final_corelogic.rds")
+
+data_ems <- read_rds("data/final_ems_forapp.rds")
+data_ems8_county <- read_rds("data/final_ems_8_countywide_coverage.rds")
+data_ems10_county <- read_rds("data/final_ems_10_countywide_coverage.rds")
+data_ems12_county <- read_rds("data/final_ems_12_countywide_coverage.rds")
 
 data_measures <- read_excel("data/measures.xlsx")
 
@@ -303,7 +309,7 @@ server <- function(input, output){
   
   
   #
-  # Map function ------------------------------------------
+  # Map function: Base maps ------------------------------------------
   #
   
   create_plot <- function(data, myvar, myvarlabel) {
@@ -339,6 +345,52 @@ server <- function(input, output){
                 na.label = "Not Available")
   }
   
+  
+  #
+  # Map function: Countywide isochrones ----------------------------------
+  #
+  
+  output$ems_iso_county <- renderLeaflet({
+    colors <- c("#232d4b","#2c4f6b","#0e879c","#60999a","#d1e0bf","#d9e12b","#e6ce3a","#e6a01d","#e57200","#fdfdfd")
+    
+    m1 <- leaflet(options = leafletOptions(minZoom = 10)) %>%
+      addProviderTiles(providers$CartoDB.Positron) %>%
+      addCircles(data = data_corelogic, 
+                 fillColor = colors[5],
+                 fillOpacity = .8, 
+                 stroke = FALSE, 
+                 group = "Residential Properties") %>%
+      addPolygons(data = data_ems8_county, 
+                  fillColor = colors[1],
+                  fillOpacity = .8, 
+                  stroke = FALSE, 
+                  group = "8 Minute Isochrones") %>%
+      addPolygons(data = data_ems10_county, 
+                  fillColor = colors[1],
+                  fillOpacity = .8, 
+                  stroke = FALSE, 
+                  group = "10 Minute Isochrones") %>%
+      addPolygons(data = data_ems12_county, 
+                  fillColor = colors[1],
+                  fillOpacity = .8, 
+                  stroke = FALSE, 
+                  group = "12 Minute Isochrones") %>%
+      addMarkers(data = data_ems,
+                 label = labels,
+                 labelOptions = labelOptions(direction = "bottom",
+                                             style = list(
+                                               "font-size" = "12px",
+                                               "border-color" = "rgba(0,0,0,0.5)",
+                                               direction = "auto")))  %>%
+      addLayersControl(
+        position = "topright",
+        overlayGroups = c("8 Minute Isochrones",
+                          "10 Minute Isochrones",
+                          "12 Minute Isochrones",
+                          "Residential Properties"),
+        options = layersControlOptions(collapsed = FALSE))
+    m1 
+  })
   
   #
   # OUTPUT: Plot - USDA ------------------------------------------

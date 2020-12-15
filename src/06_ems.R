@@ -81,9 +81,23 @@ ems <- st_transform(ems, crs = 4326)
 write_rds(ems, "./data/working/ems/final_ems.rds")
 
 
+#
+# For app ----------------------------------------------------------------------------
+#
+
+# Select
+final_ems <- final_ems %>% select("objectid", "id", "address", "city", "state", "zip", "county", 
+                                  "geoid", "naicsdescr", "name", "geometry") %>%
+                           rename("countyname" = "county")
 
 
+# Add clean county name
+countyfips <- get(data("fips_codes")) %>% filter(state == "VA")
+countyfips$FIPS <- paste0(countyfips$state_code, countyfips$county_code)
+countyfips <- countyfips %>% select(county, FIPS)
 
+final_ems <- left_join(final_ems, countyfips, by = c("geoid" = "FIPS"))
 
-
+# Write
+write_rds(final_ems, "./data/working/ems/final_ems_forapp.rds")
 
