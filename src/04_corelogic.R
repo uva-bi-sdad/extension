@@ -4,6 +4,7 @@ library(readr)
 library(sf)
 library(naniar)
 library(leaflet)
+library(tidycensus)
 
 
 #
@@ -465,7 +466,7 @@ countyfips <- get(data("fips_codes")) %>% filter(state == "VA")
 countyfips$FIPS <- paste0(countyfips$state_code, countyfips$county_code)
 countyfips <- countyfips %>% select(county, FIPS)
 
-data_writeout <- data_writeout %>% select("composite_property_linkage_key", "fips_code", "geometry")
+data_writeout <- data_writeout %>% select("fips_code", "geometry")
 data_writeout <- left_join(data_writeout, countyfips, by = c("fips_code" = "FIPS"))
 data_writeout <- data_writeout %>% select(-fips_code)
 

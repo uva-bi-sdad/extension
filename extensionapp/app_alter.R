@@ -1,4 +1,5 @@
 library(shiny)
+library(shinycssloaders)
 library(dashboardthemes)
 library(shinydashboard)
 library(shinydashboardPlus)
@@ -18,12 +19,14 @@ library(DT)
 data_usda <- read_rds("data/final_usda.rds")
 data_older <- read_rds("data/final_older.rds")
 data_internet <- read_rds("data/final_internet.rds")
-data_corelogic <- read_excel("data/final_corelogic.rds")
+data_corelogic <- read_rds("data/final_corelogic.rds")
 
 data_ems <- read_rds("data/final_ems_forapp.rds")
 data_ems8_county <- read_rds("data/final_ems_8_countywide_coverage.rds")
 data_ems10_county <- read_rds("data/final_ems_10_countywide_coverage.rds")
 data_ems12_county <- read_rds("data/final_ems_12_countywide_coverage.rds")
+
+data_borders <- read_rds("data/final_countyborders.rds")
 
 data_measures <- read_excel("data/measures.xlsx")
 
@@ -35,6 +38,9 @@ data_measures <- read_excel("data/measures.xlsx")
 countylist_usda <- sort(unique(data_usda$county))
 countylist_older <- sort(unique(data_older$county))
 countylist_internet <- sort(unique(data_internet$county))
+
+countylist_ems <- sort(unique(data_ems$county))
+
 
 #
 # Create variable choice vectors ------------------------------------------------
@@ -72,6 +78,7 @@ names(choices_internet) <- c("Percent Households without a Computer", "Percent H
                              "Percent Households with Cellular Internet", "Percent Households with Dial-Up Internet",
                              "Percent Households with Broadband Internet")
 
+
 #
 # Other prep --------------------------------------------
 #
@@ -79,6 +86,9 @@ names(choices_internet) <- c("Percent Households without a Computer", "Percent H
 # Fix leaflet legend NA issue
 css_fix <- "div.info.legend.leaflet-control br {clear: both;}"
 html_fix <- as.character(htmltools::tags$style(type = "text/css", css_fix))
+
+# Spinner
+options(spinner.color = "#f0f0f0", spinner.color.background = "#ffffff", spinner.size = 3, spinner.type = 7)
 
 
 #
@@ -161,7 +171,7 @@ ui <- dashboardPage(
                                    multiple = F, width = "100%", choices = c(countylist_older)),
                        selectInput("whichvar_older", "Select Variable:", width = "100%", choices = choices_older),
                        br(),
-                       leafletOutput("plot_older"))
+                       withSpinner(leafletOutput("plot_older")))
       ),
       
       #
@@ -177,7 +187,7 @@ ui <- dashboardPage(
                                    multiple = F, width = "100%", choices = c(countylist_usda)),
                        selectInput("whichvar_usda", "Select Variable:", width = "100%", choices = choices_usda),
                        br(),
-                       leafletOutput("plot_usda"))
+                       withSpinner(leafletOutput("plot_usda")))
       ),
       
       #
@@ -193,7 +203,7 @@ ui <- dashboardPage(
                                    multiple = F, width = "100%", choices = c(countylist_internet)),
                        selectInput("whichvar_internet", "Select Variable:", width = "100%", choices = choices_internet),
                        br(),
-                       leafletOutput("plot_internet"))
+                       withSpinner(leafletOutput("plot_internet")))
       ),
       
       #
@@ -201,7 +211,21 @@ ui <- dashboardPage(
       #
       
       tabItem(tabName = "ems",
-              fluidRow(style = "margin: 6px;")
+              fluidRow(style = "margin: 6px;",
+                       h1(strong("Emergency Medical Services Station Access"), align = "center"),
+                       br(),
+                       selectInput("whichcounty_ems", "Select County:", 
+                                   selected = "Accomack County",
+                                   multiple = F, width = "100%", choices = c(countylist_ems)),
+                       br(),
+                       column(width = 9, 
+                          withSpinner(leafletOutput("plot_ems_iso_county", height = "600px"))
+                          ),
+                       column(width = 3,
+                              fluidRow(valueBoxOutput("box_ems_countywide_8", width = "100%")),
+                              fluidRow(valueBoxOutput("box_ems_countywide_10", width = "100%")),
+                              fluidRow(valueBoxOutput("box_ems_countywide_12", width = "100%")))
+              )
       ),
       
       #
@@ -350,33 +374,50 @@ server <- function(input, output){
   # Map function: Countywide isochrones ----------------------------------
   #
   
-  output$ems_iso_county <- renderLeaflet({
+  labels_ems <- lapply(
+    paste("<strong>Name: </strong>",
+          data_ems$name,
+          "<br />",
+          "<strong>Service Type: </strong>",
+          data_ems$naicsdescr,
+          "<br />",
+          "<strong>Address:</strong>",
+          paste0(data_ems$address, ", ", data_ems$city, ", VA ", data_ems$zip)
+    ),
+    htmltools::HTML
+  )
+  
+  create_plot_countywide <- function(data_labels, data_county_borders, data_county_points, data_county_residences, 
+                                     data_county_8, data_county_10, data_county_12) {
+    
     colors <- c("#232d4b","#2c4f6b","#0e879c","#60999a","#d1e0bf","#d9e12b","#e6ce3a","#e6a01d","#e57200","#fdfdfd")
     
     m1 <- leaflet(options = leafletOptions(minZoom = 10)) %>%
       addProviderTiles(providers$CartoDB.Positron) %>%
-      addCircles(data = data_corelogic, 
+      addPolygons(data = data_county_borders,
+                  stroke = T, weight = 2, color = "grey", fillOpacity = 0) %>%
+      addCircles(data = data_county_residences, 
                  fillColor = colors[5],
                  fillOpacity = .8, 
                  stroke = FALSE, 
                  group = "Residential Properties") %>%
-      addPolygons(data = data_ems8_county, 
+      addPolygons(data = data_county_8, 
                   fillColor = colors[1],
                   fillOpacity = .8, 
                   stroke = FALSE, 
                   group = "8 Minute Isochrones") %>%
-      addPolygons(data = data_ems10_county, 
+      addPolygons(data = data_county_10, 
                   fillColor = colors[1],
                   fillOpacity = .8, 
                   stroke = FALSE, 
                   group = "10 Minute Isochrones") %>%
-      addPolygons(data = data_ems12_county, 
+      addPolygons(data = data_county_12, 
                   fillColor = colors[1],
                   fillOpacity = .8, 
                   stroke = FALSE, 
                   group = "12 Minute Isochrones") %>%
-      addMarkers(data = data_ems,
-                 label = labels,
+      addMarkers(data = data_county_points,
+                 label = data_labels,
                  labelOptions = labelOptions(direction = "bottom",
                                              style = list(
                                                "font-size" = "12px",
@@ -389,8 +430,58 @@ server <- function(input, output){
                           "12 Minute Isochrones",
                           "Residential Properties"),
         options = layersControlOptions(collapsed = FALSE))
+    
     m1 
+  
+  }
+  
+  
+  #
+  # Value box function: Countywide isochrones ----------------------------------
+  #
+  
+  create_countywide_coverage <- function(data, coveragelabel) {
+    
+  valueBox(
+    paste0(round(data, 2), "%"), coveragelabel, icon = icon("fas fa-ambulance"),
+    color = "olive", width = "100%"
+  )
+    
+  }
+  
+  #
+  # OUTPUT: Countywide Coverage Box - EMS
+  #
+  
+  box_ems_8 <- reactive({data_ems8_county %>% filter(county == input$whichcounty_ems) %>% pull(ems_countywide_coverage_8)})
+  box_ems_10 <- reactive({data_ems10_county %>% filter(county == input$whichcounty_ems) %>% pull(ems_countywide_coverage_10)})
+  box_ems_12 <- reactive({data_ems12_county %>% filter(county == input$whichcounty_ems) %>% pull(ems_countywide_coverage_12)})
+   
+  output$box_ems_countywide_8 <- renderValueBox({
+    create_countywide_coverage(box_ems_8(), "Coverage at 8 Minute Drive")
   })
+  output$box_ems_countywide_10 <- renderValueBox({
+    create_countywide_coverage(box_ems_10(), "Coverage at 10 Minute Drive")
+  })
+  output$box_ems_countywide_12 <- renderValueBox({
+    create_countywide_coverage(box_ems_12(), "Coverage at 12 Minute Drive")
+  })
+  
+  #
+  # OUTPUT: Plot - Countywide isochrones - EMS ------------------------------------------
+  #
+  
+  plot_ems_borders <- reactive({data_borders %>% filter(county == input$whichcounty_ems)})
+  plot_ems_points <- reactive({data_ems %>% filter(county == input$whichcounty_ems)})
+  plot_ems_residences <- reactive({data_corelogic %>% filter(county == input$whichcounty_ems)})
+  plot_ems_8 <- reactive({data_ems8_county %>% filter(county == input$whichcounty_ems)})
+  plot_ems_10 <- reactive({data_ems10_county %>% filter(county == input$whichcounty_ems)})
+  plot_ems_12 <- reactive({data_ems12_county %>% filter(county == input$whichcounty_ems)})
+  
+  output$plot_ems_iso_county <- renderLeaflet({
+    create_plot_countywide(labels_ems, plot_ems_borders(), plot_ems_points(), plot_ems_residences(), plot_ems_8(), plot_ems_10(), plot_ems_12())
+  })
+  
   
   #
   # OUTPUT: Plot - USDA ------------------------------------------

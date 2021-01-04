@@ -98,6 +98,14 @@ countyfips <- countyfips %>% select(county, FIPS)
 
 final_ems <- left_join(final_ems, countyfips, by = c("geoid" = "FIPS"))
 
+# Select rural counties only (according to VDH) 
+rural <- read_csv("./data/original/srhp_rurality_2020/omb_srhp_rurality.csv", 
+                  col_names = TRUE, col_types = list(col_character(), col_factor(), col_factor()))
+rural <- rural %>% filter(RuralUrban == "R") %>% select(FIPS)
+
+final_ems <- final_ems %>% filter(final_ems$geoid %in% rural$FIPS)
+final_ems <- final_ems %>% select(-objectid, -id)
+
 # Write
 write_rds(final_ems, "./data/working/ems/final_ems_forapp.rds")
 
