@@ -15,7 +15,7 @@ rural <- read_csv("./data/original/srhp_rurality_2020/omb_srhp_rurality.csv",
 rural <- rural %>% filter(RuralUrban == "R")
 
 # Read in property data
-properties <- read_rds("./data/working/corelogic/final_corelogic.rds")
+properties <- read_rds("./data/working/corelogic/final_corelogic_forprocessing.rds")
 properties <- properties %>% filter(properties$fips_code %in% rural$FIPS)
 st_crs(properties)
 

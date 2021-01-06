@@ -3,6 +3,7 @@ library(tidyverse)
 library(leaflet)
 library(waldo)
 library(purrr)
+library(tidycensus)
 
 
 #
@@ -15,7 +16,7 @@ rural <- read_csv("./data/original/srhp_rurality_2020/omb_srhp_rurality.csv",
 rural <- rural %>% filter(RuralUrban == "R")
 
 # Read in property data
-properties <- read_rds("./data/working/corelogic/final_corelogic.rds")
+properties <- read_rds("./data/working/corelogic/final_corelogic_forprocessing.rds")
 properties <- properties %>% filter(properties$fips_code %in% rural$FIPS)
 st_crs(properties)
 
@@ -162,6 +163,31 @@ ems_12_coverage_final <- mget(ls(pattern = "^ems_12_coverage_")) %>% bind_rows()
 write_rds(ems_8_coverage_final, "./data/working/ems/final_ems_8_coverage.rds")
 write_rds(ems_10_coverage_final, "./data/working/ems/final_ems_10_coverage.rds")
 write_rds(ems_12_coverage_final, "./data/working/ems/final_ems_12_coverage.rds")
+
+
+#
+# Add county names -------------------------------------------------
+#
+
+# Prepare
+countyfips <- get(data("fips_codes")) %>% filter(state == "VA")
+countyfips$FIPS <- paste0(countyfips$state_code, countyfips$county_code)
+countyfips <- countyfips %>% select(county, FIPS)
+
+ems_8_coverage_final$county <- NULL
+ems_10_coverage_final$county <- NULL
+ems_12_coverage_final$county <- NULL
+
+# Join
+final_ems_8_coverage <- left_join(ems_8_coverage_final, countyfips, by = c("geoid" = "FIPS"))
+final_ems_10_coverage <- left_join(ems_10_coverage_final, countyfips, by = c("geoid" = "FIPS"))
+final_ems_12_coverage <- left_join(ems_12_coverage_final, countyfips, by = c("geoid" = "FIPS"))
+
+# Write
+write_rds(final_ems_8_coverage, "./data/working/ems/final_ems_8_coverage.rds")
+write_rds(final_ems_10_coverage, "./data/working/ems/final_ems_10_coverage.rds")
+write_rds(final_ems_12_coverage, "./data/working/ems/final_ems_12_coverage.rds")
+
 
 
 #

@@ -3,6 +3,7 @@ library(tidyverse)
 library(leaflet)
 library(waldo)
 library(purrr)
+library(tidycensus)
 
 
 #
@@ -15,7 +16,7 @@ rural <- read_csv("./data/original/srhp_rurality_2020/omb_srhp_rurality.csv",
 rural <- rural %>% filter(RuralUrban == "R")
 
 # Read in property data
-properties <- read_rds("./data/working/corelogic/final_corelogic.rds")
+properties <- read_rds("./data/working/corelogic/final_corelogic_forprocessing.rds")
 properties <- properties %>% filter(properties$fips_code %in% rural$FIPS)
 st_crs(properties)
 
@@ -134,6 +135,24 @@ write_rds(wifi_15_coverage_final, "./data/working/wifi/final_wifi_15_coverage.rd
 
 
 #
+# Add county names -------------------------------------------------
+#
+
+# Prepare
+countyfips <- get(data("fips_codes")) %>% filter(state == "VA")
+countyfips$FIPS <- paste0(countyfips$state_code, countyfips$county_code)
+countyfips <- countyfips %>% select(county, FIPS)
+
+# Join
+final_wifi_10_coverage <- left_join(wifi_10_coverage_final, countyfips, by = c("GEOID" = "FIPS"))
+final_wifi_15_coverage <- left_join(wifi_15_coverage_final, countyfips, by = c("GEOID" = "FIPS"))
+
+# Write
+write_rds(final_wifi_10_coverage, "./data/working/wifi/final_wifi_10_coverage.rds")
+write_rds(final_wifi_15_coverage, "./data/working/wifi/final_wifi_15_coverage.rds")
+
+
+#
 # Scale: UNION -------------------------------------------------
 #
 
@@ -203,4 +222,22 @@ wifi_15_countywide_coverage_final <- mget(ls(pattern = "^wifi_15_countywide_cove
 
 write_rds(wifi_10_countywide_coverage_final, "./data/working/wifi/final_wifi_10_countywide_coverage.rds")
 write_rds(wifi_15_countywide_coverage_final, "./data/working/wifi/final_wifi_15_countywide_coverage.rds")
+
+
+#
+# Add county names -------------------------------------------------
+#
+
+# Prepare
+countyfips <- get(data("fips_codes")) %>% filter(state == "VA")
+countyfips$FIPS <- paste0(countyfips$state_code, countyfips$county_code)
+countyfips <- countyfips %>% select(county, FIPS)
+
+# Join
+final_wifi_10_countywide_coverage <- left_join(wifi_10_countywide_coverage_final, countyfips, by = c("GEOID" = "FIPS"))
+final_wifi_15_countywide_coverage <- left_join(wifi_15_countywide_coverage_final, countyfips, by = c("GEOID" = "FIPS"))
+
+# Write
+write_rds(final_wifi_10_countywide_coverage, "./data/working/wifi/final_wifi_10_countywide_coverage.rds")
+write_rds(final_wifi_15_countywide_coverage, "./data/working/wifi/final_wifi_15_countywide_coverage.rds")
 

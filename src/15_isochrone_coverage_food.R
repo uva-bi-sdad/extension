@@ -3,6 +3,7 @@ library(tidyverse)
 library(leaflet)
 library(waldo)
 library(purrr)
+library(stringr)
 
 
 #
@@ -15,7 +16,7 @@ rural <- read_csv("./data/original/srhp_rurality_2020/omb_srhp_rurality.csv",
 rural <- rural %>% filter(RuralUrban == "R")
 
 # Read in property data
-properties <- read_rds("./data/working/corelogic/final_corelogic.rds")
+properties <- read_rds("./data/working/corelogic/final_corelogic_forprocessing.rds")
 properties <- properties %>% filter(properties$fips_code %in% rural$FIPS)
 st_crs(properties)
 
@@ -138,6 +139,12 @@ for(i in food_fips){
 food_10_coverage_final <- mget(ls(pattern = "^food_10_coverage_")) %>% bind_rows()
 food_15_coverage_final <- mget(ls(pattern = "^food_15_coverage_")) %>% bind_rows()
 
+food_10_coverage_final <- food_10_coverage_final %>% rename("county" = "countyname")
+food_15_coverage_final <- food_15_coverage_final %>% rename("county" = "countyname")
+
+food_10_coverage_final$county <- str_replace_all(food_10_coverage_final$county, "City", "city")
+food_15_coverage_final$county <- str_replace_all(food_15_coverage_final$county, "City", "city")
+
 write_rds(food_10_coverage_final, "./data/working/foodretail/final_food_10_coverage.rds")
 write_rds(food_15_coverage_final, "./data/working/foodretail/final_food_15_coverage.rds")
 
@@ -155,9 +162,9 @@ for(i in food_fips){
   fooddata <- food_10 %>% 
     filter(fips == i)
   
-  whichgeoid <- fooddata$GEOID[1]
+  whichgeoid <- fooddata$fips[1]
   fooddata <- fooddata %>% summarize(geometry = st_union(geometry))
-  fooddata$GEOID <- whichgeoid
+  fooddata$fips <- whichgeoid
   
   int <- st_intersection(propertydata, fooddata)
   cov <- (nrow(int) / nrow(propertydata)) * 100
@@ -183,9 +190,9 @@ for(i in food_fips){
   fooddata <- food_15 %>% 
     filter(fips == i)
   
-  whichgeoid <- fooddata$GEOID[1]
+  whichgeoid <- fooddata$fips[1]
   fooddata <- fooddata %>% summarize(geometry = st_union(geometry))
-  fooddata$GEOID <- whichgeoid
+  fooddata$fips <- whichgeoid
   
   int <- st_intersection(propertydata, fooddata)
   cov <- (nrow(int) / nrow(propertydata)) * 100
