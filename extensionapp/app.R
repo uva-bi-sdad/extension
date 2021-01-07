@@ -18,7 +18,7 @@ library(DT)
 # Read in data
 data_usda <- read_rds("data/final_usda.rds")
 data_older <- read_rds("data/final_older.rds")
-data_internet <- read_rds("data/final_internet.rds")
+data_bband <- read_rds("data/final_internet.rds")
 data_corelogic <- read_rds("data/final_corelogic.rds")
 
 data_ems <- read_rds("data/final_ems_forapp.rds")
@@ -30,9 +30,9 @@ data_wifi <- read_rds("data/final_wifi_forapp.rds")
 data_wifi10_county <- read_rds("data/final_wifi_10_countywide_coverage.rds")
 data_wifi15_county <- read_rds("data/final_wifi_15_countywide_coverage.rds")
 
-data_food <- read_rds("data/final_foodretail_forapp.rds")
-data_food10_county <- read_rds("data/final_food_10_countywide_coverage.rds")
-data_food15_county <- read_rds("data/final_food_15_countywide_coverage.rds")
+#data_food <- read_rds("data/final_foodretail_forapp.rds")
+#data_food10_county <- read_rds("data/final_food_10_countywide_coverage.rds")
+#data_food15_county <- read_rds("data/final_food_15_countywide_coverage.rds")
 
 data_borders <- read_rds("data/final_countyborders.rds")
 
@@ -45,9 +45,10 @@ data_measures <- read_excel("data/measures.xlsx")
 
 countylist_usda <- sort(unique(data_usda$county))
 countylist_older <- sort(unique(data_older$county))
-countylist_internet <- sort(unique(data_internet$county))
+countylist_bband <- sort(unique(data_bband$county))
 
 countylist_ems <- sort(unique(data_ems$county))
+countylist_wifi <- sort(unique(data_wifi$county))
 
 
 #
@@ -75,11 +76,11 @@ names(choices_older) <- c("Percent Population Age 65 or Older", "Percent Older A
   "Percent Older Adults in Labor Force", "Percent Households with Members Age 60 or Older", "Percent Married Couple Households with Members Age 60 or Older",
   "Percent Single Households with Householder Age 60 or Older", "Percent Non-Family Households with Members Age 60 or Older")
 
-# Internet
-choices_internet <- c("nocomputer", "laptop", "smartphone", "tablet", "othercomputer",
+# Broadband
+choices_bband <- c("nocomputer", "laptop", "smartphone", "tablet", "othercomputer",
                       "nointernet", "satellite", "cellular", "dialup", "broadband")
 
-names(choices_internet) <- c("Percent Households without a Computer", "Percent Households with a Desktop or Laptop Computer",
+names(choices_bband) <- c("Percent Households without a Computer", "Percent Households with a Desktop or Laptop Computer",
                              "Percent Households with a Smartphone", "Percent Households with a Tablet Computer",
                              "Percent Households with Other Type of Computer",
                              "Percent Households without Internet Access", "Percent Households with Satellite Internet",
@@ -124,6 +125,7 @@ ui <- dashboardPage(
                          text = "Explore Access", 
                          icon = icon("info-circle"),
                          menuSubItem(text = "Food Retail", tabName = "food", icon = NULL),
+                         menuSubItem(text = "Broadband", tabName = "bband", icon = NULL),
                          menuSubItem(text = "Free Wi-Fi Hotspots", tabName = "wifi", icon = NULL),
                          menuSubItem(text = "Emergency Medical Service Stations", tabName = "ems", icon = NULL)),
                 menuItem(startExpanded = F,
@@ -199,19 +201,40 @@ ui <- dashboardPage(
       ),
       
       #
+      # SUBMENU: Access - broadband --------------------------------------------------------------------------
+      #
+      
+      tabItem(tabName = "bband",
+              fluidRow(style = "margin: 6px;",
+                       h1(strong("Internet and Computer Access"), align = "center"),
+                       br(),
+                       selectInput("whichcounty_bband", "Select County:", 
+                                   selected = "Accomack County",
+                                   multiple = F, width = "100%", choices = c(countylist_bband)),
+                       selectInput("whichvar_bband", "Select Variable:", width = "100%", choices = choices_bband),
+                       br(),
+                       withSpinner(leafletOutput("plot_bband")))
+      ),
+      
+      #
       # SUBMENU: Access - wifi --------------------------------------------------------------------------
       #
       
       tabItem(tabName = "wifi",
               fluidRow(style = "margin: 6px;",
-                       h1(strong("Internet and Computer Access"), align = "center"),
+                       h1(strong("Free Wi-Fi Hotspots"), align = "center"),
                        br(),
-                       selectInput("whichcounty_internet", "Select County:", 
+                       selectInput("whichcounty_wifi", "Select County:", 
                                    selected = "Accomack County",
-                                   multiple = F, width = "100%", choices = c(countylist_internet)),
-                       selectInput("whichvar_internet", "Select Variable:", width = "100%", choices = choices_internet),
+                                   multiple = F, width = "100%", choices = c(countylist_wifi)),
                        br(),
-                       withSpinner(leafletOutput("plot_internet")))
+                       column(width = 9, 
+                              withSpinner(leafletOutput("plot_wifi_iso_county", height = "600px"))
+                       ),
+                       column(width = 3,
+                              fluidRow(valueBoxOutput("box_wifi_countywide_10", width = "100%")),
+                              fluidRow(valueBoxOutput("box_wifi_countywide_15", width = "100%")))
+              )
       ),
       
       #
@@ -395,7 +418,18 @@ server <- function(input, output){
     htmltools::HTML
   )
   
-  create_plot_countywide <- function(data_labels, data_county_borders, data_county_points, data_county_residences, 
+  labels_wifi <- lapply(
+    paste("<strong>Name: </strong>",
+          data_wifi$name,
+          "<br />",
+          "<strong>Address:</strong>",
+          paste0(data_wifi$address, ", ", data_wifi$city_1, ", VA ", data_wifi$zip_code)
+    ),
+    htmltools::HTML
+  )
+  
+  # For 8, 10, 12
+  create_plot_countywide3 <- function(data_labels, data_county_borders, data_county_points, data_county_residences, 
                                      data_county_8, data_county_10, data_county_12) {
     
     colors <- c("#232d4b","#2c4f6b","#0e879c","#60999a","#d1e0bf","#d9e12b","#e6ce3a","#e6a01d","#e57200","#fdfdfd")
@@ -440,7 +474,48 @@ server <- function(input, output){
         options = layersControlOptions(collapsed = FALSE))
     
     m1 
+  }
   
+  # For 10, 15
+  create_plot_countywide2 <- function(data_labels, data_county_borders, data_county_points, data_county_residences, 
+                                      data_county_10, data_county_15) {
+    
+    colors <- c("#232d4b","#2c4f6b","#0e879c","#60999a","#d1e0bf","#d9e12b","#e6ce3a","#e6a01d","#e57200","#fdfdfd")
+    
+    m1 <- leaflet(options = leafletOptions(minZoom = 10)) %>%
+      addProviderTiles(providers$CartoDB.Positron) %>%
+      addPolygons(data = data_county_borders,
+                  stroke = T, weight = 2, color = "grey", fillOpacity = 0) %>%
+      addCircles(data = data_county_residences, 
+                 fillColor = colors[5],
+                 fillOpacity = .8, 
+                 stroke = FALSE, 
+                 group = "Residential Properties") %>%
+      addPolygons(data = data_county_10, 
+                  fillColor = colors[1],
+                  fillOpacity = .8, 
+                  stroke = FALSE, 
+                  group = "10 Minute Isochrones") %>%
+      addPolygons(data = data_county_15, 
+                  fillColor = colors[1],
+                  fillOpacity = .8, 
+                  stroke = FALSE, 
+                  group = "15 Minute Isochrones") %>%
+      addMarkers(data = data_county_points,
+                 label = data_labels,
+                 labelOptions = labelOptions(direction = "bottom",
+                                             style = list(
+                                               "font-size" = "12px",
+                                               "border-color" = "rgba(0,0,0,0.5)",
+                                               direction = "auto")))  %>%
+      addLayersControl(
+        position = "topright",
+        overlayGroups = c("10 Minute Isochrones",
+                          "15 Minute Isochrones",
+                          "Residential Properties"),
+        options = layersControlOptions(collapsed = FALSE))
+    
+    m1 
   }
   
   
@@ -448,17 +523,17 @@ server <- function(input, output){
   # Value box function: Countywide isochrones ----------------------------------
   #
   
-  create_countywide_coverage <- function(data, coveragelabel) {
+  create_countywide_coverage <- function(data, coveragelabel, iconname) {
     
   valueBox(
-    paste0(round(data, 2), "%"), coveragelabel, icon = icon("fas fa-ambulance"),
+    paste0(round(data, 2), "%"), coveragelabel, icon = icon(iconname),
     color = "olive", width = "100%"
   )
     
   }
   
   #
-  # OUTPUT: Countywide Coverage Box - EMS
+  # OUTPUT: Countywide Coverage Box - EMS ----------------------------------------
   #
   
   box_ems_8 <- reactive({data_ems8_county %>% filter(county == input$whichcounty_ems) %>% pull(ems_countywide_coverage_8)})
@@ -466,14 +541,30 @@ server <- function(input, output){
   box_ems_12 <- reactive({data_ems12_county %>% filter(county == input$whichcounty_ems) %>% pull(ems_countywide_coverage_12)})
    
   output$box_ems_countywide_8 <- renderValueBox({
-    create_countywide_coverage(box_ems_8(), "Coverage at 8 Minute Drive")
+    create_countywide_coverage(box_ems_8(), "Coverage at 8 Minute Drive", "fas fa-ambulance")
   })
   output$box_ems_countywide_10 <- renderValueBox({
-    create_countywide_coverage(box_ems_10(), "Coverage at 10 Minute Drive")
+    create_countywide_coverage(box_ems_10(), "Coverage at 10 Minute Drive", "fas fa-ambulance")
   })
   output$box_ems_countywide_12 <- renderValueBox({
-    create_countywide_coverage(box_ems_12(), "Coverage at 12 Minute Drive")
+    create_countywide_coverage(box_ems_12(), "Coverage at 12 Minute Drive", "fas fa-ambulance")
   })
+  
+  
+  #
+  # OUTPUT: Countywide Coverage Box - WIFI ----------------------------------------
+  #
+  
+  box_wifi_10 <- reactive({data_wifi10_county %>% filter(county == input$whichcounty_wifi) %>% pull(wifi_countywide_coverage_10)})
+  box_wifi_15 <- reactive({data_wifi15_county %>% filter(county == input$whichcounty_wifi) %>% pull(wifi_countywide_coverage_15)})
+  
+  output$box_wifi_countywide_10 <- renderValueBox({
+    create_countywide_coverage(box_wifi_10(), "Coverage at 10 Minute Drive", "fas fa-wifi")
+  })
+  output$box_wifi_countywide_15 <- renderValueBox({
+    create_countywide_coverage(box_wifi_15(), "Coverage at 15 Minute Drive", "fas fa-wifi")
+  })
+  
   
   #
   # OUTPUT: Plot - Countywide isochrones - EMS ------------------------------------------
@@ -487,7 +578,22 @@ server <- function(input, output){
   plot_ems_12 <- reactive({data_ems12_county %>% filter(county == input$whichcounty_ems)})
   
   output$plot_ems_iso_county <- renderLeaflet({
-    create_plot_countywide(labels_ems, plot_ems_borders(), plot_ems_points(), plot_ems_residences(), plot_ems_8(), plot_ems_10(), plot_ems_12())
+    create_plot_countywide3(labels_ems, plot_ems_borders(), plot_ems_points(), plot_ems_residences(), plot_ems_8(), plot_ems_10(), plot_ems_12())
+  })
+  
+  
+  #
+  # OUTPUT: Plot - Countywide isochrones - Wifi ------------------------------------------
+  #
+  
+  plot_wifi_borders <- reactive({data_borders %>% filter(county == input$whichcounty_wifi)})
+  plot_wifi_points <- reactive({data_wifi %>% filter(county == input$whichcounty_wifi)})
+  plot_wifi_residences <- reactive({data_corelogic %>% filter(county == input$whichcounty_wifi)})
+  plot_wifi_10 <- reactive({data_wifi10_county %>% filter(county == input$whichcounty_wifi)})
+  plot_wifi_15 <- reactive({data_wifi15_county %>% filter(county == input$whichcounty_wifi)})
+  
+  output$plot_wifi_iso_county <- renderLeaflet({
+    create_plot_countywide2(labels_wifi, plot_wifi_borders(), plot_wifi_points(), plot_wifi_residences(), plot_wifi_10(), plot_wifi_15())
   })
   
   
@@ -523,17 +629,17 @@ server <- function(input, output){
   
   
   #
-  # OUTPUT: Plot - Internet ------------------------------------------
+  # OUTPUT: Plot - Broadband ------------------------------------------
   #
   
-  plot_internet_data <- reactive({data_internet %>% filter(county == input$whichcounty_internet)})
-  plot_internet_var <- reactive({plot_internet_data()[[input$whichvar_internet]]})
+  plot_bband_data <- reactive({data_bband %>% filter(county == input$whichcounty_bband)})
+  plot_bband_var <- reactive({plot_bband_data()[[input$whichvar_bband]]})
   
-  output$plot_internet <- renderLeaflet({
+  output$plot_bband <- renderLeaflet({
     
-    var_label <- names(choices_older)[choices_internet == input$whichvar_internet]
+    var_label <- names(choices_older)[choices_bband == input$whichvar_bband]
     
-    create_plot(plot_internet_data(), plot_internet_var(), var_label)
+    create_plot(plot_bband_data(), plot_bband_var(), var_label)
   })
   
   

@@ -1,10 +1,3 @@
-# install.packages('readr', repos = 'http://cran.us.r-project.org')
-# install.packages('dplyr', repos = 'http://cran.us.r-project.org')
-# install.packages('osrm', repos = 'http://cran.us.r-project.org')
-# install.packages('sf', repos = 'http://cran.us.r-project.org')
-# install.packages('purrr', repos = 'http://cran.us.r-project.org')
-# install.packages('lwgeom', repos = 'http://cran.us.r-project.org')
-
 library(readr)
 library(dplyr)
 library(osrm)
