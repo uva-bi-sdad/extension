@@ -4,6 +4,7 @@ library(leaflet)
 library(waldo)
 library(purrr)
 library(stringr)
+library(tidycensus)
 
 
 #
@@ -219,3 +220,21 @@ food_15_countywide_coverage_final <- mget(ls(pattern = "^food_15_countywide_cove
 
 write_rds(food_10_countywide_coverage_final, "./data/working/foodretail/final_food_10_countywide_coverage.rds")
 write_rds(food_15_countywide_coverage_final, "./data/working/foodretail/final_food_15_countywide_coverage.rds")
+
+
+#
+# Add county names -------------------------------------------------
+#
+
+# Prepare
+countyfips <- get(data("fips_codes")) %>% filter(state == "VA")
+countyfips$FIPS <- paste0(countyfips$state_code, countyfips$county_code)
+countyfips <- countyfips %>% select(county, FIPS)
+
+# Join
+final_food_10_countywide_coverage <- left_join(food_10_countywide_coverage_final, countyfips, by = c("fips" = "FIPS"))
+final_food_15_countywide_coverage <- left_join(food_15_countywide_coverage_final, countyfips, by = c("fips" = "FIPS"))
+
+# Write
+write_rds(final_food_10_countywide_coverage, "./data/working/foodretail/final_food_10_countywide_coverage.rds")
+write_rds(final_food_15_countywide_coverage, "./data/working/foodretail/final_food_15_countywide_coverage.rds")
