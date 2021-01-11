@@ -97,8 +97,6 @@ leaflet(store_geocoded) %>%
   addCircleMarkers(stroke = FALSE, fillOpacity = 1, radius = 2)
 
 
-
-
 #
 # Write out --------------------------------------------------
 #
@@ -116,6 +114,4 @@ write_rds(store_geocoded_nonmiss, "./data/working/foodretail/foodretail_nonmiss.
 # Missing
 store_geocoded_miss <- store_geocoded %>% filter(is.na(longitude) | is.na(latitude))
 write_rds(store_geocoded_miss, "./data/working/foodretail/foodretail_missing.rds")
-
-
 

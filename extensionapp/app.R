@@ -30,9 +30,9 @@ data_wifi <- read_rds("data/final_wifi_forapp.rds")
 data_wifi10_county <- read_rds("data/final_wifi_10_countywide_coverage.rds")
 data_wifi15_county <- read_rds("data/final_wifi_15_countywide_coverage.rds")
 
-#data_food <- read_rds("data/final_foodretail_forapp.rds")
-#data_food10_county <- read_rds("data/final_food_10_countywide_coverage.rds")
-#data_food15_county <- read_rds("data/final_food_15_countywide_coverage.rds")
+data_food <- read_rds("data/final_foodretail_forapp.rds")
+data_food10_county <- read_rds("data/final_food_10_countywide_coverage.rds")
+data_food15_county <- read_rds("data/final_food_15_countywide_coverage.rds")
 
 data_borders <- read_rds("data/final_countyborders.rds")
 
@@ -49,6 +49,7 @@ countylist_bband <- sort(unique(data_bband$county))
 
 countylist_ems <- sort(unique(data_ems$county))
 countylist_wifi <- sort(unique(data_wifi$county))
+countylist_food <- sort(unique(data_food$county))
 
 
 #
@@ -124,7 +125,8 @@ ui <- dashboardPage(
                 menuItem(startExpanded = F,
                          text = "Explore Access", 
                          icon = icon("info-circle"),
-                         menuSubItem(text = "Food Retail", tabName = "food", icon = NULL),
+                         menuSubItem(text = "Food Security", tabName = "foodsec", icon = NULL),
+                         menuSubItem(text = "Food Retail", tabName = "foodretail", icon = NULL),
                          menuSubItem(text = "Broadband", tabName = "bband", icon = NULL),
                          menuSubItem(text = "Free Wi-Fi Hotspots", tabName = "wifi", icon = NULL),
                          menuSubItem(text = "Emergency Medical Service Stations", tabName = "ems", icon = NULL)),
@@ -185,10 +187,10 @@ ui <- dashboardPage(
       ),
       
       #
-      # SUBMENU: Access - food --------------------------------------------------------------------------
+      # SUBMENU: Access - food security--------------------------------------------------------------------------
       #
       
-      tabItem(tabName = "food",
+      tabItem(tabName = "foodsec",
               fluidRow(style = "margin: 6px;",
                        h1(strong("Food Security"), align = "center"),
                        br(),
@@ -199,6 +201,29 @@ ui <- dashboardPage(
                        br(),
                        withSpinner(leafletOutput("plot_usda")))
       ),
+      
+      
+      #
+      # SUBMENU: Access - food retail --------------------------------------------------------------------------
+      #
+      
+      tabItem(tabName = "foodretail",
+              fluidRow(style = "margin: 6px;",
+                       h1(strong("Food Retail Access"), align = "center"),
+                       br(),
+                       selectInput("whichcounty_food", "Select County:", 
+                                   selected = "Accomack County",
+                                   multiple = F, width = "100%", choices = c(countylist_food)),
+                       br(),
+                       column(width = 9, 
+                              withSpinner(leafletOutput("plot_food_iso_county", height = "600px"))
+                       ),
+                       column(width = 3,
+                              fluidRow(valueBoxOutput("box_food_countywide_10", width = "100%")),
+                              fluidRow(valueBoxOutput("box_food_countywide_15", width = "100%")))
+              )
+      ),
+      
       
       #
       # SUBMENU: Access - broadband --------------------------------------------------------------------------
@@ -215,6 +240,7 @@ ui <- dashboardPage(
                        br(),
                        withSpinner(leafletOutput("plot_bband")))
       ),
+      
       
       #
       # SUBMENU: Access - wifi --------------------------------------------------------------------------
@@ -236,6 +262,7 @@ ui <- dashboardPage(
                               fluidRow(valueBoxOutput("box_wifi_countywide_15", width = "100%")))
               )
       ),
+     
       
       #
       # SUBMENU: Access - EMS --------------------------------------------------------------------------
@@ -259,6 +286,7 @@ ui <- dashboardPage(
               )
       ),
       
+      
       #
       # SUBMENU: Data and methods - Measures --------------------------------------------------------------------------
       #
@@ -279,6 +307,7 @@ ui <- dashboardPage(
                        DTOutput("measurestable")
               )
       ),
+      
       
       #
       # SUBMENU: Data and methods - Data  --------------------------------------------------------------------------
@@ -329,6 +358,7 @@ ui <- dashboardPage(
               )
       ),
       
+      
       #
       # SUBMENU: About - This project -----------------------------------------------------------------------
       #
@@ -336,6 +366,7 @@ ui <- dashboardPage(
       tabItem(tabName = "thisproject",
               fluidRow(style = "margin: 6px;")
       ),
+      
       
       #
       # SUBMENU: About - Contact -----------------------------------------------------------------------
@@ -356,15 +387,16 @@ ui <- dashboardPage(
 
 server <- function(input, output){
   
+  
   #
-  # Options ------------------------------------------------------
+  # OPTIONS ------------------------------------------------------
   #
   
   map_colors <- c('#efe1c6', '#dccdb3', '#c9b8a0', '#b8a58d', '#a89179', '#987d65', '#896a52', '#7a573e', '#6b452b')
   
   
   #
-  # Map function: Base maps ------------------------------------------
+  # FUNCTION: Map: Base maps ------------------------------------------
   #
   
   create_plot <- function(data, myvar, myvarlabel) {
@@ -402,32 +434,9 @@ server <- function(input, output){
   
   
   #
-  # Map function: Countywide isochrones ----------------------------------
+  # FUNCTION: Map: Countywide isochrones ----------------------------------
   #
-  
-  labels_ems <- lapply(
-    paste("<strong>Name: </strong>",
-          data_ems$name,
-          "<br />",
-          "<strong>Service Type: </strong>",
-          data_ems$naicsdescr,
-          "<br />",
-          "<strong>Address:</strong>",
-          paste0(data_ems$address, ", ", data_ems$city, ", VA ", data_ems$zip)
-    ),
-    htmltools::HTML
-  )
-  
-  labels_wifi <- lapply(
-    paste("<strong>Name: </strong>",
-          data_wifi$name,
-          "<br />",
-          "<strong>Address:</strong>",
-          paste0(data_wifi$address, ", ", data_wifi$city_1, ", VA ", data_wifi$zip_code)
-    ),
-    htmltools::HTML
-  )
-  
+
   # For 8, 10, 12
   create_plot_countywide3 <- function(data_labels, data_county_borders, data_county_points, data_county_residences, 
                                      data_county_8, data_county_10, data_county_12) {
@@ -520,7 +529,7 @@ server <- function(input, output){
   
   
   #
-  # Value box function: Countywide isochrones ----------------------------------
+  # FUNCTION: Value box: Countywide isochrones ----------------------------------
   #
   
   create_countywide_coverage <- function(data, coveragelabel, iconname) {
@@ -531,6 +540,7 @@ server <- function(input, output){
   )
     
   }
+  
   
   #
   # OUTPUT: Countywide Coverage Box - EMS ----------------------------------------
@@ -567,6 +577,21 @@ server <- function(input, output){
   
   
   #
+  # OUTPUT: Countywide Coverage Box - FOOD RETAIL ----------------------------------------
+  #
+  
+  box_food_10 <- reactive({data_food10_county %>% filter(county == input$whichcounty_food) %>% pull(food_countywide_coverage_10)})
+  box_food_15 <- reactive({data_food15_county %>% filter(county == input$whichcounty_food) %>% pull(food_countywide_coverage_15)})
+  
+  output$box_food_countywide_10 <- renderValueBox({
+    create_countywide_coverage(box_food_10(), "Coverage at 10 Minute Drive", "fas fa-bread-slice")
+  })
+  output$box_food_countywide_15 <- renderValueBox({
+    create_countywide_coverage(box_food_15(), "Coverage at 15 Minute Drive", "fas fa-bread-slice")
+  })
+  
+  
+  #
   # OUTPUT: Plot - Countywide isochrones - EMS ------------------------------------------
   #
   
@@ -577,8 +602,23 @@ server <- function(input, output){
   plot_ems_10 <- reactive({data_ems10_county %>% filter(county == input$whichcounty_ems)})
   plot_ems_12 <- reactive({data_ems12_county %>% filter(county == input$whichcounty_ems)})
   
+  labels_ems <- reactive({
+    lapply(
+    paste("<strong>Name: </strong>",
+          plot_ems_points()$name,
+          "<br />",
+          "<strong>Service Type: </strong>",
+          plot_ems_points()$naicsdescr,
+          "<br />",
+          "<strong>Address:</strong>",
+          paste0(plot_ems_points()$address, ", ", plot_ems_points()$city, ", VA ", plot_ems_points()$zip)
+    ),
+    htmltools::HTML
+  )
+  })
+  
   output$plot_ems_iso_county <- renderLeaflet({
-    create_plot_countywide3(labels_ems, plot_ems_borders(), plot_ems_points(), plot_ems_residences(), plot_ems_8(), plot_ems_10(), plot_ems_12())
+    create_plot_countywide3(labels_ems(), plot_ems_borders(), plot_ems_points(), plot_ems_residences(), plot_ems_8(), plot_ems_10(), plot_ems_12())
   })
   
   
@@ -592,8 +632,62 @@ server <- function(input, output){
   plot_wifi_10 <- reactive({data_wifi10_county %>% filter(county == input$whichcounty_wifi)})
   plot_wifi_15 <- reactive({data_wifi15_county %>% filter(county == input$whichcounty_wifi)})
   
+  labels_wifi <- reactive({
+    lapply(
+    paste("<strong>Name: </strong>",
+          plot_wifi_points()$name,
+          "<br />",
+          "<strong>County: </strong>",
+          plot_wifi_points()$county,
+          "<br />",
+          "<strong>GEOID: </strong>",
+          plot_wifi_points()$GEOID,
+          "<br />",
+          "<strong>Address:</strong>",
+          paste0(plot_wifi_points()$address, ", ", plot_wifi_points()$city_1, ", VA ", plot_wifi_points()$zip_code)
+    ),
+    htmltools::HTML
+  )
+  })
+  
   output$plot_wifi_iso_county <- renderLeaflet({
-    create_plot_countywide2(labels_wifi, plot_wifi_borders(), plot_wifi_points(), plot_wifi_residences(), plot_wifi_10(), plot_wifi_15())
+    create_plot_countywide2(labels_wifi(), plot_wifi_borders(), plot_wifi_points(), plot_wifi_residences(), plot_wifi_10(), plot_wifi_15())
+  })
+  
+  
+  #
+  # OUTPUT: Plot - Countywide isochrones - Food retail ------------------------------------------
+  #
+  
+  plot_food_borders <- reactive({data_borders %>% filter(county == input$whichcounty_food)})
+  plot_food_points <- reactive({data_food %>% filter(county == input$whichcounty_food)})
+  plot_food_residences <- reactive({data_corelogic %>% filter(county == input$whichcounty_food)})
+  plot_food_10 <- reactive({data_food10_county %>% filter(county == input$whichcounty_food)})
+  plot_food_15 <- reactive({data_food15_county %>% filter(county == input$whichcounty_food)})
+  
+  labels_food <-  reactive({
+    lapply(
+    paste("<strong>Name: </strong>",
+          plot_food_points()$business,
+          "<br />",
+          "<strong>Type: </strong>",
+          plot_food_points()$profiles,
+          "<br />",
+          "<strong>FIPS: </strong>",
+          plot_food_points()$FIPS,
+          "<br />",
+          "<strong>County: </strong>",
+          plot_food_points()$county,
+          "<br />",
+          "<strong>Address:</strong>",
+          paste0(plot_food_points()$address1, ", ", plot_food_points()$city, ", VA ", plot_food_points()$zip)
+    ),
+    htmltools::HTML
+  )
+  })
+  
+  output$plot_food_iso_county <- renderLeaflet({
+    create_plot_countywide2(labels_food(), plot_food_borders(), plot_food_points(), plot_food_residences(), plot_food_10(), plot_food_15())
   })
   
   

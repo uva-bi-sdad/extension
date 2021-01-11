@@ -28,25 +28,31 @@ ggplot()+
 # automate checking ------------------------------------------
 county <- borders$GEOID
 outside_loc <- list()
+outside_loc_cont <- list()
 
 for(i in 1:length(county)){
   # subset the corelogic data for the county its supposed to be in
   subset_core <- corelogic[which(corelogic$GEOID==county[i]),]
   subset_bord <- borders[which(borders$GEOID==county[i]),]
   # check if the observation is within the border of the county its supposed to be in
-  subset_core$outside <- sapply(st_intersects(subset_core, subset_bord),function(x){length(x)==0})
+  subset_core$outside <- sapply(st_within(subset_core, subset_bord),function(x){length(x)==0})
   # subset those that are outside of the county
   outside <- subset_core[which(subset_core$outside == TRUE),]
   outside <- as.data.frame(outside)
   # save in a list
-  outside_loc[[i]] <- outside
+  outside_loc_cont[[i]] <- outside
 }
 
 outside_core <- do.call("rbind", outside_loc)
 outside_core <- as.data.frame(outside_core)
 outside_core <- st_as_sf(outside_core)
 
-# 2,732 locations that are outside their county polygons
+# change st_intersects to st_contains and outside_loc to outside_loc_cont to do this
+outside_core_cont <- do.call("rbind", outside_loc_cont)
+outside_core_cont <- as.data.frame(outside_core_cont)
+outside_core_cont <- st_as_sf(outside_core_cont)
+
+# 2,732 locations that are outside their county polygons with st_intersects
 
 # assess how many counties we need to manually geocode -------
 # I'm going to loop through each location and see what county they're actually in and then save
