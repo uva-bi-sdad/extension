@@ -436,44 +436,7 @@ server <- function(input, output){
   #
   # FUNCTION: Map: Countywide isochrones ----------------------------------
   #
-  
-  # Labels
-  labels_ems <- lapply(
-    paste("<strong>Name: </strong>",
-          data_ems$name,
-          "<br />",
-          "<strong>Service Type: </strong>",
-          data_ems$naicsdescr,
-          "<br />",
-          "<strong>Address:</strong>",
-          paste0(data_ems$address, ", ", data_ems$city, ", VA ", data_ems$zip)
-    ),
-    htmltools::HTML
-  )
-  
-  labels_wifi <- lapply(
-    paste("<strong>Name: </strong>",
-          data_wifi$name,
-          "<br />",
-          "<strong>Address:</strong>",
-          paste0(data_wifi$address, ", ", data_wifi$city_1, ", VA ", data_wifi$zip_code)
-    ),
-    htmltools::HTML
-  )
-  
-  labels_food <- lapply(
-    paste("<strong>Name: </strong>",
-          data_food$business,
-          "<br />",
-          "<strong>Type: </strong>",
-          data_food$profiles,
-          "<br />",
-          "<strong>Address:</strong>",
-          paste0(data_food$address1, ", ", data_food$city, ", VA ", data_food$zip)
-    ),
-    htmltools::HTML
-  )
-  
+
   # For 8, 10, 12
   create_plot_countywide3 <- function(data_labels, data_county_borders, data_county_points, data_county_residences, 
                                      data_county_8, data_county_10, data_county_12) {
@@ -639,8 +602,23 @@ server <- function(input, output){
   plot_ems_10 <- reactive({data_ems10_county %>% filter(county == input$whichcounty_ems)})
   plot_ems_12 <- reactive({data_ems12_county %>% filter(county == input$whichcounty_ems)})
   
+  labels_ems <- reactive({
+    lapply(
+    paste("<strong>Name: </strong>",
+          plot_ems_points()$name,
+          "<br />",
+          "<strong>Service Type: </strong>",
+          plot_ems_points()$naicsdescr,
+          "<br />",
+          "<strong>Address:</strong>",
+          paste0(plot_ems_points()$address, ", ", plot_ems_points()$city, ", VA ", plot_ems_points()$zip)
+    ),
+    htmltools::HTML
+  )
+  })
+  
   output$plot_ems_iso_county <- renderLeaflet({
-    create_plot_countywide3(labels_ems, plot_ems_borders(), plot_ems_points(), plot_ems_residences(), plot_ems_8(), plot_ems_10(), plot_ems_12())
+    create_plot_countywide3(labels_ems(), plot_ems_borders(), plot_ems_points(), plot_ems_residences(), plot_ems_8(), plot_ems_10(), plot_ems_12())
   })
   
   
@@ -654,8 +632,26 @@ server <- function(input, output){
   plot_wifi_10 <- reactive({data_wifi10_county %>% filter(county == input$whichcounty_wifi)})
   plot_wifi_15 <- reactive({data_wifi15_county %>% filter(county == input$whichcounty_wifi)})
   
+  labels_wifi <- reactive({
+    lapply(
+    paste("<strong>Name: </strong>",
+          plot_wifi_points()$name,
+          "<br />",
+          "<strong>County: </strong>",
+          plot_wifi_points()$county,
+          "<br />",
+          "<strong>GEOID: </strong>",
+          plot_wifi_points()$GEOID,
+          "<br />",
+          "<strong>Address:</strong>",
+          paste0(plot_wifi_points()$address, ", ", plot_wifi_points()$city_1, ", VA ", plot_wifi_points()$zip_code)
+    ),
+    htmltools::HTML
+  )
+  })
+  
   output$plot_wifi_iso_county <- renderLeaflet({
-    create_plot_countywide2(labels_wifi, plot_wifi_borders(), plot_wifi_points(), plot_wifi_residences(), plot_wifi_10(), plot_wifi_15())
+    create_plot_countywide2(labels_wifi(), plot_wifi_borders(), plot_wifi_points(), plot_wifi_residences(), plot_wifi_10(), plot_wifi_15())
   })
   
   
@@ -669,8 +665,29 @@ server <- function(input, output){
   plot_food_10 <- reactive({data_food10_county %>% filter(county == input$whichcounty_food)})
   plot_food_15 <- reactive({data_food15_county %>% filter(county == input$whichcounty_food)})
   
+  labels_food <-  reactive({
+    lapply(
+    paste("<strong>Name: </strong>",
+          plot_food_points()$business,
+          "<br />",
+          "<strong>Type: </strong>",
+          plot_food_points()$profiles,
+          "<br />",
+          "<strong>FIPS: </strong>",
+          plot_food_points()$FIPS,
+          "<br />",
+          "<strong>County: </strong>",
+          plot_food_points()$county,
+          "<br />",
+          "<strong>Address:</strong>",
+          paste0(plot_food_points()$address1, ", ", plot_food_points()$city, ", VA ", plot_food_points()$zip)
+    ),
+    htmltools::HTML
+  )
+  })
+  
   output$plot_food_iso_county <- renderLeaflet({
-    create_plot_countywide2(labels_food, plot_food_borders(), plot_food_points(), plot_food_residences(), plot_food_10(), plot_food_15())
+    create_plot_countywide2(labels_food(), plot_food_borders(), plot_food_points(), plot_food_residences(), plot_food_10(), plot_food_15())
   })
   
   
