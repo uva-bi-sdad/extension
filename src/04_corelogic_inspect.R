@@ -52,7 +52,12 @@ outside_core_cont <- do.call("rbind", outside_loc_cont)
 outside_core_cont <- as.data.frame(outside_core_cont)
 outside_core_cont <- st_as_sf(outside_core_cont)
 
+# Plot 
+plot(st_geometry(outside_core_cont[1]))
+plot(st_geometry(borders[which(borders$GEOID=="51015"),]), add = T)
+
 # 2,732 locations that are outside their county polygons with st_intersects
+# most of these are on the border
 
 # assess how many counties we need to manually geocode -------
 # I'm going to loop through each location and see what county they're actually in and then save

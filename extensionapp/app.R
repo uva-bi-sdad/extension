@@ -443,7 +443,7 @@ server <- function(input, output){
     
     colors <- c("#232d4b","#2c4f6b","#0e879c","#60999a","#d1e0bf","#d9e12b","#e6ce3a","#e6a01d","#e57200","#fdfdfd")
     
-    m1 <- leaflet(options = leafletOptions(minZoom = 10)) %>%
+    m1 <- leaflet(options = leafletOptions()) %>% #minZoom = 10
       addProviderTiles(providers$CartoDB.Positron) %>%
       addPolygons(data = data_county_borders,
                   stroke = T, weight = 2, color = "grey", fillOpacity = 0) %>%
@@ -491,7 +491,7 @@ server <- function(input, output){
     
     colors <- c("#232d4b","#2c4f6b","#0e879c","#60999a","#d1e0bf","#d9e12b","#e6ce3a","#e6a01d","#e57200","#fdfdfd")
     
-    m1 <- leaflet(options = leafletOptions(minZoom = 10)) %>%
+    m1 <- leaflet(options = leafletOptions()) %>% #minZoom = 10
       addProviderTiles(providers$CartoDB.Positron) %>%
       addPolygons(data = data_county_borders,
                   stroke = T, weight = 2, color = "grey", fillOpacity = 0) %>%
