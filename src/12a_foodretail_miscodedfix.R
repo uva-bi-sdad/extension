@@ -75,6 +75,9 @@ wrong2 <- filterthedata(data_geo_2)
 # Geocode manually ---------------------------------------------------------------------------------
 #
 
+# permanently closed means that google said so, not found means google suggested another location instead of the one
+# we were looking for
+
 # File 1
 st_geometry(data_geo_1)[data_geo_1$business_id == 4915753] <- st_point(c(-78.14472220226784, 38.33715897325443))
 data_geo_1$geo_method[which(data_geo_1$business_id == 4915753)] <- "manual"
@@ -92,112 +95,112 @@ st_geometry(data_geo_1)[data_geo_1$business_id == 4916907] <- st_point(c(-79.497
 data_geo_1$geo_method[which(data_geo_1$business_id == 4916907)] <- "manual"
 
 # File 2
-st_geometry(data_geo_2)[data_geo_2$business_id == 4303973] <- st_point(c())
+st_geometry(data_geo_2)[data_geo_2$business_id == 4303973] <- st_point(c(-82.1075785,37.2561095))
 data_geo_2$geo_method[which(data_geo_2$business_id == 4303973)] <- "manual"
 
-st_geometry(data_geo_2)[data_geo_2$business_id == 4304003] <- st_point(c())
+st_geometry(data_geo_2)[data_geo_2$business_id == 4304003] <- st_point(c(-78.6311307,37.056289)) # not found
 data_geo_2$geo_method[which(data_geo_2$business_id == 4304003)] <- "manual"
 
-st_geometry(data_geo_2)[data_geo_2$business_id == 4305669] <- st_point(c())
+st_geometry(data_geo_2)[data_geo_2$business_id == 4305669] <- st_point(c(-83.41134668465621, 36.648206699965016))
 data_geo_2$geo_method[which(data_geo_2$business_id == 4305669)] <- "manual"
 
-st_geometry(data_geo_2)[data_geo_2$business_id == 4305901] <- st_point(c())
+st_geometry(data_geo_2)[data_geo_2$business_id == 4305901] <- st_point(c(-82.60265359207173,36.94176690290877)) # not found
 data_geo_2$geo_method[which(data_geo_2$business_id == 4305901)] <- "manual"
 
-st_geometry(data_geo_2)[data_geo_2$business_id == 4306019] <- st_point(c())
+st_geometry(data_geo_2)[data_geo_2$business_id == 4306019] <- st_point(c(-83.25886463068757,36.6988842105347))
 data_geo_2$geo_method[which(data_geo_2$business_id == 4306019)] <- "manual"
 
-st_geometry(data_geo_2)[data_geo_2$business_id == 4306114] <- st_point(c())
+st_geometry(data_geo_2)[data_geo_2$business_id == 4306114] <- st_point(c(-81.13541608465621,37.17657327088676))
 data_geo_2$geo_method[which(data_geo_2$business_id == 4306114)] <- "manual"
 
-st_geometry(data_geo_2)[data_geo_2$business_id == 4308373] <- st_point(c())
+st_geometry(data_geo_2)[data_geo_2$business_id == 4308373] <- st_point(c(-82.04278153862484,36.912388353008616)) # permanently closed
 data_geo_2$geo_method[which(data_geo_2$business_id == 4308373)] <- "manual"
 
-st_geometry(data_geo_2)[data_geo_2$business_id == 4308909] <- st_point(c())
+st_geometry(data_geo_2)[data_geo_2$business_id == 4308909] <- st_point(c(-78.40331548465622,38.943424194014874))
 data_geo_2$geo_method[which(data_geo_2$business_id == 4308909)] <- "manual"
 
-st_geometry(data_geo_2)[data_geo_2$business_id == 4310397] <- st_point(c())
+st_geometry(data_geo_2)[data_geo_2$business_id == 4310397] <- st_point(c(-78.39973866222307,37.08869549923448))
 data_geo_2$geo_method[which(data_geo_2$business_id == 4310397)] <- "manual"
 
-st_geometry(data_geo_2)[data_geo_2$business_id == 4311269] <- st_point(c())
+st_geometry(data_geo_2)[data_geo_2$business_id == 4311269] <- st_point(c(-82.00623983216296,37.21409314310554)) # not found
 data_geo_2$geo_method[which(data_geo_2$business_id == 4311269)] <- "manual"
 
-st_geometry(data_geo_2)[data_geo_2$business_id == 4311474] <- st_point(c())
+st_geometry(data_geo_2)[data_geo_2$business_id == 4311474] <- st_point(c(-82.3036816153438,36.87959640271031))
 data_geo_2$geo_method[which(data_geo_2$business_id == 4311474)] <- "manual"
 
-st_geometry(data_geo_2)[data_geo_2$business_id == 4311534] <- st_point(c())
+st_geometry(data_geo_2)[data_geo_2$business_id == 4311534] <- st_point(c(-81.93112325396865,36.95947320424529))
 data_geo_2$geo_method[which(data_geo_2$business_id == 4311534)] <- "manual"
 
-st_geometry(data_geo_2)[data_geo_2$business_id == 4311952] <- st_point(c())
+st_geometry(data_geo_2)[data_geo_2$business_id == 4311952] <- st_point(c(-83.01516811752178,36.763034365818385))
 data_geo_2$geo_method[which(data_geo_2$business_id == 4311952)] <- "manual"
 
-st_geometry(data_geo_2)[data_geo_2$business_id == 4312498] <- st_point(c())
+st_geometry(data_geo_2)[data_geo_2$business_id == 4312498] <- st_point(c(-78.97127175985001,36.75786265824452))
 data_geo_2$geo_method[which(data_geo_2$business_id == 4312498)] <- "manual"
 
-st_geometry(data_geo_2)[data_geo_2$business_id == 4313073] <- st_point(c())
+st_geometry(data_geo_2)[data_geo_2$business_id == 4313073] <- st_point(c(-81.0973135156646,36.95900696024521)) # permanently closed
 data_geo_2$geo_method[which(data_geo_2$business_id == 4313073)] <- "manual"
 
-st_geometry(data_geo_2)[data_geo_2$business_id == 4313526] <- st_point(c())
+st_geometry(data_geo_2)[data_geo_2$business_id == 4313526] <- st_point(c(-82.30050214450294,36.87331498193733))
 data_geo_2$geo_method[which(data_geo_2$business_id == 4313526)] <- "manual"
 
-st_geometry(data_geo_2)[data_geo_2$business_id == 4313943] <- st_point(c())
+st_geometry(data_geo_2)[data_geo_2$business_id == 4313943] <- st_point(c(-82.16288596931243,37.31137732651243)) # permanently closed
 data_geo_2$geo_method[which(data_geo_2$business_id == 4313943)] <- "manual"
 
-st_geometry(data_geo_2)[data_geo_2$business_id == 4314973] <- st_point(c())
+st_geometry(data_geo_2)[data_geo_2$business_id == 4314973] <- st_point(c( -77.55085483068757, 36.67601142433903))
 data_geo_2$geo_method[which(data_geo_2$business_id == 4314973)] <- "manual"
 
-st_geometry(data_geo_2)[data_geo_2$business_id == 4315017] <- st_point(c())
+st_geometry(data_geo_2)[data_geo_2$business_id == 4315017] <- st_point(c(-78.5450563, 36.712265869414324))
 data_geo_2$geo_method[which(data_geo_2$business_id == 4315017)] <- "manual"
 
-st_geometry(data_geo_2)[data_geo_2$business_id == 4316296] <- st_point(c())
+st_geometry(data_geo_2)[data_geo_2$business_id == 4316296] <- st_point(c(-82.28570598465622, 36.924398115315114)) # permanently closed
 data_geo_2$geo_method[which(data_geo_2$business_id == 4316296)] <- "manual"
 
-st_geometry(data_geo_2)[data_geo_2$business_id == 4316503] <- st_point(c())
+st_geometry(data_geo_2)[data_geo_2$business_id == 4316503] <- st_point(c( -79.94926804603136, 37.99405653808035))
 data_geo_2$geo_method[which(data_geo_2$business_id == 4316503)] <- "manual"
 
-st_geometry(data_geo_2)[data_geo_2$business_id == 4318726] <- st_point(c())
+st_geometry(data_geo_2)[data_geo_2$business_id == 4318726] <- st_point(c(-79.87180705343788, 36.73155206879525))
 data_geo_2$geo_method[which(data_geo_2$business_id == 4318726)] <- "manual"
 
-st_geometry(data_geo_2)[data_geo_2$business_id == 4318990] <- st_point(c())
+st_geometry(data_geo_2)[data_geo_2$business_id == 4318990] <- st_point(c(-75.85360698465621, 37.635420135908646)) # permanently closed
 data_geo_2$geo_method[which(data_geo_2$business_id == 4318990)] <- "manual"
 
-st_geometry(data_geo_2)[data_geo_2$business_id == 4319531] <- st_point(c())
+st_geometry(data_geo_2)[data_geo_2$business_id == 4319531] <- st_point(c(-78.70897050032126, 36.943156776729474))
 data_geo_2$geo_method[which(data_geo_2$business_id == 4319531)] <- "manual"
 
-st_geometry(data_geo_2)[data_geo_2$business_id == 4321197] <- st_point(c())
+st_geometry(data_geo_2)[data_geo_2$business_id == 4321197] <- st_point(c(-76.758272, 37.53994582506903))
 data_geo_2$geo_method[which(data_geo_2$business_id == 4321197)] <- "manual"
 
-st_geometry(data_geo_2)[data_geo_2$business_id == 4321783] <- st_point(c())
+st_geometry(data_geo_2)[data_geo_2$business_id == 4321783] <- st_point(c(-82.19805600000001, 37.35288906874195))
 data_geo_2$geo_method[which(data_geo_2$business_id == 4321783)] <- "manual"
 
-st_geometry(data_geo_2)[data_geo_2$business_id == 4322455] <- st_point(c())
+st_geometry(data_geo_2)[data_geo_2$business_id == 4322455] <- st_point(c( -82.30093296137517, 36.87309094459355))
 data_geo_2$geo_method[which(data_geo_2$business_id == 4322455)] <- "manual"
 
-st_geometry(data_geo_2)[data_geo_2$business_id == 4323171] <- st_point(c())
+st_geometry(data_geo_2)[data_geo_2$business_id == 4323171] <- st_point(c(-82.9894281, 36.7019399552546))
 data_geo_2$geo_method[which(data_geo_2$business_id == 4323171)] <- "manual"
 
-st_geometry(data_geo_2)[data_geo_2$business_id == 4324842] <- st_point(c())
+st_geometry(data_geo_2)[data_geo_2$business_id == 4324842] <- st_point(c( -82.30352524450281, 36.879732747335595 )) # not found
 data_geo_2$geo_method[which(data_geo_2$business_id == 4324842)] <- "manual"
 
-st_geometry(data_geo_2)[data_geo_2$business_id == 4325773] <- st_point(c())
+st_geometry(data_geo_2)[data_geo_2$business_id == 4325773] <- st_point(c(-78.9147446, 38.285192847294944)) # permanently closed
 data_geo_2$geo_method[which(data_geo_2$business_id == 4325773)] <- "manual"
 
-st_geometry(data_geo_2)[data_geo_2$business_id == 4325872] <- st_point(c())
+st_geometry(data_geo_2)[data_geo_2$business_id == 4325872] <- st_point(c( -79.41761238465621, 36.601151321645055))
 data_geo_2$geo_method[which(data_geo_2$business_id == 4325872)] <- "manual"
 
-st_geometry(data_geo_2)[data_geo_2$business_id == 4326012] <- st_point(c())
+st_geometry(data_geo_2)[data_geo_2$business_id == 4326012] <- st_point(c( -76.57409719259348, 37.63845581567375))
 data_geo_2$geo_method[which(data_geo_2$business_id == 4326012)] <- "manual"
 
-st_geometry(data_geo_2)[data_geo_2$business_id == 4327689] <- st_point(c())
+st_geometry(data_geo_2)[data_geo_2$business_id == 4327689] <- st_point(c(-81.13541978465622, 37.17642030074994))
 data_geo_2$geo_method[which(data_geo_2$business_id == 4327689)] <- "manual"
 
-st_geometry(data_geo_2)[data_geo_2$business_id == 4328038] <- st_point(c())
+st_geometry(data_geo_2)[data_geo_2$business_id == 4328038] <- st_point(c(-76.38489943862486, 37.72781309049406))
 data_geo_2$geo_method[which(data_geo_2$business_id == 4328038)] <- "manual"
 
-st_geometry(data_geo_2)[data_geo_2$business_id == 4328475] <- st_point(c())
+st_geometry(data_geo_2)[data_geo_2$business_id == 4328475] <- st_point(c(-78.14539556907626, 36.60519801799862)) # not found
 data_geo_2$geo_method[which(data_geo_2$business_id == 4328475)] <- "manual"
 
-st_geometry(data_geo_2)[data_geo_2$business_id == 4916914] <- st_point(c())
+st_geometry(data_geo_2)[data_geo_2$business_id == 4916914] <- st_point(c(-79.2029649, 38.01261162794507))
 data_geo_2$geo_method[which(data_geo_2$business_id == 4916914)] <- "manual"
 
 
