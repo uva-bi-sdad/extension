@@ -31,8 +31,8 @@ data_wifi10_county <- read_rds("data/final_wifi_10_countywide_coverage.rds")
 data_wifi15_county <- read_rds("data/final_wifi_15_countywide_coverage.rds")
 
 data_food <- read_rds("data/final_foodretail_forapp.rds")
-data_food10_county <- read_rds("data/final_food_10_coverage.rds")
-data_food15_county <- read_rds("data/final_food_15_coverage.rds") #final_food_15_countywide_coverage.rds")
+data_food10_county <- read_rds("data/final_food_10_countywide_coverage.rds")
+data_food15_county <- read_rds("data/final_food_15_countywide_coverage.rds") 
 
 data_borders <- read_rds("data/final_countyborders.rds")
 

@@ -137,16 +137,16 @@ for(i in food_fips){
 # Save -------------------------------------------------
 #
 
-#food_10_coverage_final <- mget(ls(pattern = "^food_10_coverage_")) %>% bind_rows()
+food_10_coverage_final <- mget(ls(pattern = "^food_10_coverage_")) %>% bind_rows()
 food_15_coverage_final <- mget(ls(pattern = "^food_15_coverage_")) %>% bind_rows()
 
-#food_10_coverage_final <- food_10_coverage_final %>% rename("county" = "countyname")
+food_10_coverage_final <- food_10_coverage_final %>% rename("county" = "countyname")
 food_15_coverage_final <- food_15_coverage_final %>% rename("county" = "countyname")
 
-#food_10_coverage_final$countyname <- str_replace_all(food_10_coverage_final$countyname, "City", "city")
+food_10_coverage_final$countyname <- str_replace_all(food_10_coverage_final$countyname, "City", "city")
 food_15_coverage_final$countyname <- str_replace_all(food_15_coverage_final$county, "City", "city")
 
-#write_rds(food_10_coverage_final, "./data/working/foodretail/final_food_10_coverage.rds")
+write_rds(food_10_coverage_final, "./data/working/foodretail/final_food_10_coverage.rds")
 write_rds(food_15_coverage_final, "./data/working/foodretail/final_food_15_coverage.rds")
 
 
