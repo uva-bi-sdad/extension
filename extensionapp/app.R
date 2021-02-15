@@ -60,7 +60,7 @@ countylist_food <- sort(unique(data_food$county))
 
 # USDA
 choices_usda <- c("lapop1share", "lapop10share", "lakids1share", "lakids10share",
-                   "laseniors1share", "laseniors10share", "lalowi1share", "lalowi10share")
+                  "laseniors1share", "laseniors10share", "lalowi1share", "lalowi10share")
 
 names(choices_usda) <- c("Percent Population with Low Food Access at 1 Mile", "Percent Population with Low Food Access at 10 Miles",
                          "Percent Children with Low Food Access at 1 Mile", "Percent Children with Low Food Access at 10 Miles",
@@ -69,13 +69,13 @@ names(choices_usda) <- c("Percent Population with Low Food Access at 1 Mile", "P
 
 # Sociodemographics
 choices_socdem <- c("totalpop_trct", "age65", "under18", "hispanic", "black", "noba", "unempl", "inpov", "nohealthins",
-                   "publicins", "privateins", "snap")
-  
+                    "publicins", "privateins", "snap")
+
 names(choices_socdem) <- c("Total Tract Population", "Percent Population Age 65 and Older", "Percent Population Age 18 and Younger",
-                          "Percent Population Hispanic", "Percent Population Black", "Percent Working-Age Population Without Bachelor's Degree",
-                          "Percent Population In Labor Force Unemployed", "Percent Population in Poverty", 
-                          "Percent Population Without Health Insurance", "Percent Population With Public Health Insurance",
-                          "Percent Population With Private Health Insurance", "Percent Population Receiving SNAP Benefits or Public Assistance")
+                           "Percent Population Hispanic", "Percent Population Black", "Percent Working-Age Population Without Bachelor's Degree",
+                           "Percent Population In Labor Force Unemployed", "Percent Population in Poverty", 
+                           "Percent Population Without Health Insurance", "Percent Population With Public Health Insurance",
+                           "Percent Population With Private Health Insurance", "Percent Population Receiving SNAP Benefits or Public Assistance")
 
 
 # Older adults
@@ -93,14 +93,14 @@ names(choices_older) <- c("Percent Population Age 65 or Older", "Percent Older A
 
 # Broadband
 choices_bband <- c("nocomputer", "laptop", "smartphone", "tablet", "othercomputer",
-                      "nointernet", "satellite", "cellular", "dialup", "broadband")
+                   "nointernet", "satellite", "cellular", "dialup", "broadband")
 
 names(choices_bband) <- c("Percent Households without a Computer", "Percent Households with a Desktop or Laptop Computer",
-                             "Percent Households with a Smartphone", "Percent Households with a Tablet Computer",
-                             "Percent Households with Other Type of Computer",
-                             "Percent Households without Internet Access", "Percent Households with Satellite Internet",
-                             "Percent Households with Cellular Internet", "Percent Households with Dial-Up Internet",
-                             "Percent Households with Broadband Internet")
+                          "Percent Households with a Smartphone", "Percent Households with a Tablet Computer",
+                          "Percent Households with Other Type of Computer",
+                          "Percent Households without Internet Access", "Percent Households with Satellite Internet",
+                          "Percent Households with Cellular Internet", "Percent Households with Dial-Up Internet",
+                          "Percent Households with Broadband Internet")
 
 
 #
@@ -146,7 +146,7 @@ ui <- dashboardPage(
                 menuItem(startExpanded = F,
                          text = "Internet Access", 
                          icon = icon("info-circle"),
-                         menuSubItem(text = "Broadband", tabName = "bband", icon = NULL),
+                         menuSubItem(text = "Devices and Internet", tabName = "bband", icon = NULL),
                          menuSubItem(text = "Free Wi-Fi Hotspots", tabName = "wifi", icon = NULL)),
                 menuItem(startExpanded = F,
                          text = "Health Access", 
@@ -184,10 +184,17 @@ ui <- dashboardPage(
               fluidRow(style = "margin: 6px;",
                        h1(strong("Community Learning Through Data Driven Discovery: Barriers to Rural Health"), align = "center"),
                        br(),
-                       p("Rural counties often face challenges in providing health care access to its residents given few health facilities available, lack of broadband infrastructure that limits providing telemedicine access or communicating health information, 
+                       box(
+                         p("Rural counties often face challenges in providing health care access to its residents given few health facilities available, lack of broadband infrastructure that limits providing telemedicine access or communicating health information, 
                           and individual-level inequalities that pose barriers to health care access and use. Identifying areas of high need or potential solutions may also be difficult for rural areas without adequate resources to acquire, analyze, and interpret 
-                          relevant data. This project builds local capacity, leveraging social and data science to construct a rural county dashboard enhancing data-driven health access decision making in rural Virginia."),
-                       p("This project is one of eight funded by the", a(href = "https://impact.extension.org/ntae/", "2020/21 NIFA NTAE grant", target = "_blank"), "through the University of Virginia, in collaboration with Virginia Cooperative Extension, Virginia Tech and implemented by the eXtension Foundation.")
+                          relevant data. This project builds local capacity, leveraging social and data science to construct a rural county dashboard enhancing data-driven health access decision making in rural Virginia.")
+                       ),
+                       box(
+                         img(src = "logo-extension.png", style = "display: block; margin-left: auto; margin-right: auto;", width = "250px"),
+                         br(),
+                         p("This project is one of eight funded by the 2020/21 USDA National Institute of Food and Agriculture ", a(href = "https://impact.extension.org/ntae/", "New Technologies for Agricultural Extension grant", target = "_blank"), 
+                           "through the University of Virginia, in collaboration with Virginia Cooperative Extension, Virginia Tech and implemented by the eXtension Foundation.")
+                       )
               )
       ),
       
@@ -197,16 +204,20 @@ ui <- dashboardPage(
       
       tabItem(tabName = "population",
               fluidRow(style = "margin: 6px;",
-                       h1(strong("Population Characteristics"), align = "center"),
+                       h1(strong("County Population Characteristics"), align = "center"),
                        br(),
-                       selectInput("whichcounty_socdem", "Select County:", 
-                                   selected = "Accomack County",
-                                   multiple = F, width = "100%", choices = c(countylist_socdem)),
-                       selectInput("whichvar_socdem", "Select Variable:", width = "100%", choices = choices_socdem),
-                       br(),
-                       withSpinner(leafletOutput("plot_socdem")),
-                       p(tags$small("Data Source: American Community Survey 2014/18 5-Year Estimates."))
+                       box(width = 3,
+                           selectInput("whichcounty_socdem", "Select County", 
+                                       selected = "Accomack County",
+                                       multiple = F, width = "100%", choices = c(countylist_socdem)),
+                           selectInput("whichvar_socdem", "Select Variable", width = "100%", choices = choices_socdem)
+                       ),
+                       box(width = 9,
+                           p(strong("Census Tract-Level Map")),
+                           withSpinner(leafletOutput("plot_socdem")),
+                           p(tags$small("Data Source: American Community Survey 2014/18 5-Year Estimates."))
                        )
+              )
       ),
       
       #
@@ -217,13 +228,17 @@ ui <- dashboardPage(
               fluidRow(style = "margin: 6px;",
                        h1(strong("Older Adult Characteristics"), align = "center"),
                        br(),
-                       selectInput("whichcounty_older", "Select County:", 
-                                   selected = "Accomack County",
-                                   multiple = F, width = "100%", choices = c(countylist_older)),
-                       selectInput("whichvar_older", "Select Variable:", width = "100%", choices = choices_older),
-                       br(),
-                       withSpinner(leafletOutput("plot_older")),
-                       p(tags$small("Data Source: American Community Survey 2014/18 5-Year Estimates."))
+                       box(width = 3,
+                           selectInput("whichcounty_older", "Select County", 
+                                       selected = "Accomack County",
+                                       multiple = F, width = "100%", choices = c(countylist_older)),
+                           selectInput("whichvar_older", "Select Variable", width = "100%", choices = choices_older)
+                       ),
+                       box(width = 9,
+                           p(strong("Census Tract-Level Map")),
+                           withSpinner(leafletOutput("plot_older")),
+                           p(tags$small("Data Source: American Community Survey 2014/18 5-Year Estimates."))
+                       )
               )
       ),
       
@@ -235,13 +250,17 @@ ui <- dashboardPage(
               fluidRow(style = "margin: 6px;",
                        h1(strong("Food Security"), align = "center"),
                        br(),
-                       selectInput("whichcounty_usda", "Select County:", 
-                                   selected = "Accomack County",
-                                   multiple = F, width = "100%", choices = c(countylist_usda)),
-                       selectInput("whichvar_usda", "Select Variable:", width = "100%", choices = choices_usda),
-                       br(),
-                       withSpinner(leafletOutput("plot_usda")),
-                       p(tags$small("Data Source: USDA Food Access Research Atlas, 2017."))
+                       box(width = 3,
+                           selectInput("whichcounty_usda", "Select County", 
+                                       selected = "Accomack County",
+                                       multiple = F, width = "100%", choices = c(countylist_usda)),
+                           selectInput("whichvar_usda", "Select Variable", width = "100%", choices = choices_usda)
+                       ),
+                       box(width = 9,
+                           p(strong("Census Tract-Level Map")),
+                           withSpinner(leafletOutput("plot_usda")),
+                           p(tags$small("Data Source: USDA Food Access Research Atlas, 2017."))
+                       )
               )
       ),
       
@@ -254,17 +273,25 @@ ui <- dashboardPage(
               fluidRow(style = "margin: 6px;",
                        h1(strong("Food Retail Access"), align = "center"),
                        br(),
-                       selectInput("whichcounty_food", "Select County:", 
-                                   selected = "Accomack County",
-                                   multiple = F, width = "100%", choices = c(countylist_food)),
-                       br(),
-                       column(width = 9, 
-                              withSpinner(leafletOutput("plot_food_iso_county", height = "600px")),
-                              p(tags$small("Data Sources: CoreLogic, 2019; MarketMaker, 2019; OpenStreetMap, 2021."))
-                       ),
                        column(width = 3,
-                              fluidRow(valueBoxOutput("box_food_countywide_10", width = "100%")),
-                              fluidRow(valueBoxOutput("box_food_countywide_15", width = "100%")))
+                              box(width = 12,
+                                  selectInput("whichcounty_food", "Select County", 
+                                              selected = "Accomack County",
+                                              multiple = F, width = "100%", choices = c(countylist_food))
+                              ),
+                              box(width = 12,
+                                p(strong("Residential Coverage")),
+                                valueBoxOutput("box_food_countywide_10", width = "100%"),
+                                valueBoxOutput("box_food_countywide_15", width = "100%")
+                              ) 
+                       ),
+                       column(width = 9, 
+                              box(width = 12,
+                                p(strong("County Map")),
+                                withSpinner(leafletOutput("plot_food_iso_county", height = "600px")),
+                                p(tags$small("Data Sources: CoreLogic, 2019; MarketMaker, 2019; OpenStreetMap, 2021."))
+                              )
+                       )
               )
       ),
       
@@ -277,13 +304,17 @@ ui <- dashboardPage(
               fluidRow(style = "margin: 6px;",
                        h1(strong("Internet and Computer Access"), align = "center"),
                        br(),
-                       selectInput("whichcounty_bband", "Select County:", 
-                                   selected = "Accomack County",
-                                   multiple = F, width = "100%", choices = c(countylist_bband)),
-                       selectInput("whichvar_bband", "Select Variable:", width = "100%", choices = choices_bband),
-                       br(),
-                       withSpinner(leafletOutput("plot_bband")),
-                       p(tags$small("Data Source: American Community Survey 2014/18 5-Year Estimates."))
+                       box(width = 3,
+                           selectInput("whichcounty_bband", "Select County", 
+                                       selected = "Accomack County",
+                                       multiple = F, width = "100%", choices = c(countylist_bband)),
+                           selectInput("whichvar_bband", "Select Variable", width = "100%", choices = choices_bband)
+                       ),
+                       box(width = 9,
+                           p(strong("Census Tract-Level Map")),
+                           withSpinner(leafletOutput("plot_bband")),
+                           p(tags$small("Data Source: American Community Survey 2014/18 5-Year Estimates."))
+                       )
               )
       ),
       
@@ -296,20 +327,28 @@ ui <- dashboardPage(
               fluidRow(style = "margin: 6px;",
                        h1(strong("Free Wi-Fi Hotspots"), align = "center"),
                        br(),
-                       selectInput("whichcounty_wifi", "Select County:", 
-                                   selected = "Accomack County",
-                                   multiple = F, width = "100%", choices = c(countylist_wifi)),
-                       br(),
-                       column(width = 9, 
-                              withSpinner(leafletOutput("plot_wifi_iso_county", height = "600px")),
-                              p(tags$small("Data Sources: CoreLogic, 2019; CommonwealthConnect, 2020; OpenStreetMap, 2021."))
-                       ),
                        column(width = 3,
-                              fluidRow(valueBoxOutput("box_wifi_countywide_10", width = "100%")),
-                              fluidRow(valueBoxOutput("box_wifi_countywide_15", width = "100%")))
+                              box(width = 12,
+                                  selectInput("whichcounty_wifi", "Select County", 
+                                              selected = "Accomack County",
+                                              multiple = F, width = "100%", choices = c(countylist_wifi))
+                              ),
+                              box(width = 12,
+                                  p(strong("Residential Coverage")),
+                                  valueBoxOutput("box_wifi_countywide_10", width = "100%"),
+                                  valueBoxOutput("box_wifi_countywide_15", width = "100%")
+                              )
+                       ),
+                       column(width = 9,
+                              box(width = 12, 
+                                  p(strong("County Map")),
+                                  withSpinner(leafletOutput("plot_wifi_iso_county", height = "600px")),
+                                  p(tags$small("Data Sources: CoreLogic, 2019; CommonwealthConnect, 2020; OpenStreetMap, 2021."))
+                              )
+                       )
               )
       ),
-     
+      
       
       #
       # SUBMENU: Access - EMS --------------------------------------------------------------------------
@@ -319,18 +358,26 @@ ui <- dashboardPage(
               fluidRow(style = "margin: 6px;",
                        h1(strong("Emergency Medical Services Station Access"), align = "center"),
                        br(),
-                       selectInput("whichcounty_ems", "Select County:", 
-                                   selected = "Accomack County",
-                                   multiple = F, width = "100%", choices = c(countylist_ems)),
-                       br(),
-                       column(width = 9, 
-                          withSpinner(leafletOutput("plot_ems_iso_county", height = "600px")),
-                          p(tags$small("Data Sources: CoreLogic, 2019; Homeland Infrastructure Foundation-Level Data, 2019; OpenStreetMap, 2021."))
-                          ),
                        column(width = 3,
-                              fluidRow(valueBoxOutput("box_ems_countywide_8", width = "100%")),
-                              fluidRow(valueBoxOutput("box_ems_countywide_10", width = "100%")),
-                              fluidRow(valueBoxOutput("box_ems_countywide_12", width = "100%")))
+                              box(width = 12,
+                                  selectInput("whichcounty_ems", "Select County", 
+                                              selected = "Accomack County",
+                                              multiple = F, width = "100%", choices = c(countylist_ems))
+                              ),
+                              box(width = 12,
+                                  p(strong("Residential Coverage")),
+                                  valueBoxOutput("box_ems_countywide_8", width = "100%"),
+                                  valueBoxOutput("box_ems_countywide_10", width = "100%"),
+                                  valueBoxOutput("box_ems_countywide_12", width = "100%")
+                              )
+                       ),
+                       column(width = 9, 
+                              box(width = 12,
+                                  p(strong("County Map")),
+                                  withSpinner(leafletOutput("plot_ems_iso_county", height = "600px")),
+                                  p(tags$small("Data Sources: CoreLogic, 2019; Homeland Infrastructure Foundation-Level Data, 2019; OpenStreetMap, 2021."))
+                              )
+                       )
               )
       ),
       
@@ -415,11 +462,18 @@ ui <- dashboardPage(
               fluidRow(style = "margin: 6px;",
                        h1(strong("Community Learning Through Data Driven Discovery: Barriers to Rural Health"), align = "center"),
                        br(),
-                       p("Rural counties often face challenges in providing health care access to its residents given few health facilities available, lack of broadband infrastructure that limits providing telemedicine access or communicating health information, 
+                       box(
+                         p("Rural counties often face challenges in providing health care access to its residents given few health facilities available, lack of broadband infrastructure that limits providing telemedicine access or communicating health information, 
                           and individual-level inequalities that pose barriers to health care access and use. Identifying areas of high need or potential solutions may also be difficult for rural areas without adequate resources to acquire, analyze, and interpret 
-                          relevant data. This project builds local capacity, leveraging social and data science to construct a rural county dashboard enhancing data-driven health access decision making in rural Virginia."),
-                       p("This project is one of eight funded by the", a(href = "https://impact.extension.org/ntae/", "2020/21 NIFA NTAE grant", target = "_blank"), "through the University of Virginia, in collaboration with Virginia Cooperative Extension, Virginia Tech and implemented by the eXtension Foundation.")
+                          relevant data. This project builds local capacity, leveraging social and data science to construct a rural county dashboard enhancing data-driven health access decision making in rural Virginia.")
+                       ),
+                       box(
+                         img(src = "logo-extension.png", style = "display: block; margin-left: auto; margin-right: auto;", width = "250px"),
+                         br(),
+                         p("This project is one of eight funded by the 2020/21 USDA National Institute of Food and Agriculture ", a(href = "https://impact.extension.org/ntae/", "New Technologies for Agricultural Extension grant", target = "_blank"), 
+                           "through the University of Virginia, in collaboration with Virginia Cooperative Extension, Virginia Tech and implemented by the eXtension Foundation.")
                        )
+              )
       ),
       
       
@@ -431,9 +485,19 @@ ui <- dashboardPage(
               fluidRow(style = "margin: 6px;",
                        h1(strong("Contact"), align = "center"),
                        br(),
-                       p(a(href = "https://biocomplexity.virginia.edu/person/teja-pristavec", "Teja Pristavec", target = "_blank"), "(Research Assistant Professor, Biocomplexity Institute, University of Virginia)"),
-                       p(a(href = "https://news.cals.vt.edu/experts/2015/06/02/mike-lambur/", "Mike Lambur", target = "_blank"), "(Associate Director of Program Development, Virginia Cooperative Extension, Virginia Tech)")
+                       box(
+                         p(a(href = "https://biocomplexity.virginia.edu/person/teja-pristavec", "Teja Pristavec", target = "_blank")), 
+                         p(em("Research Assistant Professor, Biocomplexity Institute, University of Virginia")),
+                         br(),
+                         img(src = "logo-uva.jpeg", style = "display: block; margin-left: auto; margin-right: auto; border: 0.5px solid grey; padding: 10px;", width = "250px")
+                       ),
+                       box(
+                         p(a(href = "https://news.cals.vt.edu/experts/2015/06/02/mike-lambur/", "Mike Lambur", target = "_blank")),
+                         p(em("Associate Director of Program Development, Virginia Cooperative Extension, Virginia Tech")),
+                         br(),
+                         img(src = "logo-vt.jpeg", style = "display: block; margin-left: auto; margin-right: auto; border: 0.5px solid grey; padding: 10px;", width = "250px")
                        )
+              )
       )
     )
   )
@@ -495,10 +559,10 @@ server <- function(input, output){
   #
   # FUNCTION: Map: Countywide isochrones ----------------------------------
   #
-
+  
   # For 8, 10, 12
   create_plot_countywide3 <- function(data_labels, data_county_borders, data_county_points, data_county_residences, 
-                                     data_county_8, data_county_10, data_county_12) {
+                                      data_county_8, data_county_10, data_county_12) {
     
     colors <- c("#232d4b","#2c4f6b","#0e879c","#60999a","#d1e0bf","#d9e12b","#e6ce3a","#e6a01d","#e57200","#fdfdfd")
     
@@ -593,10 +657,10 @@ server <- function(input, output){
   
   create_countywide_coverage <- function(data, coveragelabel, iconname) {
     
-  valueBox(
-    paste0(round(data, 2), "%"), coveragelabel, icon = icon(iconname),
-    color = "olive", width = "100%"
-  )
+    valueBox(
+      paste0(round(data, 2), "%"), coveragelabel, icon = icon(iconname),
+      color = "light-blue", width = "100%"
+    )
     
   }
   
@@ -608,7 +672,7 @@ server <- function(input, output){
   box_ems_8 <- reactive({data_ems8_county %>% filter(county == input$whichcounty_ems) %>% pull(ems_countywide_coverage_8)})
   box_ems_10 <- reactive({data_ems10_county %>% filter(county == input$whichcounty_ems) %>% pull(ems_countywide_coverage_10)})
   box_ems_12 <- reactive({data_ems12_county %>% filter(county == input$whichcounty_ems) %>% pull(ems_countywide_coverage_12)})
-   
+  
   output$box_ems_countywide_8 <- renderValueBox({
     create_countywide_coverage(box_ems_8(), "Coverage at 8 Minute Drive", "fas fa-ambulance")
   })
@@ -663,17 +727,17 @@ server <- function(input, output){
   
   labels_ems <- reactive({
     lapply(
-    paste("<strong>Name: </strong>",
-          plot_ems_points()$name,
-          "<br />",
-          "<strong>Service Type: </strong>",
-          plot_ems_points()$naicsdescr,
-          "<br />",
-          "<strong>Address:</strong>",
-          paste0(plot_ems_points()$address, ", ", plot_ems_points()$city, ", VA ", plot_ems_points()$zip)
-    ),
-    htmltools::HTML
-  )
+      paste("<strong>Name: </strong>",
+            plot_ems_points()$name,
+            "<br />",
+            "<strong>Service Type: </strong>",
+            plot_ems_points()$naicsdescr,
+            "<br />",
+            "<strong>Address:</strong>",
+            paste0(plot_ems_points()$address, ", ", plot_ems_points()$city, ", VA ", plot_ems_points()$zip)
+      ),
+      htmltools::HTML
+    )
   })
   
   output$plot_ems_iso_county <- renderLeaflet({
@@ -693,20 +757,20 @@ server <- function(input, output){
   
   labels_wifi <- reactive({
     lapply(
-    paste("<strong>Name: </strong>",
-          plot_wifi_points()$name,
-          "<br />",
-          "<strong>County: </strong>",
-          plot_wifi_points()$county,
-          "<br />",
-          "<strong>GEOID: </strong>",
-          plot_wifi_points()$GEOID,
-          "<br />",
-          "<strong>Address:</strong>",
-          paste0(plot_wifi_points()$address, ", ", plot_wifi_points()$city_1, ", VA ", plot_wifi_points()$zip_code)
-    ),
-    htmltools::HTML
-  )
+      paste("<strong>Name: </strong>",
+            plot_wifi_points()$name,
+            "<br />",
+            "<strong>County: </strong>",
+            plot_wifi_points()$county,
+            "<br />",
+            "<strong>GEOID: </strong>",
+            plot_wifi_points()$GEOID,
+            "<br />",
+            "<strong>Address:</strong>",
+            paste0(plot_wifi_points()$address, ", ", plot_wifi_points()$city_1, ", VA ", plot_wifi_points()$zip_code)
+      ),
+      htmltools::HTML
+    )
   })
   
   output$plot_wifi_iso_county <- renderLeaflet({
@@ -726,23 +790,23 @@ server <- function(input, output){
   
   labels_food <- reactive({
     lapply(
-    paste("<strong>Name: </strong>",
-          plot_food_points()$business,
-          "<br />",
-          "<strong>Type: </strong>",
-          plot_food_points()$profiles,
-          "<br />",
-          "<strong>FIPS: </strong>",
-          plot_food_points()$FIPS,
-          "<br />",
-          "<strong>County: </strong>",
-          plot_food_points()$county,
-          "<br />",
-          "<strong>Address: </strong>",
-          paste0(plot_food_points()$address1, ", ", plot_food_points()$city, ", VA ", plot_food_points()$zip)
-    ),
-    htmltools::HTML
-  )
+      paste("<strong>Name: </strong>",
+            plot_food_points()$business,
+            "<br />",
+            "<strong>Type: </strong>",
+            plot_food_points()$profiles,
+            "<br />",
+            "<strong>FIPS: </strong>",
+            plot_food_points()$FIPS,
+            "<br />",
+            "<strong>County: </strong>",
+            plot_food_points()$county,
+            "<br />",
+            "<strong>Address: </strong>",
+            paste0(plot_food_points()$address1, ", ", plot_food_points()$city, ", VA ", plot_food_points()$zip)
+      ),
+      htmltools::HTML
+    )
   })
   
   output$plot_food_iso_county <- renderLeaflet({
@@ -757,14 +821,14 @@ server <- function(input, output){
   
   plot_usda_data <- reactive({data_usda %>% filter(county == input$whichcounty_usda)})
   plot_usda_var <- reactive({plot_usda_data()[[input$whichvar_usda]]})
-    
+  
   output$plot_usda <- renderLeaflet({
-
+    
     var_label <- names(choices_usda)[choices_usda == input$whichvar_usda]
     
     create_plot(plot_usda_data(), plot_usda_var(), var_label)
   })
-
+  
   
   #
   # OUTPUT: Plot - Older adults ------------------------------------------
