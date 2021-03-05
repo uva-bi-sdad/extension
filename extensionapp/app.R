@@ -9,6 +9,7 @@ library(readr)
 library(readxl)
 library(sf)
 library(DT)
+library(shinyWidgets)
 
 
 #
@@ -204,7 +205,22 @@ ui <- dashboardPage(
       
       tabItem(tabName = "population",
               fluidRow(style = "margin: 6px;",
-                       h1(strong("County Population Characteristics"), align = "center"),
+                       h1(strong("County Residents' Characteristics"), align = "center"),
+                       br(),
+                       box(width = 12,
+                           fluidRow(
+                             column(width = 1,
+                                    icon("info-circle", "fa-4x")
+                             ),
+                             column(width = 11,
+                                    "Use the navigation below to explore", strong("county residents' sociodemographic characteristics,"), "including
+                                    age, race, ethnicity, education, employment, health insurance, and poverty status.",
+                                    p(),
+                                    "All information is mapped at the census tract level. A census tract is a county subdivision with population size between 1,200 and 8,000 people.", 
+                                    br(),
+                                    "Hover over a tract to see the exact value of your chosen characteristic.")
+                           )
+                       ),
                        br(),
                        box(width = 3,
                            selectInput("whichcounty_socdem", "Select County", 
@@ -226,7 +242,22 @@ ui <- dashboardPage(
       
       tabItem(tabName = "olderadult",
               fluidRow(style = "margin: 6px;",
-                       h1(strong("Older Adult Characteristics"), align = "center"),
+                       h1(strong("County Older Adults' Characteristics"), align = "center"),
+                       br(),
+                       box(width = 12,
+                           fluidRow(
+                             column(width = 1,
+                                    icon("info-circle", "fa-4x")
+                             ),
+                             column(width = 11,
+                                    "Use the navigation below to explore", strong("county older adult residents' sociodemographic and health characteristics,"), "including
+                                    disability status, poverty status, employment status, and household composition.",
+                                    p(),
+                                    "All information is mapped at the census tract level. A census tract is a county subdivision with population size between 1,200 and 8,000 people.", 
+                                    br(),
+                                    "Hover over a tract to see the exact value of your chosen characteristic.")
+                           )
+                       ),
                        br(),
                        box(width = 3,
                            selectInput("whichcounty_older", "Select County", 
@@ -248,7 +279,22 @@ ui <- dashboardPage(
       
       tabItem(tabName = "foodsec",
               fluidRow(style = "margin: 6px;",
-                       h1(strong("Food Security"), align = "center"),
+                       h1(strong("County Residents' Food Security"), align = "center"),
+                       br(),
+                       box(width = 12,
+                           fluidRow(
+                             column(width = 1,
+                                    icon("info-circle", "fa-4x")
+                             ),
+                             column(width = 11,
+                                    "Use the navigation below to explore", strong("county residents' food security status,"), "including
+                                    food access at different distance thresholds and by resident subgroups (children, older adults, and low-income population).",
+                                    p(),
+                                    "All information is mapped at the census tract level. A census tract is a county subdivision with population size between 1,200 and 8,000 people.", 
+                                    br(),
+                                    "Hover over a tract to see the exact value of your chosen characteristic.")
+                           )
+                       ),
                        br(),
                        box(width = 3,
                            selectInput("whichcounty_usda", "Select County", 
@@ -271,7 +317,25 @@ ui <- dashboardPage(
       
       tabItem(tabName = "foodretail",
               fluidRow(style = "margin: 6px;",
-                       h1(strong("Food Retail Access"), align = "center"),
+                       h1(strong("County Residents' Food Retail Access"), align = "center"),
+                       br(),
+                       box(width = 12,
+                           fluidRow(
+                             column(width = 1,
+                                    icon("info-circle", "fa-4x")
+                             ),
+                             column(width = 11,
+                                    "Use the navigation below to explore", strong("county residents' food retail access."),
+                                    p(),
+                                    "The maps below show the locations of all residential properties (green dots) and food retail locations (blue markers)
+                                     in the county. They also display", strong("isochrones"), "(grey shapes), or polygons of equal travel time distance, from food retail locations.",
+                                    p(),
+                                    "Residents living in properties that the isochrones cover are the ones who are able to access a food retail location within a
+                                    10- or 15- minute car drive under optimal road conditions. You can toggle between viewing 10- and 15-minute isochrones using map controls on the top-right.
+                                    Boxes on the left show what percent of residents have such food retail access at each travel time threshold."
+                             )
+                           )
+                       ),
                        br(),
                        column(width = 3,
                               box(width = 12,
@@ -280,16 +344,16 @@ ui <- dashboardPage(
                                               multiple = F, width = "100%", choices = c(countylist_food))
                               ),
                               box(width = 12,
-                                p(strong("Residential Coverage")),
-                                valueBoxOutput("box_food_countywide_10", width = "100%"),
-                                valueBoxOutput("box_food_countywide_15", width = "100%")
+                                  p(strong("Residential Coverage")),
+                                  valueBoxOutput("box_food_countywide_10", width = "100%"),
+                                  valueBoxOutput("box_food_countywide_15", width = "100%")
                               ) 
                        ),
                        column(width = 9, 
                               box(width = 12,
-                                p(strong("County Map")),
-                                withSpinner(leafletOutput("plot_food_iso_county", height = "600px")),
-                                p(tags$small("Data Sources: CoreLogic, 2019; MarketMaker, 2019; OpenStreetMap, 2021."))
+                                  p(strong("County Map")),
+                                  withSpinner(leafletOutput("plot_food_iso_county", height = "600px")),
+                                  p(tags$small("Data Sources: CoreLogic, 2019; MarketMaker, 2019; OpenStreetMap, 2021."))
                               )
                        )
               )
@@ -302,7 +366,22 @@ ui <- dashboardPage(
       
       tabItem(tabName = "bband",
               fluidRow(style = "margin: 6px;",
-                       h1(strong("Internet and Computer Access"), align = "center"),
+                       h1(strong("County Residents' Internet and Computer Access"), align = "center"),
+                       br(),
+                       box(width = 12,
+                           fluidRow(
+                             column(width = 1,
+                                    icon("info-circle", "fa-4x")
+                             ),
+                             column(width = 11,
+                                    "Use the navigation below to explore", strong("county residents' computing device and internet access,"), "including
+                                    computer, laptop, tablet, and smartphone ownership, and internet connection type.",
+                                    p(),
+                                    "All information is mapped at the census tract level. A census tract is a county subdivision with population size between 1,200 and 8,000 people.", 
+                                    br(),
+                                    "Hover over a tract to see the exact value of your chosen characteristic.")
+                           )
+                       ),
                        br(),
                        box(width = 3,
                            selectInput("whichcounty_bband", "Select County", 
@@ -325,7 +404,25 @@ ui <- dashboardPage(
       
       tabItem(tabName = "wifi",
               fluidRow(style = "margin: 6px;",
-                       h1(strong("Free Wi-Fi Hotspots"), align = "center"),
+                       h1(strong("County Residents' Free Wi-Fi Hotspot Access"), align = "center"),
+                       br(),
+                       box(width = 12,
+                           fluidRow(
+                             column(width = 1,
+                                    icon("info-circle", "fa-4x")
+                             ),
+                             column(width = 11,
+                                    "Use the navigation below to explore", strong("county residents' free wi-fi hotspot access."),
+                                    p(),
+                                    "The maps below show the locations of all residential properties (green dots) and free wi-fi hotspot locations (blue markers)
+                                     in the county. They also display", strong("isochrones"), "(grey shapes), or polygons of equal travel time distance, from the wi-fi hotspots.",
+                                    p(),
+                                    "Residents living in properties that the isochrones cover are the ones who are able to access a free wi-fi hotspot location within a
+                                    10- or 15- minute car drive under optimal road conditions. You can toggle between viewing 10- and 15-minute isochrones using map controls on the top-right.
+                                    Boxes on the left show what percent of residents have such free wi-fi access at each travel time threshold."
+                             )
+                           )
+                       ),
                        br(),
                        column(width = 3,
                               box(width = 12,
@@ -356,7 +453,25 @@ ui <- dashboardPage(
       
       tabItem(tabName = "ems",
               fluidRow(style = "margin: 6px;",
-                       h1(strong("Emergency Medical Services Station Access"), align = "center"),
+                       h1(strong("County Residents' Emergency Medical Services Station Access"), align = "center"),
+                       br(),
+                       box(width = 12,
+                           fluidRow(
+                             column(width = 1,
+                                    icon("info-circle", "fa-4x")
+                             ),
+                             column(width = 11,
+                                    "Use the navigation below to explore", strong("county residents' emergency medical services station access."),
+                                    p(),
+                                    "The maps below show the locations of all residential properties (green dots) and emergency medical services station locations (blue markers)
+                                     in the county. They also display", strong("isochrones"), "(grey shapes), or polygons of equal travel time distance, from emergency medical services stations.",
+                                    p(),
+                                    "Residents living in properties that the isochrones cover are the ones who are able to access a food retail location within a
+                                    8-, 10-, or 12-minute car drive under optimal road conditions. You can toggle between viewing 8-, 10- and 12-minute isochrones using map controls on the top-right.
+                                    Boxes on the left show what percent of residents have such emergency medical services station access at each travel time threshold."
+                             )
+                           )
+                       ),
                        br(),
                        column(width = 3,
                               box(width = 12,
@@ -390,16 +505,32 @@ ui <- dashboardPage(
               fluidRow(style = "margin: 6px;",
                        h1(strong("Measures"), align = "center"),
                        br(),
-                       selectInput("measurestopic", "Select Topic:", width = "100%", 
-                                   choices = c(
-                                     "All Measures",
-                                     "Sociodemographic Measures",
-                                     "Older Adult Population Measures",
-                                     "Connectivity Measures",
-                                     "Food Access Measures",
-                                     "Health Care Access Measures")
+                       box(width = 12,
+                           fluidRow(
+                             column(width = 1,
+                                    icon("info-circle", "fa-4x")
+                             ),
+                             column(width = 11,
+                                    "Use the navigation below to explore information about", strong("measures included in this dashboard."),
+                                    p(),
+                                    "The table displays variables by topic, along with their data source, year, and level of geography. Use the
+                                    search bar or filter the table by topic to quickly find a variable of interest."
+                             )
+                           )
                        ),
-                       DTOutput("measurestable")
+                       br(),
+                       column(width = 12, 
+                              selectInput("measurestopic", "Select Topic:", width = "100%", 
+                                          choices = c(
+                                            "All Measures",
+                                            "Sociodemographic Measures",
+                                            "Older Adult Population Measures",
+                                            "Connectivity Measures",
+                                            "Food Access Measures",
+                                            "Health Care Access Measures")
+                              ),
+                              DTOutput("measurestable")
+                       )
               )
       ),
       
@@ -412,38 +543,55 @@ ui <- dashboardPage(
               fluidRow(style = "margin: 6px;",
                        h1(strong("Data Sources"), align = "center"),
                        br(),
-                       column(12,
-                              box(img(src = "data-hifld.png", style = "display: inline; float: left; margin-right:20px; margin-bottom: 20px;", width = "100px"),
+                       box(width = 12,
+                           fluidRow(
+                             column(width = 1,
+                                    icon("info-circle", "fa-4x")
+                             ),
+                             column(width = 11,
+                                    "The following is a list of all", strong("data sources included in this dashboard."),
+                                    p(),
+                                    "It contains information on the dataset provider, general contents, temporal availability, level of geography, and 
+                                    a brief description of how we used the data. For more information about the original data, please visit the dataset provider's
+                                    website.")
+                           )
+                       ),
+                              box(
+                                  fluidRow(
+                                    column(width = 2,
+                                           img(src = "data-hifld.png", style = "display: inline; float: left; margin-right:10px; border: 0.2px solid grey; padding: 10px;")
+                                           ),
+                                    column(width = 10,
                                   p(strong("Homeland Infrastructure Foundation-Level Data."), "Homeland Infrastructure Foundation-Level Data (HIFLD) is a collection of public
                                   source datasets at property level provided by the Department of Homeland Security. Since 2002, this HIFLD has provided quarterly
                                   updated layers on topics from education to energy, including on health care facilities. We used HIFLD emergency medical services
-                                  station data at the latitude and longitude geographic level in our analyses."), width = 12
-                              ),
-                              box(img(src = "data-marketmaker.png", style = "display: inline; float: left; margin-right:20px; margin-bottom: 20px;", width = "200px"),
+                                  station data at the latitude and longitude geographic level in our analyses.")
+                              )),
+                              box(img(src = "data-marketmaker.png", style = "display: inline; float: left; margin-right:10px; border: 0.2px solid grey; padding: 10px;", width = "200px"),
                                   p(strong("MarketMaker."), "MarketMaker is a networking site that connects producers across America. Its food retail dataset includes 
                                   locations of supermarkets, farmers' markets, and grocery stores. We use their 2019 data set to retrieve food retail location addresses
                                   in rural Virginia and subsequently geocode them to obtain longitude and latitude coordinates."), width = 12
                               ),
-                              box(img(src = "data-acs.png", style = "display: inline; float: left; margin-right:20px; margin-bottom: 20px;", width = "200px"),
+                              box(img(src = "data-acs.png", style = "display: inline; float: left; margin-right:10px; border: 0.2px solid grey; padding: 10px;", width = "200px"),
                                   p(strong("American Community Survey."), "The American Community Survey (ACS) is an ongoing yearly survey conducted by the U.S Census
                                   Bureau. ACS samples households to compile 1-year and 5-year datasets providing information on population sociodemographic and
                                   socioeconomic characteristics including employment, disability, and health insurance coverage. We used AC 2014/18 5-year
                                   estimates to obtain census tract and census block group-level to explore rural Virginia county resident characteristics."), width = 12
                               ),
-                              box(img(src = "data-connect.png", style = "display: inline; float: left; margin-right:20px; margin-bottom: 20px;", width = "150px"),
+                              box(img(src = "data-connect.png", style = "display: inline; float: left; margin-right:10px; border: 0.2px solid grey; padding: 10px;", width = "150px"),
                                   p(strong("CommonwealthConnect."), "The Virginia Tech CommonwealthConnect Wi-Fi Hotspot Map is an interactive map of free, publicly
                                   available wi-fi hotspots in Virginia. Its goal is to provide an easily accessible map of areas where individuals can connect to the
                                   internet for free, decreasing the constraints placed on families that do not have internet access at home. We used the 2020 wi-fi
                                   hotspot map data to retrieve hotspot locations in rural Virginia counties and subsequently employed the information in calculating hotspot
                                   coverage isochrones."), width = 12
                               ),
-                              box(img(src = "data-corelogic.png", style = "display: inline; float: left; margin-right:20px; margin-bottom: 20px;", width = "120px"),
+                              box(img(src = "data-corelogic.png", style = "display: inline; float: left; margin-right:10px; border: 0.2px solid grey; padding: 10px;", width = "120px"),
                                   p(strong("CoreLogic."), "CoreLogic is a supplier of proprietary US real estate and specialized business data at the property level.
                                   This company provides data spanning over 50 years at the latitude and longitude level. Information available in the dataset includes
                                   property characteristics, mortgage, foreclosures and performance. We used 2019 CoreLogic data to obtain the locations of all residential
                                   properties in rural Virginia counties."), width = 12
                               ),
-                              box(img(src = "data-ers.png", style = "display: inline; float: left; margin-right:20px; margin-bottom: 20px;", width = "120px"),
+                              box(img(src = "data-ers.png", style = "display: inline; float: left; margin-right:10px; border: 0.2px solid grey; padding: 10px;", width = "120px"),
                                   p(strong("Food Access Research Atlas."), "The United State Department of Agriculture Food Access Research Atlas is a data resource
                                   created by the Economic Research Service that provides information on food access indicators at census tract level. The data allows
                                   individuals to understand food access in communities based on factors like age and socioeconomic status. We used the 2017 Food Access
@@ -531,7 +679,7 @@ server <- function(input, output){
             data$areaname,
             "<br />",
             "<strong>", myvarlabel, ": </strong>",
-            round(myvar, 2)),
+            format(myvar, big.mark = ",", decimal.mark = ".", digits = 4, zero.print = T)),
       htmltools::HTML
     )
     
@@ -552,7 +700,8 @@ server <- function(input, output){
                 values =  ~(myvar),
                 title = "Value",
                 opacity = 0.8,
-                na.label = "Not Available")
+                na.label = "Not Available", 
+                labFormat = labelFormat(digits = 4, big.mark = ","))
   }
   
   
@@ -577,17 +726,17 @@ server <- function(input, output){
                  group = "Residential Properties") %>%
       addPolygons(data = data_county_8, 
                   fillColor = colors[1],
-                  fillOpacity = .8, 
+                  fillOpacity = .7, 
                   stroke = FALSE, 
                   group = "8 Minute Isochrones") %>%
       addPolygons(data = data_county_10, 
                   fillColor = colors[1],
-                  fillOpacity = .8, 
+                  fillOpacity = .7, 
                   stroke = FALSE, 
                   group = "10 Minute Isochrones") %>%
       addPolygons(data = data_county_12, 
                   fillColor = colors[1],
-                  fillOpacity = .8, 
+                  fillOpacity = .7, 
                   stroke = FALSE, 
                   group = "12 Minute Isochrones") %>%
       addMarkers(data = data_county_points,
@@ -603,7 +752,8 @@ server <- function(input, output){
                           "10 Minute Isochrones",
                           "12 Minute Isochrones",
                           "Residential Properties"),
-        options = layersControlOptions(collapsed = FALSE))
+        options = layersControlOptions(collapsed = FALSE)) %>%
+      hideGroup(c("10 Minute Isochrones", "12 Minute Isochrones"))
     
     m1 
   }
@@ -625,12 +775,12 @@ server <- function(input, output){
                  group = "Residential Properties") %>%
       addPolygons(data = data_county_10, 
                   fillColor = colors[1],
-                  fillOpacity = .8, 
+                  fillOpacity = .7, 
                   stroke = FALSE, 
                   group = "10 Minute Isochrones") %>%
       addPolygons(data = data_county_15, 
                   fillColor = colors[1],
-                  fillOpacity = .8, 
+                  fillOpacity = .7, 
                   stroke = FALSE, 
                   group = "15 Minute Isochrones") %>%
       addMarkers(data = data_county_points,
@@ -645,7 +795,8 @@ server <- function(input, output){
         overlayGroups = c("10 Minute Isochrones",
                           "15 Minute Isochrones",
                           "Residential Properties"),
-        options = layersControlOptions(collapsed = FALSE))
+        options = layersControlOptions(collapsed = FALSE)) %>%
+      hideGroup(c("15 Minute Isochrones"))
     
     m1 
   }
