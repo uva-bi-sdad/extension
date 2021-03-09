@@ -555,49 +555,79 @@ ui <- dashboardPage(
                                     a brief description of how we used the data. For more information about the original data, please visit the dataset provider's
                                     website.")
                            )
-                       ),
-                              box(
-                                  fluidRow(
-                                    column(width = 2,
-                                           img(src = "data-hifld.png", style = "display: inline; float: left; margin-right:10px; border: 0.2px solid grey; padding: 10px;")
-                                           ),
-                                    column(width = 10,
-                                  p(strong("Homeland Infrastructure Foundation-Level Data."), "Homeland Infrastructure Foundation-Level Data (HIFLD) is a collection of public
+                       )
+              ),
+              fluidRow(
+                column(width = 6,
+                       box(width = 12,
+                           fluidRow(
+                             column(width = 4,
+                                    img(src = "data-hifld.png", style = "display: inline; float: left; margin-right:10px; padding: 10px;", width = "100%")
+                             ),
+                             column(width = 8,
+                                    p(strong("Homeland Infrastructure Foundation-Level Data."), "Homeland Infrastructure Foundation-Level Data (HIFLD) is a collection of public
                                   source datasets at property level provided by the Department of Homeland Security. Since 2002, this HIFLD has provided quarterly
                                   updated layers on topics from education to energy, including on health care facilities. We used HIFLD emergency medical services
                                   station data at the latitude and longitude geographic level in our analyses.")
-                              )),
-                              box(img(src = "data-marketmaker.png", style = "display: inline; float: left; margin-right:10px; border: 0.2px solid grey; padding: 10px;", width = "200px"),
-                                  p(strong("MarketMaker."), "MarketMaker is a networking site that connects producers across America. Its food retail dataset includes 
+                             ))),
+                       box(width = 12,
+                           fluidRow(
+                             column(width = 4,
+                                    img(src = "data-marketmaker.png", style = "display: inline; float: left; margin-right:10px;", width = "100%")
+                             ),
+                             column(width = 8,
+                                    p(strong("MarketMaker."), "MarketMaker is a networking site that connects producers across America. Its food retail dataset includes 
                                   locations of supermarkets, farmers' markets, and grocery stores. We use their 2019 data set to retrieve food retail location addresses
-                                  in rural Virginia and subsequently geocode them to obtain longitude and latitude coordinates."), width = 12
-                              ),
-                              box(img(src = "data-acs.png", style = "display: inline; float: left; margin-right:10px; border: 0.2px solid grey; padding: 10px;", width = "200px"),
-                                  p(strong("American Community Survey."), "The American Community Survey (ACS) is an ongoing yearly survey conducted by the U.S Census
+                                  in rural Virginia and subsequently geocode them to obtain longitude and latitude coordinates.") 
+                             ))),
+                       box(width = 12,
+                           fluidRow(
+                             column(width = 4,
+                                    img(src = "data-acs.png", style = "display: inline; float: left; margin-right:10px;", width = "100%")
+                             ),
+                             column(width = 8,
+                                    p(strong("American Community Survey."), "The American Community Survey (ACS) is an ongoing yearly survey conducted by the U.S Census
                                   Bureau. ACS samples households to compile 1-year and 5-year datasets providing information on population sociodemographic and
                                   socioeconomic characteristics including employment, disability, and health insurance coverage. We used AC 2014/18 5-year
-                                  estimates to obtain census tract and census block group-level to explore rural Virginia county resident characteristics."), width = 12
-                              ),
-                              box(img(src = "data-connect.png", style = "display: inline; float: left; margin-right:10px; border: 0.2px solid grey; padding: 10px;", width = "150px"),
-                                  p(strong("CommonwealthConnect."), "The Virginia Tech CommonwealthConnect Wi-Fi Hotspot Map is an interactive map of free, publicly
+                                  estimates to obtain census tract and census block group-level to explore rural Virginia county resident characteristics.")
+                             )))
+                ),
+                column(width = 6,
+                       box(width = 12,
+                           fluidRow(
+                             column(width = 4,
+                                    img(src = "data-connect.png", style = "display: inline; float: left; margin-right:10px;", width = "100%")
+                             ),
+                             column(width = 8,
+                                    p(strong("CommonwealthConnect."), "The Virginia Tech CommonwealthConnect Wi-Fi Hotspot Map is an interactive map of free, publicly
                                   available wi-fi hotspots in Virginia. Its goal is to provide an easily accessible map of areas where individuals can connect to the
                                   internet for free, decreasing the constraints placed on families that do not have internet access at home. We used the 2020 wi-fi
                                   hotspot map data to retrieve hotspot locations in rural Virginia counties and subsequently employed the information in calculating hotspot
-                                  coverage isochrones."), width = 12
-                              ),
-                              box(img(src = "data-corelogic.png", style = "display: inline; float: left; margin-right:10px; border: 0.2px solid grey; padding: 10px;", width = "120px"),
-                                  p(strong("CoreLogic."), "CoreLogic is a supplier of proprietary US real estate and specialized business data at the property level.
+                                  coverage isochrones.")
+                             ))),
+                       box(width = 12,
+                           fluidRow(
+                             column(width = 4,
+                                    img(src = "data-corelogic.png", style = "display: inline; float: left; margin-right:10px;", width = "100%")
+                             ),
+                             column(width = 8,
+                                    p(strong("CoreLogic."), "CoreLogic is a supplier of proprietary US real estate and specialized business data at the property level.
                                   This company provides data spanning over 50 years at the latitude and longitude level. Information available in the dataset includes
                                   property characteristics, mortgage, foreclosures and performance. We used 2019 CoreLogic data to obtain the locations of all residential
-                                  properties in rural Virginia counties."), width = 12
-                              ),
-                              box(img(src = "data-ers.png", style = "display: inline; float: left; margin-right:10px; border: 0.2px solid grey; padding: 10px;", width = "120px"),
-                                  p(strong("Food Access Research Atlas."), "The United State Department of Agriculture Food Access Research Atlas is a data resource
+                                  properties in rural Virginia counties.")
+                             ))),
+                       box(width = 12,
+                           fluidRow(
+                             column(width = 4,
+                                    img(src = "data-ers.png", style = "display: inline; float: left; margin-right:10px;", width = "100%")
+                             ),
+                             column(width = 8,
+                                    p(strong("Food Access Research Atlas."), "The United State Department of Agriculture Food Access Research Atlas is a data resource
                                   created by the Economic Research Service that provides information on food access indicators at census tract level. The data allows
                                   individuals to understand food access in communities based on factors like age and socioeconomic status. We used the 2017 Food Access
-                                  Research Atlas to examine residents’ food access at multiple distance thresholds and by resident characteristics."), width = 12
-                              )
-                       )
+                                  Research Atlas to examine residents’ food access at multiple distance thresholds and by resident characteristics.")
+                             )))
+                )
               )
       ),
       
