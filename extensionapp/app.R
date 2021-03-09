@@ -185,16 +185,26 @@ ui <- dashboardPage(
               fluidRow(style = "margin: 6px;",
                        h1(strong("Community Learning Through Data Driven Discovery: Barriers to Rural Health"), align = "center"),
                        br(),
-                       box(
-                         p("Rural counties often face challenges in providing health care access to its residents given few health facilities available, lack of broadband infrastructure that limits providing telemedicine access or communicating health information, 
+                       box(width = 12,
+                           title = strong("About"),
+                           column(12,
+                                  p(strong("This project builds local capacity, leveraging social and data science to construct a rural county dashboard enhancing data-driven health access decision making in rural Virginia."),
+                                    br(),
+                                    p("Rural counties often face challenges in providing health care access to its residents given few health facilities available, lack of broadband infrastructure that limits providing telemedicine access or communicating health information, 
                           and individual-level inequalities that pose barriers to health care access and use. Identifying areas of high need or potential solutions may also be difficult for rural areas without adequate resources to acquire, analyze, and interpret 
-                          relevant data. This project builds local capacity, leveraging social and data science to construct a rural county dashboard enhancing data-driven health access decision making in rural Virginia.")
+                          relevant data.")
+                                  )
+                           )
                        ),
-                       box(
-                         img(src = "logo-extension.png", style = "display: block; margin-left: auto; margin-right: auto;", width = "250px"),
-                         br(),
-                         p("This project is one of eight funded by the 2020/21 USDA National Institute of Food and Agriculture ", a(href = "https://impact.extension.org/ntae/", "New Technologies for Agricultural Extension grant", target = "_blank"), 
-                           "through the University of Virginia, in collaboration with Virginia Cooperative Extension, Virginia Tech and implemented by the eXtension Foundation.")
+                       box(width = 12,
+                           title = strong("Funding"),
+                           column(10,
+                                  p("This project is one of eight funded by the 2020/21 USDA National Institute of Food and Agriculture ", a(href = "https://impact.extension.org/ntae/", "New Technologies for Agricultural Extension grant", target = "_blank"), 
+                                    "through the University of Virginia, in collaboration with Virginia Cooperative Extension, Virginia Tech and implemented by the eXtension Foundation.")
+                           ),
+                           column(2,
+                                  img(src = "logo-extension.png", style = "display: block; margin-left: auto; margin-right: auto;", width = "100%")
+                           )
                        )
               )
       ),
@@ -640,16 +650,26 @@ ui <- dashboardPage(
               fluidRow(style = "margin: 6px;",
                        h1(strong("Community Learning Through Data Driven Discovery: Barriers to Rural Health"), align = "center"),
                        br(),
-                       box(
-                         p("Rural counties often face challenges in providing health care access to its residents given few health facilities available, lack of broadband infrastructure that limits providing telemedicine access or communicating health information, 
+                       box(width = 12,
+                           title = strong("About"),
+                           column(12,
+                                  p(strong("This project builds local capacity, leveraging social and data science to construct a rural county dashboard enhancing data-driven health access decision making in rural Virginia."),
+                                    br(),
+                                    p("Rural counties often face challenges in providing health care access to its residents given few health facilities available, lack of broadband infrastructure that limits providing telemedicine access or communicating health information, 
                           and individual-level inequalities that pose barriers to health care access and use. Identifying areas of high need or potential solutions may also be difficult for rural areas without adequate resources to acquire, analyze, and interpret 
-                          relevant data. This project builds local capacity, leveraging social and data science to construct a rural county dashboard enhancing data-driven health access decision making in rural Virginia.")
+                          relevant data.")
+                                  )
+                           )
                        ),
-                       box(
-                         img(src = "logo-extension.png", style = "display: block; margin-left: auto; margin-right: auto;", width = "250px"),
-                         br(),
-                         p("This project is one of eight funded by the 2020/21 USDA National Institute of Food and Agriculture ", a(href = "https://impact.extension.org/ntae/", "New Technologies for Agricultural Extension grant", target = "_blank"), 
-                           "through the University of Virginia, in collaboration with Virginia Cooperative Extension, Virginia Tech and implemented by the eXtension Foundation.")
+                       box(width = 12,
+                           title = strong("Funding"),
+                           column(10,
+                                  p("This project is one of eight funded by the 2020/21 USDA National Institute of Food and Agriculture ", a(href = "https://impact.extension.org/ntae/", "New Technologies for Agricultural Extension grant", target = "_blank"), 
+                                    "through the University of Virginia, in collaboration with Virginia Cooperative Extension, Virginia Tech and implemented by the eXtension Foundation.")
+                           ),
+                           column(2,
+                                  img(src = "logo-extension.png", style = "display: block; margin-left: auto; margin-right: auto;", width = "100%")
+                           )
                        )
               )
       ),
@@ -663,17 +683,23 @@ ui <- dashboardPage(
               fluidRow(style = "margin: 6px;",
                        h1(strong("Contact"), align = "center"),
                        br(),
-                       box(
-                         p(a(href = "https://biocomplexity.virginia.edu/person/teja-pristavec", "Teja Pristavec", target = "_blank")), 
-                         p(em("Research Assistant Professor, Biocomplexity Institute, University of Virginia")),
-                         br(),
-                         img(src = "logo-uva.jpeg", style = "display: block; margin-left: auto; margin-right: auto; border: 0.5px solid grey; padding: 10px;", width = "250px")
+                       box(width = 6,
+                           column(6,
+                                  img(src = "logo-uva.jpeg", style = "display: block; margin-left: auto; margin-right: auto;", width = "100%")
+                           ),
+                           column(6,
+                                  p(a(href = "https://biocomplexity.virginia.edu/person/teja-pristavec", "Teja Pristavec", target = "_blank")), 
+                                  p(em("Research Assistant Professor, Biocomplexity Institute, University of Virginia"))
+                           )
                        ),
-                       box(
-                         p(a(href = "https://news.cals.vt.edu/experts/2015/06/02/mike-lambur/", "Mike Lambur", target = "_blank")),
-                         p(em("Associate Director of Program Development, Virginia Cooperative Extension, Virginia Tech")),
-                         br(),
-                         img(src = "logo-vt.jpeg", style = "display: block; margin-left: auto; margin-right: auto; border: 0.5px solid grey; padding: 10px;", width = "250px")
+                       box(width = 6,
+                           column(width = 6,
+                                  img(src = "logo-vt.jpeg", style = "display: block; margin-left: auto; margin-right: auto;", width = "100%")
+                           ),
+                           column(width = 6,
+                                  p(a(href = "https://news.cals.vt.edu/experts/2015/06/02/mike-lambur/", "Mike Lambur", target = "_blank")),
+                                  p(em("Associate Director of Program Development, Virginia Cooperative Extension, Virginia Tech"))
+                           )
                        )
               )
       )
