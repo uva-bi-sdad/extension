@@ -195,6 +195,8 @@ ui <- dashboardPage(
   
   dashboardBody(
     
+    tags$head(includeScript("google-analytics.js")),
+    
     # Image in header, http://jonkatz2.github.io/2018/06/22/Image-In-Shinydashboard-Header
     tags$style(type="text/css", "
                /*    Move everything below the header */
