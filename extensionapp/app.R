@@ -202,7 +202,7 @@ ui <- dashboardPage(
                margin-top: 50px;
                }
                .content {
-               padding-top: 70px;
+               padding-top: 90px;
                }
                /*    Format the title/subtitle text */
                .title-box {
@@ -262,7 +262,7 @@ ui <- dashboardPage(
                position: absolute;
                }
                .left-side, .main-sidebar {
-               padding-top: 150px;
+               padding-top: 170px;
                }"
     ),
     
@@ -312,7 +312,7 @@ ui <- dashboardPage(
       
       tabItem(tabName = "population",
               fluidRow(style = "margin: 6px;",
-                       h1(strong("County Residents' Characteristics"), align = "center"),
+                       h3(strong("County Residents' Characteristics"), align = "left", style = "margin-left: 17px; margin-bottom: 0px;"),
                        br(),
                        box(width = 12,
                            fluidRow(
@@ -349,7 +349,7 @@ ui <- dashboardPage(
       
       tabItem(tabName = "olderadult",
               fluidRow(style = "margin: 6px;",
-                       h1(strong("County Older Adults' Characteristics"), align = "center"),
+                       h3(strong("County Older Adults' Characteristics"), align = "left", style = "margin-left: 17px; margin-bottom: 0px;"),
                        br(),
                        box(width = 12,
                            fluidRow(
@@ -386,7 +386,7 @@ ui <- dashboardPage(
       
       tabItem(tabName = "foodsec",
               fluidRow(style = "margin: 6px;",
-                       h1(strong("County Residents' Food Security"), align = "center"),
+                       h3(strong("County Residents' Food Security"), align = "left", style = "margin-left: 17px; margin-bottom: 0px;"),
                        br(),
                        box(width = 12,
                            fluidRow(
@@ -424,7 +424,7 @@ ui <- dashboardPage(
       
       tabItem(tabName = "foodretail",
               fluidRow(style = "margin: 6px;",
-                       h1(strong("County Residents' Food Retail Access"), align = "center"),
+                       h3(strong("County Residents' Food Retail Access"), align = "left", style = "margin-left: 17px; margin-bottom: 0px;"),
                        br(),
                        box(width = 12,
                            fluidRow(
@@ -445,19 +445,19 @@ ui <- dashboardPage(
                        ),
                        br(),
                        column(width = 3,
-                              box(width = 12,
+                              box(width = "100%",
                                   selectInput("whichcounty_food", "Select County", 
                                               selected = "Accomack County",
                                               multiple = F, width = "100%", choices = c(countylist_food))
                               ),
-                              box(width = 12,
+                              box(width = "100%",
                                   p(strong("Residential Coverage")),
                                   valueBoxOutput("box_food_countywide_10", width = "100%"),
                                   valueBoxOutput("box_food_countywide_15", width = "100%")
                               ) 
                        ),
                        column(width = 9, 
-                              box(width = 12,
+                              box(width = "100%",
                                   p(strong("County Map")),
                                   withSpinner(leafletOutput("plot_food_iso_county", height = "600px")),
                                   p(tags$small("Data Sources: CoreLogic, 2019; MarketMaker, 2019; OpenStreetMap, 2021."))
@@ -473,7 +473,7 @@ ui <- dashboardPage(
       
       tabItem(tabName = "bband",
               fluidRow(style = "margin: 6px;",
-                       h1(strong("County Residents' Internet and Computer Access"), align = "center"),
+                       h3(strong("County Residents' Internet and Computer Access"), align = "left", style = "margin-left: 17px; margin-bottom: 0px;"),
                        br(),
                        box(width = 12,
                            fluidRow(
@@ -511,7 +511,7 @@ ui <- dashboardPage(
       
       tabItem(tabName = "wifi",
               fluidRow(style = "margin: 6px;",
-                       h1(strong("County Residents' Free Wi-Fi Hotspot Access"), align = "center"),
+                       h3(strong("County Residents' Free Wi-Fi Hotspot Access"), align = "left", style = "margin-left: 17px; margin-bottom: 0px;"),
                        br(),
                        box(width = 12,
                            fluidRow(
@@ -532,19 +532,19 @@ ui <- dashboardPage(
                        ),
                        br(),
                        column(width = 3,
-                              box(width = 12,
+                              box(width = "100%",
                                   selectInput("whichcounty_wifi", "Select County", 
                                               selected = "Accomack County",
                                               multiple = F, width = "100%", choices = c(countylist_wifi))
                               ),
-                              box(width = 12,
+                              box(width = "100%",
                                   p(strong("Residential Coverage")),
                                   valueBoxOutput("box_wifi_countywide_10", width = "100%"),
                                   valueBoxOutput("box_wifi_countywide_15", width = "100%")
                               )
                        ),
                        column(width = 9,
-                              box(width = 12, 
+                              box(width = "100%", 
                                   p(strong("County Map")),
                                   withSpinner(leafletOutput("plot_wifi_iso_county", height = "600px")),
                                   p(tags$small("Data Sources: CoreLogic, 2019; CommonwealthConnect, 2020; OpenStreetMap, 2021."))
@@ -560,7 +560,7 @@ ui <- dashboardPage(
       
       tabItem(tabName = "ems",
               fluidRow(style = "margin: 6px;",
-                       h1(strong("County Residents' Emergency Medical Services Station Access"), align = "center"),
+                       h3(strong("County Residents' Emergency Medical Services Station Access"), align = "left", style = "margin-left: 17px; margin-bottom: 0px;"),
                        br(),
                        box(width = 12,
                            fluidRow(
@@ -581,12 +581,12 @@ ui <- dashboardPage(
                        ),
                        br(),
                        column(width = 3,
-                              box(width = 12,
+                              box(width = "100%",
                                   selectInput("whichcounty_ems", "Select County", 
                                               selected = "Accomack County",
                                               multiple = F, width = "100%", choices = c(countylist_ems))
                               ),
-                              box(width = 12,
+                              box(width = "100%",
                                   p(strong("Residential Coverage")),
                                   valueBoxOutput("box_ems_countywide_8", width = "100%"),
                                   valueBoxOutput("box_ems_countywide_10", width = "100%"),
@@ -594,7 +594,7 @@ ui <- dashboardPage(
                               )
                        ),
                        column(width = 9, 
-                              box(width = 12,
+                              box(width = "100%",
                                   p(strong("County Map")),
                                   withSpinner(leafletOutput("plot_ems_iso_county", height = "600px")),
                                   p(tags$small("Data Sources: CoreLogic, 2019; Homeland Infrastructure Foundation-Level Data, 2019; OpenStreetMap, 2021."))
@@ -610,7 +610,7 @@ ui <- dashboardPage(
       
       tabItem(tabName = "measures",
               fluidRow(style = "margin: 6px;",
-                       h1(strong("Measures"), align = "center"),
+                       h3(strong("Measures"), align = "left", style = "margin-left: 17px; margin-bottom: 0px;"),
                        br(),
                        box(width = 12,
                            fluidRow(
@@ -648,7 +648,7 @@ ui <- dashboardPage(
       
       tabItem(tabName = "data",
               fluidRow(style = "margin: 6px;",
-                       h1(strong("Data Sources"), align = "center"),
+                       h3(strong("Data Sources"), align = "left", style = "margin-left: 17px; margin-bottom: 0px;"),
                        br(),
                        box(width = 12,
                            fluidRow(
@@ -745,6 +745,7 @@ ui <- dashboardPage(
       
       tabItem(tabName = "thisproject",
               fluidRow(style = "margin: 6px;",
+                       h3(strong("About"), align = "left", style = "margin-left: 17px; margin-bottom: 0px;"),
                        br(),
                        box(width = 12,
                            title = strong("About"),
@@ -777,7 +778,7 @@ ui <- dashboardPage(
       
       tabItem(tabName = "contact",
               fluidRow(style = "margin: 6px;",
-                       h1(strong("Contact"), align = "center"),
+                       h3(strong("Contact"), align = "left", style = "margin-left: 17px; margin-bottom: 0px;"),
                        br(),
                        box(width = 6,
                            column(6,
