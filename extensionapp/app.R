@@ -10,6 +10,7 @@ library(readxl)
 library(sf)
 library(DT)
 library(shinyWidgets)
+library(shinyjs)
 
 
 #
@@ -121,13 +122,39 @@ options(spinner.color = "#f0f0f0", spinner.color.background = "#ffffff", spinner
 #
 
 ui <- dashboardPage(
+  title = "Access Barriers to Health in Rural Virginia",
   
   dashboardHeader(
-    titleWidth = "40%",
-    title = "Access Barriers to Health in Rural Virginia"
+    # Set height of dashboardHeader
+    tags$li(class = "dropdown",
+            tags$style(".main-header {max-height: 2px}"),
+            tags$style(".main-header .logo {height: 2px;}"),
+            tags$style(".sidebar-toggle {height: 2px; padding-top: 1px !important;}"),
+            tags$style(".navbar {min-height:2px !important}")
+    ),
+    
+    titleWidth = '100%',
+    title = span(
+      tags$img(src = "header.jpg", width = "100%"), 
+      column(12, class = "title-box", 
+             tags$h1(class = "primary-title", 
+                     style = "font-size: 2.8em; 
+                                       font-weight: bold; 
+                                       text-shadow: -1px -1px 0 #DCDCDC,
+                                       1px -1px 0 #DCDCDC,
+                                       -1px 1px 0 #DCDCDC,
+                                       1px 1px 0 #DCDCDC;", 
+                     "Access Barriers to Health in Rural Virginia") 
+      )
+    )
   ),
   
   dashboardSidebar(
+    # Remove the sidebar toggle element
+    tags$script(JS("document.getElementsByClassName('sidebar-toggle')[0].style.visibility = 'hidden';")),
+    # Adjust the sidebar
+    tags$style(".left-side, .main-sidebar {padding-top: 20px}"),
+    
     collapsed = FALSE,
     width = "300px",
     sidebarMenu(menuItem(text = "Home", 
@@ -168,6 +195,77 @@ ui <- dashboardPage(
   
   dashboardBody(
     
+    # Image in header, http://jonkatz2.github.io/2018/06/22/Image-In-Shinydashboard-Header
+    tags$style(type="text/css", "
+               /*    Move everything below the header */
+               .content-wrapper {
+               margin-top: 50px;
+               }
+               .content {
+               padding-top: 70px;
+               }
+               /*    Format the title/subtitle text */
+               .title-box {
+               position: absolute;
+               text-align: center;
+               top: 50%;
+               left: 50%;
+               transform:translate(-50%, 5%);
+               }
+               @media (max-width: 590px) {
+               .title-box {
+               position: absolute;
+               text-align: center;
+               top: 10%;
+               left: 10%;
+               transform:translate(-5%, -5%);
+               }
+               }
+               @media (max-width: 767px) {
+               .primary-title {
+               font-size: 1.1em;
+               top: -50%;
+               }
+               .primary-subtitle {
+               font-size: 1em;
+               }
+               }
+               /*    Make the image taller */
+               .main-header .logo {
+               align: center;
+               display: block;
+               margin:0!important;
+               padding:0!important;
+               border:0!important;
+               height: 125px;
+               }
+               /*    Override the default media-specific settings */
+               @media (max-width: 5000px) {
+               .main-header {
+               padding: 0 0;
+               position: relative;
+               }
+               .main-header .logo,
+               .main-header .navbar {
+               width: 100%;
+               float: none;
+               }
+               .main-header .navbar {
+               margin: 0;
+               }
+               .main-header .navbar-custom-menu {
+               float: right;
+               }
+               }
+               /*    Move the sidebar down */
+               .main-sidebar {
+               position: absolute;
+               }
+               .left-side, .main-sidebar {
+               padding-top: 150px;
+               }"
+    ),
+    
     shinyDashboardThemes(
       theme = "grey_light"
     ),
@@ -183,7 +281,6 @@ ui <- dashboardPage(
       
       tabItem(tabName = "home",
               fluidRow(style = "margin: 6px;",
-                       h1(strong("Community Learning Through Data Driven Discovery: Barriers to Rural Health"), align = "center"),
                        br(),
                        box(width = 12,
                            title = strong("About"),
@@ -648,7 +745,6 @@ ui <- dashboardPage(
       
       tabItem(tabName = "thisproject",
               fluidRow(style = "margin: 6px;",
-                       h1(strong("Community Learning Through Data Driven Discovery: Barriers to Rural Health"), align = "center"),
                        br(),
                        box(width = 12,
                            title = strong("About"),
@@ -728,7 +824,7 @@ server <- function(input, output){
   
   create_plot <- function(data, myvar, myvarlabel) {
     
-    pal <- colorNumeric(map_colors, domain = myvar, na.color = "grey")
+    pal <- colorBin(map_colors, bins = 5, domain = myvar, na.color = "grey")
     
     labels <- lapply(
       paste("<strong>Area: </strong>",
