@@ -198,7 +198,7 @@ ui <- dashboardPage(
     tags$head(includeScript("google-analytics.js")),
     
     # Image in header, http://jonkatz2.github.io/2018/06/22/Image-In-Shinydashboard-Header
-    tags$style(type="text/css", "
+    tags$style(type = "text/css", "
                /*    Move everything below the header */
                .content-wrapper {
                margin-top: 50px;
@@ -298,8 +298,8 @@ ui <- dashboardPage(
                        box(width = 12,
                            title = strong("Funding"),
                            column(10,
-                                  p("This project is one of eight funded by the 2020/21 USDA National Institute of Food and Agriculture ", a(href = "https://impact.extension.org/ntae/", "New Technologies for Agricultural Extension grant", target = "_blank"), 
-                                    "through the University of Virginia, in collaboration with Virginia Cooperative Extension, Virginia Tech and implemented by the eXtension Foundation.")
+                                  p("This project is supported by the 2020/21 USDA National Institute of Food and Agriculture ", a(href = "https://impact.extension.org/ntae/", "New Technologies for Agricultural Extension", target = "_blank"), 
+                                    "Cooperative Agreement, delivered in partnership with Oklahoma State University and the Extension Foundation. Funds are provided through Virginia Cooperative Extension at Virginia Tech, and this work is done in collaboration with the University of Virginia.")
                            ),
                            column(2,
                                   img(src = "logo-extension.png", style = "display: block; margin-left: auto; margin-right: auto;", width = "100%")
@@ -763,8 +763,8 @@ ui <- dashboardPage(
                        box(width = 12,
                            title = strong("Funding"),
                            column(10,
-                                  p("This project is one of eight funded by the 2020/21 USDA National Institute of Food and Agriculture ", a(href = "https://impact.extension.org/ntae/", "New Technologies for Agricultural Extension grant", target = "_blank"), 
-                                    "through the University of Virginia, in collaboration with Virginia Cooperative Extension, Virginia Tech and implemented by the eXtension Foundation.")
+                                  p("This project is supported by the 2020/21 USDA National Institute of Food and Agriculture ", a(href = "https://impact.extension.org/ntae/", "New Technologies for Agricultural Extension", target = "_blank"), 
+                                    "Cooperative Agreement, delivered in partnership with Oklahoma State University and the Extension Foundation. Funds are provided through Virginia Cooperative Extension at Virginia Tech, and this work is done in collaboration with the University of Virginia.")
                            ),
                            column(2,
                                   img(src = "logo-extension.png", style = "display: block; margin-left: auto; margin-right: auto;", width = "100%")
