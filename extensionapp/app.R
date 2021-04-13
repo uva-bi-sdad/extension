@@ -1175,7 +1175,7 @@ server <- function(input, output){
   
   output$plot_bband <- renderLeaflet({
     
-    var_label <- names(choices_older)[choices_bband == input$whichvar_bband]
+    var_label <- names(choices_bband)[choices_bband == input$whichvar_bband]
     
     create_plot(plot_bband_data(), plot_bband_var(), var_label)
   })
