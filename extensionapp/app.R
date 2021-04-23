@@ -194,7 +194,7 @@ ui <- dashboardPage(
                          menuSubItem(text = "Measures", tabName = "measures", icon = NULL),
                          menuSubItem(text = "Data Sources", tabName = "data", icon = NULL)),
                 menuItem(startExpanded = F,
-                         text = "About", 
+                         text = "About and Contact", 
                          icon = icon("info-circle"),
                          menuSubItem(text = "This Project", tabName = "thisproject", icon = NULL),
                          menuSubItem(text = "Contact", tabName = "contact", icon = NULL))
@@ -294,12 +294,19 @@ ui <- dashboardPage(
                        box(width = 12,
                            title = strong("About"),
                            column(12,
-                                  p(strong("This project builds local capacity, leveraging social and data science to construct a rural county dashboard enhancing data-driven health access decision making in rural Virginia."),
+                                  p("Rural counties often face challenges in providing health care access to its residents given few health facilities available, 
+                                       lack of broadband infrastructure that limits providing telemedicine access or communicating health information, 
+                                       and individual-level inequalities that pose barriers to health care access and use. Identifying areas of high need or potential 
+                                       solutions may also be difficult for rural areas without adequate resources to acquire, analyze, and interpret 
+                                       relevant data."),
                                     br(),
-                                    p("Rural counties often face challenges in providing health care access to its residents given few health facilities available, lack of broadband infrastructure that limits providing telemedicine access or communicating health information, 
-                          and individual-level inequalities that pose barriers to health care access and use. Identifying areas of high need or potential solutions may also be difficult for rural areas without adequate resources to acquire, analyze, and interpret 
-                          relevant data.")
-                                  )
+                                    p(strong("This project builds local capacity, leveraging social and data science to construct a rural county dashboard 
+                                             enhancing data-driven health access decision making in rural Virginia.")),
+                                    br(),
+                                    p("The dashboard uses Virginia Department of Health Office of Rural Health's definition of county rurality. For every county considered rural,
+                                      we provide maps and data on community socioeconomic characteristics, food access, internet access, and health care access. We also
+                                      provide a tool that allows you to compare the rural status of Virginia's counties according to multiple available definitions. You can explore
+                                      the dashboard's features using the navigation panel on your left.")
                            )
                        ),
                        box(width = 12,
@@ -909,12 +916,19 @@ ui <- dashboardPage(
                        box(width = 12,
                            title = strong("About"),
                            column(12,
-                                  p(strong("This project builds local capacity, leveraging social and data science to construct a rural county dashboard enhancing data-driven health access decision making in rural Virginia."),
-                                    br(),
-                                    p("Rural counties often face challenges in providing health care access to its residents given few health facilities available, lack of broadband infrastructure that limits providing telemedicine access or communicating health information, 
-                          and individual-level inequalities that pose barriers to health care access and use. Identifying areas of high need or potential solutions may also be difficult for rural areas without adequate resources to acquire, analyze, and interpret 
-                          relevant data.")
-                                  )
+                                  p("Rural counties often face challenges in providing health care access to its residents given few health facilities available, 
+                                       lack of broadband infrastructure that limits providing telemedicine access or communicating health information, 
+                                       and individual-level inequalities that pose barriers to health care access and use. Identifying areas of high need or potential 
+                                       solutions may also be difficult for rural areas without adequate resources to acquire, analyze, and interpret 
+                                       relevant data."),
+                                  br(),
+                                  p(strong("This project builds local capacity, leveraging social and data science to construct a rural county dashboard 
+                                             enhancing data-driven health access decision making in rural Virginia.")),
+                                  br(),
+                                  p("The dashboard uses Virginia Department of Health Office of Rural Health's definition of county rurality. For every county considered rural,
+                                      we provide maps and data on community socioeconomic characteristics, food access, internet access, and health care access. We also
+                                      provide a tool that allows you to compare the rural status of Virginia's counties according to multiple available definitions. You can explore
+                                      the dashboard's features using the navigation panel on your left.")
                            )
                        ),
                        box(width = 12,
@@ -956,6 +970,12 @@ ui <- dashboardPage(
                                   p(a(href = "https://news.cals.vt.edu/experts/2015/06/02/mike-lambur/", "Mike Lambur", target = "_blank")),
                                   p(em("Associate Director of Program Development, Virginia Cooperative Extension, Virginia Tech"))
                            )
+                       ),
+                       br(),
+                       box(width = 12,
+                           column(12,
+                                  p("If you would like to submit", strong("feedback or a question,"), "please use", 
+                                  a(href = "https://forms.gle/ASAZA2xY29cDLwzP8", "this form.", target = "_blank")))
                        )
               )
       )
