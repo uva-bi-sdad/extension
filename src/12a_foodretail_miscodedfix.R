@@ -38,17 +38,17 @@ filterthedata <- function(whichdata) {
                          (str_detect(business, "Exxon Distributor") & county == "Buchanan" & str_detect(address1, "1403 Three River")) |
                          (str_detect(business, "Old 26") & county == "Charlotte" & str_detect(address1, "9641 RR")) |
                          (str_detect(business, "Duffey") & county == "Charlotte" & str_detect(address1, "2459 Patrick")) |
-                         (str_detect(business, "Sweet Frog") & county == "Danville" & str_detect(address1, "165 Holt")) |                        
-                         (str_detect(business, "Danville Quality Plus") & county == "Danville" & str_detect(address1, "1090 Franklin Tpke")) |   
-                         (str_detect(business, "Town & Country Market") & county == "Greensville" & str_detect(address1, "PO Box 22")) |           
+                         (str_detect(business, "Sweet Frog") & county == "Danville" & str_detect(address1, "165 Holt")) |
+                         (str_detect(business, "Danville Quality Plus") & county == "Danville" & str_detect(address1, "1090 Franklin Tpke")) |
+                         (str_detect(business, "Town & Country Market") & county == "Greensville" & str_detect(address1, "PO Box 22")) |
                          (str_detect(business, "Friendly Corners") & county == "Halifax" & str_detect(address1, "2216 Mountain")) |
                          (str_detect(business, "Pointers") & county == "King and Queen" & str_detect(address1, "33 Central")) |
                          (str_detect(business, "Walmart") & county == "Lancaster" & str_detect(address1, "200 Old Fair")) |
                          (str_detect(business, "Food City") & county == "Lee" & str_detect(address1, "205 River")) |
-                         (str_detect(business, "Black") & county == "Lee" & str_detect(address1, "138 Western")) |                       
+                         (str_detect(business, "Black") & county == "Lee" & str_detect(address1, "138 Western")) |
                          (str_detect(business, "Food") & county == "Lee" & str_detect(address1, "177 Dollar")) |
                          (str_detect(business, "Boone") & county == "Lee" & str_detect(address1, "155 Boone")) |
-                         (str_detect(business, "Monogram") & county == "Martinsville" & str_detect(address1, "200 Knauss")) |          
+                         (str_detect(business, "Monogram") & county == "Martinsville" & str_detect(address1, "200 Knauss")) |
                          (str_detect(business, "Jack Donkey") & county == "Mecklenburg" & str_detect(address1, "3450 Britton")) |
                          (str_detect(business, "Country") & county == "Mecklenburg" & str_detect(address1, "19074 Highway")) |
                          (str_detect(business, "Country") & county == "Mecklenburg" & str_detect(address1, "3630 Highway")) |
@@ -225,12 +225,12 @@ write_rds(store_geocoded, "./data/working/foodretail/foodretail_all.rds")
 #
 
 # Make isochrones for incorrect locations again
-options(osrm.server = "http://104.248.112.16:5000/", osrm.profile = "driving")
+options(osrm.server = Sys.getenv("OSRM_SERVER"), osrm.profile = "driving")
 
 # Filter to incorrect locations again
 bussid1 <- c(4915753, 4913790, 4309665, 3624031, 4916907)
-bussid2 <- c(4303973, 4304003, 4305669, 4305901, 4306019, 4306114, 4308373, 4308909, 4310397, 4311269, 4311474, 4311534, 
-             4311952, 4312498, 4313073, 4313526, 4313943, 4314973, 4315017, 4316296, 4316503, 4318726, 4318990, 4319531, 
+bussid2 <- c(4303973, 4304003, 4305669, 4305901, 4306019, 4306114, 4308373, 4308909, 4310397, 4311269, 4311474, 4311534,
+             4311952, 4312498, 4313073, 4313526, 4313943, 4314973, 4315017, 4316296, 4316503, 4318726, 4318990, 4319531,
              4321197, 4321783, 4322455, 4323171, 4324842, 4325773, 4325872, 4326012, 4327689, 4328038, 4328475, 4916914)
 
 data1 <- data_geo_1 %>% filter(business_id %in% bussid1)

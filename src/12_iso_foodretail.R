@@ -15,12 +15,12 @@ library(stringr)
 # The nonmissing DF
 # data <- read_rds("/home/tp2sk/Git/extension/data/working/foodretail/foodretail_nonmiss.rds")
 # data_mis <- read_rds("/home/tp2sk/Git/extension/data/working/foodretail/foodretail_missing_coded.rds")
-# 
+#
 # #st_crs(data) <- 4326
 # #st_crs(data_mis) <- 4326
 # #data <- st_transform(data, 4326)
 # #data_mis <- st_transform(data_mis, 4326)
-# 
+#
 # # Split across 5 days
 # data1 <- data[1:1607, ]
 # data2 <- data[1608:3215, ]
@@ -36,7 +36,7 @@ library(stringr)
 # OSRM backend instance for Virginia locations on the SDAD server  -------------------------------
 #
 
-options(osrm.server = "http://104.248.112.16:5000/", osrm.profile = "driving")
+options(osrm.server = Sys.getenv("OSRM_SERVER"), osrm.profile = "driving")
 
 
 #
@@ -50,7 +50,7 @@ options(osrm.server = "http://104.248.112.16:5000/", osrm.profile = "driving")
 #   res = 200,
 #   returnclass = "sf"
 # ))
-# 
+#
 # write_rds(foodretail_10_pt1, "/home/tp2sk/Git/extension/data/working/foodretail/foodretail_10_nonmiss_pt1.rds")
 
 # # 10 minute isochrones PART 2
@@ -60,7 +60,7 @@ options(osrm.server = "http://104.248.112.16:5000/", osrm.profile = "driving")
 #   res = 200,
 #   returnclass = "sf"
 # ))
-# 
+#
 # write_rds(foodretail_10_pt2, "/home/tp2sk/Git/extension/data/working/foodretail/foodretail_10_nonmiss_pt2.rds")
 
 # # 10 minute isochrones PART 3
@@ -70,7 +70,7 @@ options(osrm.server = "http://104.248.112.16:5000/", osrm.profile = "driving")
 #   res = 200,
 #   returnclass = "sf"
 # ))
-# 
+#
 # write_rds(foodretail_10_pt3, "/home/tp2sk/Git/extension/data/working/foodretail/foodretail_10_nonmiss_pt3.rds")
 
 # # 10 minute isochrones PART 4
@@ -80,7 +80,7 @@ options(osrm.server = "http://104.248.112.16:5000/", osrm.profile = "driving")
 #   res = 200,
 #   returnclass = "sf"
 # ))
-# 
+#
 # write_rds(foodretail_10_pt4, "/home/tp2sk/Git/extension/data/working/foodretail/foodretail_10_nonmiss_pt4.rds")
 
 # # 10 minute isochrones PART 5
@@ -90,7 +90,7 @@ options(osrm.server = "http://104.248.112.16:5000/", osrm.profile = "driving")
 #   res = 200,
 #   returnclass = "sf"
 # ))
-# 
+#
 # write_rds(foodretail_10_pt5, "/home/tp2sk/Git/extension/data/working/foodretail/foodretail_10_nonmiss_pt5.rds")
 
 # # # 10 minute isochrones MISS
@@ -100,7 +100,7 @@ options(osrm.server = "http://104.248.112.16:5000/", osrm.profile = "driving")
 #   res = 200,
 #   returnclass = "sf"
 # ))
-# 
+#
 # write_rds(foodretail_10_mis, "/home/tp2sk/Git/extension/data/working/foodretail/foodretail_10_mis.rds")
 
 # 15 minute isochrones PART 1
@@ -110,7 +110,7 @@ options(osrm.server = "http://104.248.112.16:5000/", osrm.profile = "driving")
 #   res = 200,
 #   returnclass = "sf"
 # ))
-# 
+#
 # write_rds(foodretail_15_pt1, "/home/tp2sk/Git/extension/data/working/foodretail/foodretail_15_nonmiss_pt1.rds")
 
 # # 15 minute isochrones PART 2
@@ -120,7 +120,7 @@ options(osrm.server = "http://104.248.112.16:5000/", osrm.profile = "driving")
 #   res = 200,
 #   returnclass = "sf"
 # ))
-# 
+#
 # write_rds(foodretail_15_pt2, "/home/tp2sk/Git/extension/data/working/foodretail/foodretail_15_nonmiss_pt2.rds")
 
 # # 15 minute isochrones PART 3
@@ -130,7 +130,7 @@ options(osrm.server = "http://104.248.112.16:5000/", osrm.profile = "driving")
 #   res = 200,
 #   returnclass = "sf"
 # ))
-# 
+#
 # write_rds(foodretail_15_pt3, "/home/tp2sk/Git/extension/data/working/foodretail/foodretail_15_nonmiss_pt3.rds")
 
 # 15 minute isochrones PART 4
@@ -140,7 +140,7 @@ options(osrm.server = "http://104.248.112.16:5000/", osrm.profile = "driving")
 #   res = 200,
 #   returnclass = "sf"
 # ))
-# 
+#
 # write_rds(foodretail_15_pt4, "/home/tp2sk/Git/extension/data/working/foodretail/foodretail_15_nonmiss_pt4.rds")
 
 # # # 15 minute isochrones PART 5
@@ -150,7 +150,7 @@ options(osrm.server = "http://104.248.112.16:5000/", osrm.profile = "driving")
 #   res = 200,
 #   returnclass = "sf"
 # ))
-# 
+#
 # write_rds(foodretail_15_pt5, "/home/tp2sk/Git/extension/data/working/foodretail/foodretail_15_nonmiss_pt5.rds")
 
 # # 15 minute isochrones MISS
@@ -160,7 +160,7 @@ options(osrm.server = "http://104.248.112.16:5000/", osrm.profile = "driving")
 #   res = 200,
 #   returnclass = "sf"
 # ))
-# 
+#
 # write_rds(foodretail_15_mis, "/home/tp2sk/Git/extension/data/working/foodretail/foodretail_15_mis.rds")
 
 
@@ -175,7 +175,7 @@ food_10_pt3 <- read_rds("./data/working/foodretail/foodretail_10_nonmiss_pt3.rds
 food_10_pt4 <- read_rds("./data/working/foodretail/foodretail_10_nonmiss_pt4.rds") %>% select(max, geometry) %>% rename(isominute = max)
 food_10_pt5 <- read_rds("./data/working/foodretail/foodretail_10_nonmiss_pt5.rds") %>% select(max, geometry) %>% rename(isominute = max)
 food_10_mis <- read_rds("./data/working/foodretail/foodretail_10_mis.rds") %>% select(max, geometry) %>% rename(isominute = max)
-  
+
 food_15_pt1 <- read_rds("./data/working/foodretail/foodretail_15_nonmiss_pt1.rds") %>% select(max, geometry) %>% rename(isominute = max)
 food_15_pt2 <- read_rds("./data/working/foodretail/foodretail_15_nonmiss_pt2.rds") %>% select(max, geometry) %>% rename(isominute = max)
 food_15_pt3 <- read_rds("./data/working/foodretail/foodretail_15_nonmiss_pt3.rds") %>% select(max, geometry) %>% rename(isominute = max)
@@ -245,11 +245,11 @@ countyfips$fips <- paste0(countyfips$state_code, countyfips$county_code)
 countyfips$state <- NULL
 countyfips$state_name <- NULL
 
-# These are all cities but they do not have "city" in the name in the original dataset. 
+# These are all cities but they do not have "city" in the name in the original dataset.
 # Have to fix to get a match. Tricky! There are:
 # Roanoke and Roanoke City, Richmond and Richmond City, Fairfax and Fairfax City, Franklin and Franklin City
-# Assume that if it's not specified to be a city, it refers to the county -- won't work because 
-# of entries like "Virginia Beach", which is only a city (no Virginia Beach County exists). 
+# Assume that if it's not specified to be a city, it refers to the county -- won't work because
+# of entries like "Virginia Beach", which is only a city (no Virginia Beach County exists).
 # Assume the other way around but be careful about existing distinctions (Roanoke, Richmond, Fairfax, Franklin).
 
 table(data_10$county)
@@ -275,7 +275,7 @@ countyfips$fips <- paste0(countyfips$state_code, countyfips$county_code)
 countyfips <- countyfips %>% select(-state, -state_name) %>% rename(countyname = county)
 
 # Join
-data_10 <- left_join(data_10, countyfips, by = "fips") 
+data_10 <- left_join(data_10, countyfips, by = "fips")
 data_10$county <- NULL
 
 data_15 <- left_join(data_15, countyfips, by = "fips") %>% select(-county)
