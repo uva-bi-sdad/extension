@@ -6,15 +6,15 @@ library(dplyr)
 
 
 # OSRM backend instance for Virginia locations on the SDAD server
-options(osrm.server = "http://104.248.112.16:5000/", osrm.profile = "driving")
+options(osrm.server = Sys.getenv("OSRM_SERVER"), osrm.profile = "driving")
 
 #
 # Test from Aaron's house ----------------------------------------------------------
 #
 
-iso <- osrmIsochrone(loc = c(-77.116444, 38.896130), 
+iso <- osrmIsochrone(loc = c(-77.116444, 38.896130),
                      returnclass="sf",
-                     breaks = seq(from = 0, to = 14, by = 2), 
+                     breaks = seq(from = 0, to = 14, by = 2),
                      res = 50)
 
 osm3 <- getTiles(x = iso, crop = FALSE, type = "osm", zoom = 12)
@@ -44,7 +44,7 @@ class(data)
 table(st_is_valid(data))
 st_is_longlat(data)
 
-iso <- osrmIsochrone(loc = data[1], 
+iso <- osrmIsochrone(loc = data[1],
                      returnclass="sf",
-                     breaks = 10, 
+                     breaks = 10,
                      res = 50)
