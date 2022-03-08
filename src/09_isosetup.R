@@ -31,7 +31,7 @@ choroLayer(x = iso, var = "center", breaks = bks,
 # https://github.com/rCarto/osrm
 # http://project-osrm.org/docs/v5.23.0/api/#result-objects
 # https://github.com/Project-OSRM/osrm-backend/blob/master/docs/http.md
-# curl http://104.248.112.16:5000/route/v1/driving/-77.116444,38.896130;-77.070264,38.894856?steps=true
+# curl http://OSRM SERVER IP:5000/route/v1/driving/-77.116444,38.896130;-77.070264,38.894856?steps=true
 
 
 #
